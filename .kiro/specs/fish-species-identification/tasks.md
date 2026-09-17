@@ -105,7 +105,7 @@
   - _Boundary: Features/FishScanner/PhotoPickerView_
 
 ## 6. ViewModel de orquestación
-- [ ] 6.1 Implementar la máquina de estados del escaneo en `FishScannerViewModel`
+- [x] 6.1 Implementar la máquina de estados del escaneo en `FishScannerViewModel`
   - Estados `idle`, `imageReady`, `identifying`, `identified(IdentificationResult)`, `noMatch` y `failed(message)`; auto-inicio al quedar imagen lista; cancelación desde `identifying` vuelve a `idle`; `retryWithAnotherPhoto` vuelve a `idle`.
   - Preparar la imagen con `ImageCompressor` antes de llamar a `FishIdentifying`; aplicar estado de carga mientras se identifica.
   - Observable: tests de transiciones (imageReady→identifying→identified/noMatch/failed, cancelación en curso, retry) con un fake de `FishIdentifying` y del compresor.
