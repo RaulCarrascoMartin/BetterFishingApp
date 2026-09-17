@@ -10,9 +10,18 @@ final class MockURLProtocol: URLProtocol {
     }
 
     override func startLoading() {
-        guard let url = request.url, let stub = HTTPStubRegistry.shared.stub(for: url) else {
+        guard let url = request.url else {
             client?.urlProtocol(self, didFailWithError: URLError(.unsupportedURL))
             return
+        }
+        HTTPStubRegistry.shared.record(request, urlString: url.absoluteString)
+        guard let stub = HTTPStubRegistry.shared.stub(for: url) else {
+            client?.urlProtocol(self, didFailWithError: URLError(.unsupportedURL))
+            return
+        }
+
+        if stub.requestDelay > 0 {
+            Thread.sleep(forTimeInterval: stub.requestDelay)
         }
 
         if let error = stub.error {

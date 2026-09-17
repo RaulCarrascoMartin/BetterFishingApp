@@ -24,8 +24,10 @@
 		0000000000000000000000B1C /* CatchDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A1C /* CatchDraft.swift */; };
 		0000000000000000000000B1D /* CatchDraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A1D /* CatchDraftTests.swift */; };
 		0000000000000000000000B1E /* FishIdentifying.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A1E /* FishIdentifying.swift */; };
+		0000000000000000000000B21 /* FishialTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A21 /* FishialTokenStore.swift */; };
 		0000000000000000000000B1F /* FishIdentifyingFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A1F /* FishIdentifyingFake.swift */; };
 		0000000000000000000000B20 /* FishIdentifyingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A20 /* FishIdentifyingTests.swift */; };
+		0000000000000000000000B22 /* FishialTokenStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A22 /* FishialTokenStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,8 +62,10 @@
 		0000000000000000000000A1C /* CatchDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDraft.swift; sourceTree = "<group>"; };
 		0000000000000000000000A1D /* CatchDraftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDraftTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A1E /* FishIdentifying.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishIdentifying.swift; sourceTree = "<group>"; };
+		0000000000000000000000A21 /* FishialTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishialTokenStore.swift; sourceTree = "<group>"; };
 		0000000000000000000000A1F /* FishIdentifyingFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishIdentifyingFake.swift; sourceTree = "<group>"; };
 		0000000000000000000000A20 /* FishIdentifyingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishIdentifyingTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A22 /* FishialTokenStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishialTokenStoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000A1E /* FishIdentifying.swift */,
+				0000000000000000000000A21 /* FishialTokenStore.swift */,
 			);
 			path = FishID;
 			sourceTree = "<group>";
@@ -177,6 +182,7 @@
 				0000000000000000000000A1D /* CatchDraftTests.swift */,
 				0000000000000000000000A1F /* FishIdentifyingFake.swift */,
 				0000000000000000000000A20 /* FishIdentifyingTests.swift */,
+				0000000000000000000000A22 /* FishialTokenStoreTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -297,6 +303,7 @@ isa = PBXSourcesBuildPhase;
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
 			0000000000000000000000B1A /* IdentificationResult.swift in Sources */,
 			0000000000000000000000B1E /* FishIdentifying.swift in Sources */,
+			0000000000000000000000B21 /* FishialTokenStore.swift in Sources */,
 		);
 		runOnlyForDeploymentPostprocessing = 0;
 	};
@@ -314,6 +321,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B1D /* CatchDraftTests.swift in Sources */,
 				0000000000000000000000B1F /* FishIdentifyingFake.swift in Sources */,
 				0000000000000000000000B20 /* FishIdentifyingTests.swift in Sources */,
+				0000000000000000000000B22 /* FishialTokenStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

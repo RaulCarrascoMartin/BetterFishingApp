@@ -53,7 +53,7 @@
   - _Requirements: 2.1, 2.2, 3.1, 3.2, 3.4_
   - _Boundary: Services/FishID/FishIdentifying_
 
-- [ ] 3.2 (P) Crear `FishialTokenStore`
+- [x] 3.2 (P) Crear `FishialTokenStore`
   - Caché del JWT con expiración (TTL 600 s, margen de 60 s) y renovación perezosa vía `POST /v2/auth` con `client_id`/`client_secret`.
   - Evitar auths duplicados en concurrencia (serialización de la renovación); loguear (os.Logger) cada renovación y sus fallos.
   - Observable: test en verde que verifica token vigente reutilizado, token vencido renovado y una sola llamada de auth bajo uso concurrente.
