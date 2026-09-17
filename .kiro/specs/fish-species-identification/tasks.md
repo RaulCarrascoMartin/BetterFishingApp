@@ -39,7 +39,7 @@
   - _Requirements: 2.2, 3.1, 3.2_
   - _Boundary: Models/Fishial_
 
-- [ ] 2.4 Crear el modelo provisional `CatchDraft`
+- [x] 2.4 Crear el modelo provisional `CatchDraft`
   - Definir `CatchDraft` (id, species: Species, photoPath, createdAt, status) y `CatchDraftStatus` (draft), ambos Codable/Sendable.
   - Observable: test en verde de codificación/decodificación del borrador completo con species embebida.
   - _Requirements: 4.1, 4.2_
