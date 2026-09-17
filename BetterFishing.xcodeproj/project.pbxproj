@@ -37,6 +37,7 @@
 		0000000000000000000000B28 /* ImageCompressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A28 /* ImageCompressor.swift */; };
 		0000000000000000000000B2A /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2A /* CameraManager.swift */; };
 		0000000000000000000000B2B /* CameraManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2B /* CameraManagerTests.swift */; };
+		0000000000000000000000B2C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2C /* CameraView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		0000000000000000000000A28 /* ImageCompressor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompressor.swift; sourceTree = "<group>"; };
 		0000000000000000000000A2A /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		0000000000000000000000A2B /* CameraManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManagerTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A2C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000A2A /* CameraManager.swift */,
+				0000000000000000000000A2C /* CameraView.swift */,
 			);
 			path = FishScanner;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B23 /* FishialClient.swift in Sources */,
 				0000000000000000000000B28 /* ImageCompressor.swift in Sources */,
 				0000000000000000000000B2A /* CameraManager.swift in Sources */,
+				0000000000000000000000B2C /* CameraView.swift in Sources */,
 			);
 		runOnlyForDeploymentPostprocessing = 0;
 	};

@@ -92,7 +92,7 @@
   - _Requirements: 1.2, 1.5_
   - _Boundary: Features/FishScanner/CameraManager_
 
-- [ ] 5.2 Crear `CameraView` (preview de cámara)
+- [x] 5.2 Crear `CameraView` (preview de cámara)
   - `UIViewRepresentable` con `layerClass` override que expone la sesión del `CameraManager` como preview.
   - Observable: la vista compila en el target, renderiza la preview en un preview de SwiftUI y expone la sesión del `CameraManager`; al desaparecer, la sesión se detiene.
   - _Requirements: 1.2_
