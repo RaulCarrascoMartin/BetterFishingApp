@@ -98,7 +98,7 @@
   - _Requirements: 1.2_
   - _Boundary: Features/FishScanner/CameraView_
 
-- [ ] 5.3 (P) Crear `PhotoPickerView`
+- [x] 5.3 (P) Crear `PhotoPickerView`
   - Wrapper de `PhotosPicker` (matching `.images`) que carga los datos con `loadTransferable(type: Data.self)` y entrega la imagen o notifica cancelación.
   - Observable: seleccionar una imagen de la galería entrega los datos a la vista; cancelar no inicia identificación (test unitario del callback).
   - _Requirements: 1.3, 1.4_

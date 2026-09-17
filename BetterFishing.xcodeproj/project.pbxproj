@@ -38,6 +38,8 @@
 		0000000000000000000000B2A /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2A /* CameraManager.swift */; };
 		0000000000000000000000B2B /* CameraManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2B /* CameraManagerTests.swift */; };
 		0000000000000000000000B2C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2C /* CameraView.swift */; };
+		0000000000000000000000B2D /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2D /* PhotoPickerView.swift */; };
+		0000000000000000000000B2E /* PhotoPickerViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2E /* PhotoPickerViewTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +88,8 @@
 		0000000000000000000000A2A /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		0000000000000000000000A2B /* CameraManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManagerTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A2C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		0000000000000000000000A2D /* PhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerView.swift; sourceTree = "<group>"; };
+		0000000000000000000000A2E /* PhotoPickerViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +139,7 @@
 			children = (
 				0000000000000000000000A2A /* CameraManager.swift */,
 				0000000000000000000000A2C /* CameraView.swift */,
+				0000000000000000000000A2D /* PhotoPickerView.swift */,
 			);
 			path = FishScanner;
 			sourceTree = "<group>";
@@ -213,6 +218,7 @@
 				0000000000000000000000A27 /* CatchSavingTests.swift */,
 				0000000000000000000000A29 /* ImageCompressorTests.swift */,
 				0000000000000000000000A2B /* CameraManagerTests.swift */,
+				0000000000000000000000A2E /* PhotoPickerViewTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -337,11 +343,12 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B21 /* FishialTokenStore.swift in Sources */,
 				0000000000000000000000B23 /* FishialClient.swift in Sources */,
 				0000000000000000000000B28 /* ImageCompressor.swift in Sources */,
-				0000000000000000000000B2A /* CameraManager.swift in Sources */,
+0000000000000000000000B2A /* CameraManager.swift in Sources */,
 				0000000000000000000000B2C /* CameraView.swift in Sources */,
+				0000000000000000000000B2D /* PhotoPickerView.swift in Sources */,
 			);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 	0000000000000000000000F0C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -362,6 +369,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B27 /* CatchSavingTests.swift in Sources */,
 				0000000000000000000000B29 /* ImageCompressorTests.swift in Sources */,
 				0000000000000000000000B2B /* CameraManagerTests.swift in Sources */,
+				0000000000000000000000B2E /* PhotoPickerViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
