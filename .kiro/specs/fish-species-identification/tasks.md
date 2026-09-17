@@ -78,7 +78,7 @@
   - _Boundary: Services/FishID/CatchSaving_
 
 ## 4. Utilidad Core de imagen
-- [ ] 4.1 (P) Crear `ImageCompressor`
+- [x] 4.1 (P) Crear `ImageCompressor`
   - Resize manteniendo aspect ratio (máx 1280 px) con `UIGraphicsImageRenderer` y compresión `jpegData(0.7)`; garantizar salida JPEG inferior a 20 MB; error tipado si no se puede procesar.
   - Observable: test sobre una imagen de gran tamaño confirma dimensión <= 1280 px y tamaño de datos en rango seguro; el error de procesamiento se eleva sin crash.
   - _Requirements: 2.1_
