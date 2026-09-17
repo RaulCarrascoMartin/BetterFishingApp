@@ -28,6 +28,8 @@
 		0000000000000000000000B1F /* FishIdentifyingFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A1F /* FishIdentifyingFake.swift */; };
 		0000000000000000000000B20 /* FishIdentifyingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A20 /* FishIdentifyingTests.swift */; };
 		0000000000000000000000B22 /* FishialTokenStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A22 /* FishialTokenStoreTests.swift */; };
+		0000000000000000000000B23 /* FishialClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A23 /* FishialClient.swift */; };
+		0000000000000000000000B24 /* FishialClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A24 /* FishialClientTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +68,8 @@
 		0000000000000000000000A1F /* FishIdentifyingFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishIdentifyingFake.swift; sourceTree = "<group>"; };
 		0000000000000000000000A20 /* FishIdentifyingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishIdentifyingTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A22 /* FishialTokenStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishialTokenStoreTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A23 /* FishialClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishialClient.swift; sourceTree = "<group>"; };
+		0000000000000000000000A24 /* FishialClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishialClientTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +134,7 @@
 			children = (
 				0000000000000000000000A1E /* FishIdentifying.swift */,
 				0000000000000000000000A21 /* FishialTokenStore.swift */,
+				0000000000000000000000A23 /* FishialClient.swift */,
 			);
 			path = FishID;
 			sourceTree = "<group>";
@@ -183,6 +188,7 @@
 				0000000000000000000000A1F /* FishIdentifyingFake.swift */,
 				0000000000000000000000A20 /* FishIdentifyingTests.swift */,
 				0000000000000000000000A22 /* FishialTokenStoreTests.swift */,
+				0000000000000000000000A24 /* FishialClientTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -302,9 +308,10 @@ isa = PBXSourcesBuildPhase;
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
 			0000000000000000000000B1A /* IdentificationResult.swift in Sources */,
-			0000000000000000000000B1E /* FishIdentifying.swift in Sources */,
-			0000000000000000000000B21 /* FishialTokenStore.swift in Sources */,
-		);
+0000000000000000000000B1E /* FishIdentifying.swift in Sources */,
+				0000000000000000000000B21 /* FishialTokenStore.swift in Sources */,
+				0000000000000000000000B23 /* FishialClient.swift in Sources */,
+			);
 		runOnlyForDeploymentPostprocessing = 0;
 	};
 	0000000000000000000000F0C /* Sources */ = {
@@ -322,6 +329,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B1F /* FishIdentifyingFake.swift in Sources */,
 				0000000000000000000000B20 /* FishIdentifyingTests.swift in Sources */,
 				0000000000000000000000B22 /* FishialTokenStoreTests.swift in Sources */,
+				0000000000000000000000B24 /* FishialClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

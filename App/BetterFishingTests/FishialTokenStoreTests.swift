@@ -152,6 +152,26 @@ final class FishialTokenStoreTests: XCTestCase {
         }
     }
 
+    func testInvalidatedCachedTokenForcesNewAuthRequest() async throws {
+        let (store, _) = makeStore()
+        HTTPStubRegistry.shared.register(
+            HTTPStub.json(["token_type": "Bearer", "access_token": "jwt-token-1"]),
+            for: authEndpoint.absoluteString
+        )
+        _ = try await store.validToken()
+
+        store.invalidateCachedToken()
+
+        HTTPStubRegistry.shared.register(
+            HTTPStub.json(["token_type": "Bearer", "access_token": "jwt-token-2"]),
+            for: authEndpoint.absoluteString
+        )
+        let refreshed = try await store.validToken()
+
+        XCTAssertEqual(refreshed, "jwt-token-2", "Invalidar la caché debe forzar una nueva llamada a /v2/auth")
+        XCTAssertEqual(HTTPStubRegistry.shared.requestCount(for: authEndpoint.absoluteString), 2)
+    }
+
     func testAuthRequestSendsClientCredentialsInJSONBody() async throws {
         let (store, _) = makeStore()
         HTTPStubRegistry.shared.register(

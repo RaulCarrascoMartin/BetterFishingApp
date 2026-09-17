@@ -4,6 +4,7 @@ import os
 enum FishialConfiguration {
     static let baseURL = URL(string: "https://api-recognition.fishial.ai")!
     static let authEndpoint = baseURL.appendingPathComponent("v2/auth")
+    static let recognizeEndpoint = baseURL.appendingPathComponent("v2/recognize")
 }
 
 enum FishialTokenError: Error, Equatable {
@@ -67,6 +68,13 @@ final class FishialTokenStore: Sendable {
         } catch {
             clearInFlight(renewal.id)
             throw error
+        }
+    }
+
+    func invalidateCachedToken() {
+        state.withLock { state in
+            state.token = nil
+            state.expiresAt = nil
         }
     }
 

@@ -60,7 +60,7 @@
   - _Requirements: 3.4, 5.2_
   - _Boundary: Services/FishID/FishialTokenStore_
 
-- [ ] 3.3 Implementar `FishialClient` (conformante a `FishIdentifying`)
+- [x] 3.3 Implementar `FishialClient` (conformante a `FishIdentifying`)
   - Centralizar la base URL `https://api-recognition.fishial.ai` y los endpoints `/v2/auth` y `/v2/recognize` en un punto de configuración único consumido por `FishialClient` y `FishialTokenStore`.
   - Llamar `POST /v2/recognize` con la imagen como body binario y `Content-Type: image/jpeg` + `Authorization: Bearer`; timeout de request 15 s.
   - Mapear `objects`/`definitions` a `Species` (primera candidata del mejor objeto → única especie; `localizedName` nil), clasificar confianza (>=0.55 fiable, 0.30..<0.55 baja) y `objects` vacío o certainty <0.30 → `noMatch`.

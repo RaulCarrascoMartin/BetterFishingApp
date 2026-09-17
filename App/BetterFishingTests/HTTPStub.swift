@@ -32,8 +32,10 @@ final class HTTPStubRegistry: @unchecked Sendable {
 
     private let lock = NSLock()
     private var stubs: [String: HTTPStub] = [:]
+    private var queuedStubs: [String: [HTTPStub]] = [:]
     private var requestCounts: [String: Int] = [:]
     private var requestBodies: [String: [Data]] = [:]
+    private var requestHeaders: [String: [[String: String]]] = [:]
 
     private init() {}
 
@@ -43,10 +45,26 @@ final class HTTPStubRegistry: @unchecked Sendable {
         stubs[urlString] = stub
     }
 
+    func enqueue(_ stubs: [HTTPStub], for urlString: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        queuedStubs[urlString, default: []].append(contentsOf: stubs)
+    }
+
     func stub(for url: URL) -> HTTPStub? {
         lock.lock()
         defer { lock.unlock() }
-        return stubs[url.absoluteString]
+        let urlString = url.absoluteString
+        guard var queue = queuedStubs[urlString], !queue.isEmpty else {
+            return stubs[urlString]
+        }
+        let next = queue.removeFirst()
+        if queue.isEmpty {
+            queuedStubs.removeValue(forKey: urlString)
+        } else {
+            queuedStubs[urlString] = queue
+        }
+        return next
     }
 
     func record(_ request: URLRequest, urlString: String) {
@@ -54,6 +72,7 @@ final class HTTPStubRegistry: @unchecked Sendable {
         defer { lock.unlock() }
         requestCounts[urlString, default: 0] += 1
         requestBodies[urlString, default: []].append(Self.bodyData(of: request))
+        requestHeaders[urlString, default: []].append(request.allHTTPHeaderFields ?? [:])
     }
 
     func requestCount(for urlString: String) -> Int {
@@ -68,12 +87,20 @@ final class HTTPStubRegistry: @unchecked Sendable {
         return requestBodies[urlString] ?? []
     }
 
+    func requestHeaders(for urlString: String) -> [[String: String]] {
+        lock.lock()
+        defer { lock.unlock() }
+        return requestHeaders[urlString] ?? []
+    }
+
     func reset() {
         lock.lock()
         defer { lock.unlock() }
         stubs.removeAll()
+        queuedStubs.removeAll()
         requestCounts.removeAll()
         requestBodies.removeAll()
+        requestHeaders.removeAll()
     }
 
     private static func bodyData(of request: URLRequest) -> Data {
