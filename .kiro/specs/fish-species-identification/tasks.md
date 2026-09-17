@@ -119,7 +119,7 @@
   - _Boundary: Features/FishScanner/FishScannerViewModel_
 
 ## 7. Vista del escáner
-- [ ] 7.1 Construir `FishScannerView` y sus estados
+- [x] 7.1 Construir `FishScannerView` y sus estados
   - Mostrar opciones cámara/galería en `idle`; estado de carga durante `identifying`; resultado con nombre de la especie; avisos de no-match y de confianza baja; botones de reintento y cancelación desde el procesamiento.
   - Guiar al usuario a Ajustes cuando el permiso de cámara está denegado (estado de 5.1).
   - Observable: cada estado del ViewModel se renderiza en la UI (verificable por render/hit-testing en previews y UI tests); cancelar la identificación vuelve al selector de fuente.
