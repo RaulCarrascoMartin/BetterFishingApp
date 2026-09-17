@@ -19,7 +19,7 @@
   - _Requirements: —_
 
 ## 2. Modelos de dominio y transporte
-- [ ] 2.1 (P) Crear el modelo de dominio `Species`
+- [x] 2.1 (P) Crear el modelo de dominio `Species`
   - Definir `Species` como Codable/Identifiable/Hashable con `id`, `commonName`, `scientificName`, `localizedName` (opcional, nil por defecto) y `referenceImageURL` opcional.
   - Añadir test de codificación/igualdad.
   - Observable: test de `Species` en verde; el tipo compila y se usa como identidad canónica.

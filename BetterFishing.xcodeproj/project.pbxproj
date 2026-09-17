@@ -9,11 +9,13 @@
 /* Begin PBXBuildFile section */
 		0000000000000000000000B01 /* BetterFishingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A01 /* BetterFishingApp.swift */; };
 		0000000000000000000000B02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A02 /* Assets.xcassets */; };
+		0000000000000000000000B15 /* Species.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A15 /* Species.swift */; };
 		0000000000000000000000B10 /* BetterFishingSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A10 /* BetterFishingSmokeTests.swift */; };
 		0000000000000000000000B11 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A11 /* MockURLProtocol.swift */; };
 		0000000000000000000000B12 /* HTTPStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A12 /* HTTPStub.swift */; };
 		0000000000000000000000B13 /* TestFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A13 /* TestFileManager.swift */; };
 		0000000000000000000000B14 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A06 /* XCTest.framework */; };
+		0000000000000000000000B16 /* SpeciesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A16 /* SpeciesTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +31,7 @@
 /* Begin PBXFileReference section */
 		0000000000000000000000A01 /* BetterFishingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterFishingApp.swift; sourceTree = "<group>"; };
 		0000000000000000000000A02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0000000000000000000000A15 /* Species.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Species.swift; sourceTree = "<group>"; };
 		0000000000000000000000A03 /* BetterFishing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BetterFishing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0000000000000000000000A04 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		0000000000000000000000A05 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -38,6 +41,7 @@
 		0000000000000000000000A12 /* HTTPStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPStub.swift; sourceTree = "<group>"; };
 		0000000000000000000000A13 /* TestFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFileManager.swift; sourceTree = "<group>"; };
 		0000000000000000000000A14 /* BetterFishingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BetterFishingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0000000000000000000000A16 /* SpeciesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeciesTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,12 +124,13 @@
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C09 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
+isa = PBXGroup;
+		children = (
+			0000000000000000000000A15 /* Species.swift */,
+		);
+		path = Models;
+		sourceTree = "<group>";
+	};
 		0000000000000000000000C11 /* BetterFishingTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +138,7 @@
 				0000000000000000000000A11 /* MockURLProtocol.swift */,
 				0000000000000000000000A12 /* HTTPStub.swift */,
 				0000000000000000000000A13 /* TestFileManager.swift */,
+				0000000000000000000000A16 /* SpeciesTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -243,14 +249,15 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		0000000000000000000000F07 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0000000000000000000000B01 /* BetterFishingApp.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0000000000000000000000F0C /* Sources */ = {
+isa = PBXSourcesBuildPhase;
+		buildActionMask = 2147483647;
+		files = (
+			0000000000000000000000B01 /* BetterFishingApp.swift in Sources */,
+			0000000000000000000000B15 /* Species.swift in Sources */,
+		);
+		runOnlyForDeploymentPostprocessing = 0;
+	};
+	0000000000000000000000F0C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -258,6 +265,7 @@
 				0000000000000000000000B11 /* MockURLProtocol.swift in Sources */,
 				0000000000000000000000B12 /* HTTPStub.swift in Sources */,
 				0000000000000000000000B13 /* TestFileManager.swift in Sources */,
+				0000000000000000000000B16 /* SpeciesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
