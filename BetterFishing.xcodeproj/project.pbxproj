@@ -35,6 +35,8 @@
 		0000000000000000000000B27 /* CatchSavingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A27 /* CatchSavingTests.swift */; };
 		0000000000000000000000B29 /* ImageCompressorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A29 /* ImageCompressorTests.swift */; };
 		0000000000000000000000B28 /* ImageCompressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A28 /* ImageCompressor.swift */; };
+		0000000000000000000000B2A /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2A /* CameraManager.swift */; };
+		0000000000000000000000B2B /* CameraManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A2B /* CameraManagerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +82,8 @@
 		0000000000000000000000A27 /* CatchSavingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSavingTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A29 /* ImageCompressorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompressorTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A28 /* ImageCompressor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompressor.swift; sourceTree = "<group>"; };
+		0000000000000000000000A2A /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		0000000000000000000000A2B /* CameraManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManagerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +131,7 @@
 		0000000000000000000000C04 /* FishScanner */ = {
 			isa = PBXGroup;
 			children = (
+				0000000000000000000000A2A /* CameraManager.swift */,
 			);
 			path = FishScanner;
 			sourceTree = "<group>";
@@ -204,6 +209,7 @@
 				0000000000000000000000A26 /* CatchSavingFake.swift */,
 				0000000000000000000000A27 /* CatchSavingTests.swift */,
 				0000000000000000000000A29 /* ImageCompressorTests.swift */,
+				0000000000000000000000A2B /* CameraManagerTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -328,6 +334,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B21 /* FishialTokenStore.swift in Sources */,
 				0000000000000000000000B23 /* FishialClient.swift in Sources */,
 				0000000000000000000000B28 /* ImageCompressor.swift in Sources */,
+				0000000000000000000000B2A /* CameraManager.swift in Sources */,
 			);
 		runOnlyForDeploymentPostprocessing = 0;
 	};
@@ -350,6 +357,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B26 /* CatchSavingFake.swift in Sources */,
 				0000000000000000000000B27 /* CatchSavingTests.swift in Sources */,
 				0000000000000000000000B29 /* ImageCompressorTests.swift in Sources */,
+				0000000000000000000000B2B /* CameraManagerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

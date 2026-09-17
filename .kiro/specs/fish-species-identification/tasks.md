@@ -85,7 +85,7 @@
   - _Boundary: Core/Image/ImageCompressor_
 
 ## 5. Cámara y galería
-- [ ] 5.1 (P) Crear `CameraManager`
+- [x] 5.1 (P) Crear `CameraManager`
   - Sesión `AVCaptureSession` + `AVCapturePhotoOutput`, configuración en cola serial y `startRunning/stopRunning` controlados; captura async que devuelve los datos de la foto.
   - Solicitar permiso en el momento de uso y exponer estado `cameraAccessDenied` para guiar a Ajustes.
   - Observable: tests de permisos (autorizado/denegado) y de captura devolviendo datos JPEG; `stopRunning()` se invoca con la sesión detenida.
