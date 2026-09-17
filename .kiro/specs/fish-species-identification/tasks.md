@@ -1,7 +1,7 @@
 # Implementation Plan
 
 ## 1. Foundation: esqueleto de app, configuración e infraestructura de pruebas
-- [ ] 1.1 Crear el proyecto iOS BetterFishing (SwiftUI, iOS 17+)
+- [x] 1.1 Crear el proyecto iOS BetterFishing (SwiftUI, iOS 17+)
   - Crear el workspace/scheme del target `BetterFishing` y las carpetas feature-first según `structure.md`: `App/Features/FishScanner`, `App/Services/FishID`, `App/Core/Image`, `App/Models`, `App/Resources`.
   - Añadir una vista raíz placeholder (`BetterFishingApp`) que muestre una pantalla vacía navegable.
   - Observable: `xcodebuild -scheme BetterFishing build` compila el target con la vista raíz sin errores.
@@ -170,3 +170,8 @@
   - Observable: UI tests en verde cubriendo 4.1 y 4.2.
   - _Requirements: 4.1, 4.2_
   - _Boundary: Features/FishScanner, Services/FishID/LocalDraftCatchSaver_
+
+## Implementation Notes
+- Sin equipo de desarrollo configurado en el repo, el target deshabilita la firma de código (`CODE_SIGNING_ALLOWED=NO` en Debug/Release) para que `xcodebuild -scheme BetterFishing build` compile en un checkout limpio; para desplegar en dispositivo habrá que seleccionar un equipo y reactivar la firma.
+- `xcode-select` del sistema apunta a CommandLineTools: usar `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` antepuesto a `xcodebuild` si `xcodebuild` no encuentra Xcode.
+- El proyecto Xcode (BetterFishing.xcodeproj + scheme compartido) se creó a mano (sin XcodeGen); los grupos vacíos (Features/FishScanner, Services/FishID, Core/Image, Models) llevan `.gitkeep` y no se añaden al proyecto hasta tener código real.
