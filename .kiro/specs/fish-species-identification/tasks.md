@@ -46,7 +46,7 @@
   - _Boundary: Models/CatchDraft_
 
 ## 3. Servicio de identificación y seams
-- [ ] 3.1 Definir el protocolo `FishIdentifying`
+- [x] 3.1 Definir el protocolo `FishIdentifying`
   - Declarar `recognize(imageData: Data) async throws -> IdentificationOutcome` como único contrato del proveedor.
   - Añadir un fake de `FishIdentifying` en el test target (avanzado/fallo/noMatch programable).
   - Observable: el protocolo compila en el target del app y el fake compila en el test target, sin acoplar a FishialClient.
