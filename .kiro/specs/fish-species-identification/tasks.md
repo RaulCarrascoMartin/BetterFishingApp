@@ -26,7 +26,7 @@
   - _Requirements: 2.2_
   - _Boundary: Models/Species_
 
-- [ ] 2.2 (P) Crear los DTOs de Fishial
+- [x] 2.2 (P) Crear los DTOs de Fishial
   - Definir `FishialTokenResponse` (token_type, access_token) y `FishialRecognitionResponse` (ok, queryToken, objects, definitions) con sus subtipos `FishialObject`, `FishialSpeciesCandidate` y `FishialSpeciesDefinition`.
   - Decodificación JSON snake_case (`convertFromSnakeCase`); incluir casos: respuesta válida, `objects` vacío y definiciones incompletas.
   - Observable: tests de decodificación cubren los tres casos y pasan.
