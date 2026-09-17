@@ -13,7 +13,7 @@
   - Observable: el build pasa, la clave de uso de cámara está presente en el Info.plist empaquetado y las credenciales no quedan en código fuente ni en git.
   - _Requirements: 1.5_
 
-- [ ] 1.3 Infraestructura de tests y doubles de red
+- [x] 1.3 Infraestructura de tests y doubles de red
   - Añadir el test target del app, un helper de URLSession mockeable compartido y utilidades de tests (directorios temporales de FileManager para pruebas de persistencia).
   - Observable: `xcodebuild test` ejecuta un test de humo que pasa y el helper de URLSession mockeable compila dentro del test target.
   - _Requirements: —_

@@ -9,7 +9,22 @@
 /* Begin PBXBuildFile section */
 		0000000000000000000000B01 /* BetterFishingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A01 /* BetterFishingApp.swift */; };
 		0000000000000000000000B02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A02 /* Assets.xcassets */; };
+		0000000000000000000000B10 /* BetterFishingSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A10 /* BetterFishingSmokeTests.swift */; };
+		0000000000000000000000B11 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A11 /* MockURLProtocol.swift */; };
+		0000000000000000000000B12 /* HTTPStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A12 /* HTTPStub.swift */; };
+		0000000000000000000000B13 /* TestFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A13 /* TestFileManager.swift */; };
+		0000000000000000000000B14 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A06 /* XCTest.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0000000000000000000000F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0000000000000000000000E01 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0000000000000000000000D01;
+			remoteInfo = BetterFishing;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0000000000000000000000A01 /* BetterFishingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterFishingApp.swift; sourceTree = "<group>"; };
@@ -17,9 +32,23 @@
 		0000000000000000000000A03 /* BetterFishing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BetterFishing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0000000000000000000000A04 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		0000000000000000000000A05 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		0000000000000000000000A06 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		0000000000000000000000A10 /* BetterFishingSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterFishingSmokeTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A11 /* MockURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
+		0000000000000000000000A12 /* HTTPStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPStub.swift; sourceTree = "<group>"; };
+		0000000000000000000000A13 /* TestFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFileManager.swift; sourceTree = "<group>"; };
+		0000000000000000000000A14 /* BetterFishingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BetterFishingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0000000000000000000000F0B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0000000000000000000000B14 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -35,6 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000A01 /* BetterFishingApp.swift */,
+				0000000000000000000000C11 /* BetterFishingTests */,
 				0000000000000000000000C03 /* Features */,
 				0000000000000000000000C05 /* Services */,
 				0000000000000000000000C07 /* Core */,
@@ -96,6 +126,17 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		0000000000000000000000C11 /* BetterFishingTests */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A10 /* BetterFishingSmokeTests.swift */,
+				0000000000000000000000A11 /* MockURLProtocol.swift */,
+				0000000000000000000000A12 /* HTTPStub.swift */,
+				0000000000000000000000A13 /* TestFileManager.swift */,
+			);
+			path = BetterFishingTests;
+			sourceTree = "<group>";
+		};
 		0000000000000000000000C0A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000A03 /* BetterFishing.app */,
+				0000000000000000000000A14 /* BetterFishingTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,6 +175,23 @@
 			productReference = 0000000000000000000000A03 /* BetterFishing.app */;
 			productType = "com.apple.product-type.application";
 		};
+		0000000000000000000000D02 /* BetterFishingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0000000000000000000000F0F /* Build configuration list for PBXNativeTarget "BetterFishingTests" */;
+			buildPhases = (
+				0000000000000000000000F0C /* Sources */,
+				0000000000000000000000F0B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0000000000000000000000F0A /* PBXTargetDependency */,
+			);
+			name = BetterFishingTests;
+			productName = BetterFishingTests;
+			productReference = 0000000000000000000000A14 /* BetterFishingTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -145,6 +204,10 @@
 				TargetAttributes = {
 					0000000000000000000000D01 = {
 						CreatedOnToolsVersion = 27.0;
+					};
+					0000000000000000000000D02 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 0000000000000000000000D01;
 					};
 				};
 			};
@@ -162,6 +225,7 @@
 			projectRoot = "";
 			targets = (
 				0000000000000000000000D01 /* BetterFishing */,
+				0000000000000000000000D02 /* BetterFishingTests */,
 			);
 		};
 /* End PBXProject section */
@@ -186,7 +250,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0000000000000000000000F0C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0000000000000000000000B10 /* BetterFishingSmokeTests.swift in Sources */,
+				0000000000000000000000B11 /* MockURLProtocol.swift in Sources */,
+				0000000000000000000000B12 /* HTTPStub.swift in Sources */,
+				0000000000000000000000B13 /* TestFileManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0000000000000000000000F0A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0000000000000000000000D01 /* BetterFishing */;
+			targetProxy = 0000000000000000000000F09 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		0000000000000000000000F01 /* Debug */ = {
@@ -372,6 +455,45 @@
 			};
 			name = Release;
 		};
+		0000000000000000000000F0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.betterfishing.BetterFishingTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BetterFishing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BetterFishing";
+			};
+			name = Debug;
+		};
+		0000000000000000000000F0E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.betterfishing.BetterFishingTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BetterFishing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BetterFishing";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -389,6 +511,15 @@
 			buildConfigurations = (
 				0000000000000000000000F03 /* Debug */,
 				0000000000000000000000F04 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0000000000000000000000F0F /* Build configuration list for PBXNativeTarget "BetterFishingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0000000000000000000000F0D /* Debug */,
+				0000000000000000000000F0E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
