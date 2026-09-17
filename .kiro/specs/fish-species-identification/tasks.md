@@ -112,7 +112,7 @@
   - _Requirements: 1.4, 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 5.1, 5.2, 5.3_
   - _Boundary: Features/FishScanner/FishScannerViewModel_
 
-- [ ] 6.2 Implementar el flujo de guardado de captura
+- [x] 6.2 Implementar el flujo de guardado de captura
   - Estados `saving/saved/saveFailed`; `saveCapturedCatch()` solo disponible con especie identificada, entrega species + foto comprimida a `CatchSaving` y traduce fallos a `saveFailed` con reintento.
   - Observable: test confirma que guardar con éxito pasa a `saved`, que un fallo pasa a `saveFailed` conservando la especie en pantalla, y que no se puede guardar sin identificación.
   - _Requirements: 4.1, 4.2_

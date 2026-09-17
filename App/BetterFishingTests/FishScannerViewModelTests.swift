@@ -22,9 +22,10 @@ final class FishScannerViewModelTests: XCTestCase {
 
     private func makeViewModel(
         identifier: any FishIdentifying,
-        preparer: any ImagePreparing = ImagePreparingFake()
+        preparer: any ImagePreparing = ImagePreparingFake(),
+        catchSaver: any CatchSaving = CatchSavingFake()
     ) -> FishScannerViewModel {
-        FishScannerViewModel(identifier: identifier, imagePreparer: preparer, catchSaver: CatchSavingFake())
+        FishScannerViewModel(identifier: identifier, imagePreparer: preparer, catchSaver: catchSaver)
     }
 
     func testInitialStateIsIdle() {
@@ -210,6 +211,134 @@ final class FishScannerViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.scanState, .identified(lowResult))
     }
 
+    func testSaveCapturedCatchSuccessTransitionsToSavedAndDeliversPreparedPhoto() async {
+        let identifier = FishIdentifyingFake()
+        let result = makeResult()
+        identifier.stubResult = .success(.identified(result))
+        let preparer = ImagePreparingFake()
+        preparer.stubResult = .success(preparedImage)
+        let saver = CatchSavingFake()
+        saver.stubResult = .success(())
+        let viewModel = makeViewModel(identifier: identifier, preparer: preparer, catchSaver: saver)
+
+        viewModel.setImage(data: rawImage)
+        await waitUntil { viewModel.scanState == .identified(result) }
+
+        await viewModel.saveCapturedCatch()
+        await waitUntil { viewModel.saveState == .saved }
+
+        XCTAssertEqual(viewModel.saveState, .saved)
+        XCTAssertEqual(viewModel.scanState, .identified(result), "La especie debe conservarse en pantalla tras guardar")
+        XCTAssertEqual(saver.receivedSpecies, [result.species], "CatchSaving debe recibir la especie identificada")
+        XCTAssertEqual(
+            saver.receivedPhotoData,
+            [preparedImage],
+            "CatchSaving debe recibir la foto comprimida, no la original"
+        )
+    }
+
+    func testSaveCapturedCatchFailureTransitionsToSaveFailedAndAllowsRetry() async {
+        let identifier = FishIdentifyingFake()
+        let result = makeResult()
+        identifier.stubResult = .success(.identified(result))
+        let saver = CatchSavingFake()
+        saver.stubResult = .failure(CatchSavingFakeError.saveFailed)
+        let viewModel = makeViewModel(identifier: identifier, catchSaver: saver)
+
+        viewModel.setImage(data: rawImage)
+        await waitUntil { viewModel.scanState == .identified(result) }
+
+        await viewModel.saveCapturedCatch()
+        await waitUntil { viewModel.saveState == .saveFailed }
+
+        XCTAssertEqual(viewModel.saveState, .saveFailed)
+        XCTAssertEqual(
+            viewModel.scanState,
+            .identified(result),
+            "Tras un fallo de guardado la especie debe seguir en pantalla para poder reintentar"
+        )
+        XCTAssertEqual(saver.receivedSpecies, [result.species], "El fallo aun así debe entregar el draft")
+
+        saver.stubResult = .success(())
+        await viewModel.saveCapturedCatch()
+        await waitUntil { viewModel.saveState == .saved }
+
+        XCTAssertEqual(viewModel.saveState, .saved, "El reintento tras saveFailed debe poder guardar")
+        XCTAssertEqual(saver.receivedSpecies.count, 2, "El reintento debe entregar el draft de nuevo")
+    }
+
+    func testSaveCapturedCatchWithoutIdentificationDoesNothing() async {
+        let saver = CatchSavingFake()
+        let viewModel = makeViewModel(identifier: FishIdentifyingFake(), catchSaver: saver)
+
+        await viewModel.saveCapturedCatch()
+
+        XCTAssertEqual(viewModel.saveState, .idle)
+        XCTAssertTrue(saver.receivedSpecies.isEmpty, "Sin especie identificada no debe entregarse nada a CatchSaving")
+        XCTAssertTrue(saver.receivedPhotoData.isEmpty)
+    }
+
+    func testSaveCapturedCatchFromNoMatchDoesNothing() async {
+        let identifier = FishIdentifyingFake()
+        identifier.stubResult = .success(.noMatch)
+        let saver = CatchSavingFake()
+        let viewModel = makeViewModel(identifier: identifier, catchSaver: saver)
+
+        viewModel.setImage(data: rawImage)
+        await waitUntil { viewModel.scanState == .noMatch }
+
+        await viewModel.saveCapturedCatch()
+
+        XCTAssertEqual(viewModel.saveState, .idle)
+        XCTAssertTrue(saver.receivedSpecies.isEmpty, "Sin coincidencia no puede guardarse captura")
+    }
+
+    func testSavingStateKeepsIdentifiedSpeciesOnScreen() async {
+        let identifier = FishIdentifyingFake()
+        let result = makeResult()
+        identifier.stubResult = .success(.identified(result))
+        let saver = SuspendedCatchSaving()
+        let viewModel = makeViewModel(identifier: identifier, catchSaver: saver)
+
+        viewModel.setImage(data: rawImage)
+        await waitUntil { viewModel.scanState == .identified(result) }
+
+        let save = Task { await viewModel.saveCapturedCatch() }
+        await waitUntil { viewModel.saveState == .saving && saver.isSuspended }
+
+        XCTAssertEqual(viewModel.saveState, .saving)
+        XCTAssertEqual(
+            viewModel.scanState,
+            .identified(result),
+            "Durante el guardado la especie debe seguir identificada en pantalla"
+        )
+
+        saver.release(result: .success(()))
+        await save.value
+        await waitUntil { viewModel.saveState == .saved }
+
+        XCTAssertEqual(viewModel.saveState, .saved)
+    }
+
+    func testNewScanResetsPriorSaveState() async {
+        let identifier = FishIdentifyingFake()
+        let result = makeResult()
+        identifier.stubResult = .success(.identified(result))
+        let saver = CatchSavingFake()
+        saver.stubResult = .success(())
+        let viewModel = makeViewModel(identifier: identifier, catchSaver: saver)
+
+        viewModel.setImage(data: rawImage)
+        await waitUntil { viewModel.scanState == .identified(result) }
+        await viewModel.saveCapturedCatch()
+        await waitUntil { viewModel.saveState == .saved }
+        XCTAssertEqual(viewModel.saveState, .saved)
+
+        viewModel.retryWithAnotherPhoto()
+
+        XCTAssertEqual(viewModel.saveState, .idle, "Un nuevo escaneo debe reiniciar el estado de guardado")
+    }
+
     private func waitUntil(timeout: TimeInterval = 2, _ condition: @MainActor () -> Bool) async {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
@@ -301,6 +430,49 @@ private final class SuspendedFishIdentifying: FishIdentifying, @unchecked Sendab
         switch result {
         case .success(let outcome):
             continuation.resume(returning: outcome)
+        case .failure(let error):
+            continuation.resume(throwing: error)
+        }
+    }
+}
+
+private final class SuspendedCatchSaving: CatchSaving, @unchecked Sendable {
+    private struct State {
+        var continuations: [CheckedContinuation<Void, Error>] = []
+        var callCount = 0
+    }
+
+    private let lock = OSAllocatedUnfairLock(initialState: State())
+
+    var isSuspended: Bool {
+        lock.withLock { !$0.continuations.isEmpty }
+    }
+
+    var callCount: Int {
+        lock.withLock { $0.callCount }
+    }
+
+    func saveDraft(species: Species, photoData: Data) async throws {
+        lock.withLock { state in
+            state.callCount += 1
+        }
+        try await withCheckedThrowingContinuation { continuation in
+            lock.withLock { state in
+                state.continuations.append(continuation)
+            }
+        }
+    }
+
+    func release(result: Result<Void, Error>) {
+        let continuation = lock.withLock { state -> CheckedContinuation<Void, Error>? in
+            guard !state.continuations.isEmpty else { return nil }
+            return state.continuations.removeFirst()
+        }
+        guard let continuation else { return }
+
+        switch result {
+        case .success:
+            continuation.resume()
         case .failure(let error):
             continuation.resume(throwing: error)
         }

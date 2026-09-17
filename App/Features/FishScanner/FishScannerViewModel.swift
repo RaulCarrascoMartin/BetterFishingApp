@@ -23,15 +23,24 @@ final class FishScannerViewModel {
         case failed(message: String)
     }
 
+    enum SaveState: Equatable {
+        case idle
+        case saving
+        case saved
+        case saveFailed
+    }
+
     static let imageNotProcessableMessage = "No se pudo procesar la imagen"
     static let identificationFailedMessage = "No se pudo completar la identificación"
 
     private(set) var scanState: ScanState
+    private(set) var saveState: SaveState
 
     private let identifier: any FishIdentifying
     private let imagePreparer: any ImagePreparing
     private let catchSaver: any CatchSaving
     private var pendingImage: Data?
+    private var preparedPhotoData: Data?
     private var identificationGeneration = 0
     private var identificationTask: Task<Void, Never>?
 
@@ -44,11 +53,14 @@ final class FishScannerViewModel {
         self.imagePreparer = imagePreparer
         self.catchSaver = catchSaver
         self.scanState = .idle
+        self.saveState = .idle
     }
 
     func setImage(data: Data) {
         cancelInFlightIdentification()
         pendingImage = data
+        preparedPhotoData = nil
+        saveState = .idle
         scanState = .imageReady
         startIdentification()
     }
@@ -67,13 +79,32 @@ final class FishScannerViewModel {
     func cancelCapture() {
         cancelInFlightIdentification()
         pendingImage = nil
+        preparedPhotoData = nil
+        saveState = .idle
         scanState = .idle
     }
 
     func retryWithAnotherPhoto() {
         cancelInFlightIdentification()
         pendingImage = nil
+        preparedPhotoData = nil
+        saveState = .idle
         scanState = .idle
+    }
+
+    func saveCapturedCatch() async {
+        guard case .identified(let result) = scanState,
+              let photoData = preparedPhotoData,
+              saveState != .saving else {
+            return
+        }
+        saveState = .saving
+        do {
+            try await catchSaver.saveDraft(species: result.species, photoData: photoData)
+            saveState = .saved
+        } catch {
+            saveState = .saveFailed
+        }
     }
 
     private func cancelInFlightIdentification() {
@@ -114,8 +145,10 @@ final class FishScannerViewModel {
         guard generation == identificationGeneration else { return }
         switch outcome {
         case .identified(let result):
+            preparedPhotoData = prepared
             scanState = .identified(result)
         case .noMatch:
+            preparedPhotoData = nil
             scanState = .noMatch
         }
     }
