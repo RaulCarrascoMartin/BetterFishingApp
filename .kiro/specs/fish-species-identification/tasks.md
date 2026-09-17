@@ -70,7 +70,7 @@
   - _Requirements: 2.1, 2.2, 2.3, 3.1, 3.2, 3.4, 5.2_
   - _Boundary: Services/FishID/FishialClient_
 
-- [ ] 3.4 Definir el protocolo seam `CatchSaving`
+- [x] 3.4 Definir el protocolo seam `CatchSaving`
   - Declarar `saveDraft(species: Species, photoData: Data) async throws` como único contrato del guardado.
   - Añadir un fake de `CatchSaving` (éxito y fallo programables) en el test target.
   - Observable: el protocolo compila, el fake compila en el test target y ambos son consumibles por el ViewModel.
