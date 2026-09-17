@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+
+# SwiftPM
+.checkout/
+.build/
+
+# Secrets (credentials to be provided locally)
+secret.xcconfig
