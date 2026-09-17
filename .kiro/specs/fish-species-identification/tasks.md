@@ -33,7 +33,7 @@
   - _Requirements: 2.2, 3.1_
   - _Boundary: Models/Fishial_
 
-- [ ] 2.3 Crear los tipos de resultado de identificación
+- [x] 2.3 Crear los tipos de resultado de identificación
   - Definir `IdentificationResult` (species, certainty, confidence), el enum `IdentificationConfidence` (reliable/low) y `IdentificationOutcome` (identified/noMatch), todos `Sendable`.
   - Observable: los tipos compilan y un test confirma la construcción de `identified` y `noMatch`.
   - _Requirements: 2.2, 3.1, 3.2_
