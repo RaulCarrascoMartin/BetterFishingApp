@@ -1,0 +1,6 @@
+// App/Resources/Release.xcconfig (plantilla)
+//
+// Copia este fichero a Release.xcconfig y rellena los valores con las
+// credenciales de Fishial.ai. Release.xcconfig no se versiona en git.
+FISHIAL_CLIENT_ID =
+FISHIAL_CLIENT_SECRET =

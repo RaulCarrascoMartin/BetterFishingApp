@@ -14,3 +14,5 @@ xcuserdata/
 
 # Secrets (credentials to be provided locally)
 secret.xcconfig
+App/Resources/*.xcconfig
+!App/Resources/*.xcconfig.example

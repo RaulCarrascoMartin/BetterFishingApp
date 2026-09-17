@@ -1,0 +1,6 @@
+// App/Resources/Debug.xcconfig (plantilla)
+//
+// Copia este fichero a Debug.xcconfig y rellena los valores con las
+// credenciales de Fishial.ai. Debug.xcconfig no se versiona en git.
+FISHIAL_CLIENT_ID =
+FISHIAL_CLIENT_SECRET =

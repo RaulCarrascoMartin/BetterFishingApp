@@ -7,7 +7,7 @@
   - Observable: `xcodebuild -scheme BetterFishing build` compila el target con la vista raíz sin errores.
   - _Requirements: —_
 
-- [ ] 1.2 Configurar credenciales de Fishial y permiso de cámara
+- [x] 1.2 Configurar credenciales de Fishial y permiso de cámara
   - Añadir `NSCameraUsageDescription` al Info.plist del target con una justificación de uso de la cámara.
   - Preparar `.xcconfig` de entorno (Debug/Release) para `FISHIAL_CLIENT_ID` y `FISHIAL_CLIENT_SECRET`, con valores vacíos por defecto y excluidos del repositorio.
   - Observable: el build pasa, la clave de uso de cámara está presente en el Info.plist empaquetado y las credenciales no quedan en código fuente ni en git.
@@ -175,3 +175,5 @@
 - Sin equipo de desarrollo configurado en el repo, el target deshabilita la firma de código (`CODE_SIGNING_ALLOWED=NO` en Debug/Release) para que `xcodebuild -scheme BetterFishing build` compile en un checkout limpio; para desplegar en dispositivo habrá que seleccionar un equipo y reactivar la firma.
 - `xcode-select` del sistema apunta a CommandLineTools: usar `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` antepuesto a `xcodebuild` si `xcodebuild` no encuentra Xcode.
 - El proyecto Xcode (BetterFishing.xcodeproj + scheme compartido) se creó a mano (sin XcodeGen); los grupos vacíos (Features/FishScanner, Services/FishID, Core/Image, Models) llevan `.gitkeep` y no se añaden al proyecto hasta tener código real.
+- Xcode 27 trata un `baseConfigurationReference` ausente como ERROR de build: `Debug.xcconfig`/`Release.xcconfig` están gitignored, así que un checkout limpio debe copiarlos desde las plantillas `.example` (App/Resources) antes del primer build.
+- Las credenciales `FISHIAL_CLIENT_ID`/`FISHIAL_CLIENT_SECRET` viven en Debug/Release.xcconfig (vacíos por defecto). Tasks 3.3/8.2 deberán consumirlas vía build settings (p. ej. inyectarlas en el Info.plist generado con `INFOPLIST_KEY_*` o leer de configuración), nunca desde código ni UserDefaults (design: Security).
