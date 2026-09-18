@@ -69,7 +69,7 @@
   - _Requirements: 1.7, 2.1, 2.3, 2.5_
   - _Boundary: Features/CatchLog/CatchLogViewModel_
 
-- [ ] 4.2 Construir la vista de historial
+- [x] 4.2 Construir la vista de historial
   - _Depends: 4.1, 3.2_
   - Listado con filas que muestran la foto (thumbnail), la especie y la fecha; estado vacío que invita a guardar la primera captura desde el escáner; navegación a la vista de detalle al seleccionar una captura.
   - Observable: un UI test verifica el listado con capturas, el estado vacío cuando no hay capturas y que seleccionar una captura navega al detalle.

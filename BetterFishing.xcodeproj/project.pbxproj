@@ -67,6 +67,8 @@
 		0000000000000000000000B52 /* CatchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A52 /* CatchDetailView.swift */; };
 		0000000000000000000000B54 /* CatchLogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A54 /* CatchLogViewModel.swift */; };
 		0000000000000000000000B55 /* CatchLogViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A55 /* CatchLogViewModelTests.swift */; };
+		0000000000000000000000B56 /* CatchLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A56 /* CatchLogView.swift */; };
+		0000000000000000000000B57 /* CatchLogUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A57 /* CatchLogUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +155,8 @@
 		0000000000000000000000A53 /* CatchDetailUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDetailUITests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A54 /* CatchLogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchLogViewModel.swift; sourceTree = "<group>"; };
 		0000000000000000000000A55 /* CatchLogViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchLogViewModelTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A56 /* CatchLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchLogView.swift; sourceTree = "<group>"; };
+		0000000000000000000000A57 /* CatchLogUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchLogUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +224,7 @@
 				0000000000000000000000A50 /* CatchDetailViewModel.swift */,
 				0000000000000000000000A52 /* CatchDetailView.swift */,
 				0000000000000000000000A54 /* CatchLogViewModel.swift */,
+				0000000000000000000000A56 /* CatchLogView.swift */,
 			);
 			path = CatchLog;
 			sourceTree = "<group>";
@@ -341,6 +346,7 @@
 			children = (
 				0000000000000000000000A35 /* BetterFishingUITests.swift */,
 				0000000000000000000000A53 /* CatchDetailUITests.swift */,
+				0000000000000000000000A57 /* CatchLogUITests.swift */,
 			);
 			path = BetterFishingUITests;
 			sourceTree = "<group>";
@@ -488,6 +494,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B50 /* CatchDetailViewModel.swift in Sources */,
 				0000000000000000000000B52 /* CatchDetailView.swift in Sources */,
 				0000000000000000000000B54 /* CatchLogViewModel.swift in Sources */,
+				0000000000000000000000B56 /* CatchLogView.swift in Sources */,
 				0000000000000000000000B43 /* DeviceLocationProvider.swift in Sources */,
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
@@ -549,6 +556,7 @@ isa = PBXSourcesBuildPhase;
 			files = (
 				0000000000000000000000B35 /* BetterFishingUITests.swift in Sources */,
 				0000000000000000000000B53 /* CatchDetailUITests.swift in Sources */,
+				0000000000000000000000B57 /* CatchLogUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

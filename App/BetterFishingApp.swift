@@ -16,6 +16,7 @@ struct RootView: View {
     private let gallerySelectionProvider: (@MainActor () -> Data?)?
     #if DEBUG
     private let detailScenario: CatchDetailScenario?
+    private let logScenario: CatchLogScenario?
     #endif
 
     init(
@@ -27,6 +28,7 @@ struct RootView: View {
         #if DEBUG
         self.gallerySelectionProvider = AppComposition.makeGallerySelectionProvider()
         self.detailScenario = AppComposition.makeCatchDetailScenario()
+        self.logScenario = AppComposition.makeCatchLogScenario()
         #else
         self.gallerySelectionProvider = nil
         #endif
@@ -37,6 +39,14 @@ struct RootView: View {
         if let detailScenario {
             NavigationStack {
                 CatchDetailView(viewModel: detailScenario.viewModel)
+            }
+        } else if let logScenario {
+            NavigationStack {
+                CatchLogView(
+                    viewModel: logScenario.viewModel,
+                    thumbnailProvider: logScenario.thumbnailProvider,
+                    detailViewModelFactory: logScenario.detailViewModelFactory
+                )
             }
         } else {
             scannerNavigation

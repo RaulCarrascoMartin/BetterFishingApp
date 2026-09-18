@@ -76,10 +76,20 @@ enum UITestScenario: String {
     case saveFails
     case detailLoaded
     case detailDeleteFails
+    case logLoading
+    case logLoaded
+    case logEmpty
 
     var isDetail: Bool {
         switch self {
         case .detailLoaded, .detailDeleteFails: return true
+        default: return false
+        }
+    }
+
+    var isLog: Bool {
+        switch self {
+        case .logLoading, .logLoaded, .logEmpty: return true
         default: return false
         }
     }
@@ -135,7 +145,7 @@ struct UITestDoubleFishIdentifier: FishIdentifying {
             return .identified(UITestScenarios.reliableBass)
         case .identifiedLowConfidence:
             return .identified(UITestScenarios.lowConfidenceBluegill)
-        case .noMatch, .detailLoaded, .detailDeleteFails:
+        case .noMatch, .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty:
             return .noMatch
         }
     }
@@ -164,6 +174,77 @@ extension AppComposition {
             photoProvider: { repository.photoData(for: $0) }
         )
         return CatchDetailScenario(id: UITestDetailFixture.id, viewModel: viewModel)
+    }
+
+    static func makeCatchLogScenario(arguments: [String] = ProcessInfo.processInfo.arguments) -> CatchLogScenario? {
+        guard let scenario = UITestScenario.requested(in: arguments), scenario.isLog else { return nil }
+
+        let directoryURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("UITestLog-\(UUID().uuidString)", isDirectory: true)
+        let repository = LocalFileCatchRepository(directoryURL: directoryURL)
+
+        if scenario == .logLoaded {
+            UITestLogFixture.seed(into: repository)
+        }
+
+        let viewModel = CatchLogViewModel(repository: repository)
+        return CatchLogScenario(
+            viewModel: viewModel,
+            thumbnailProvider: { repository.photoData(for: $0) },
+            detailViewModelFactory: { catchEntry in
+                CatchDetailViewModel(
+                    id: catchEntry.id,
+                    repository: repository,
+                    photoProvider: { repository.photoData(for: $0) }
+                )
+            }
+        )
+    }
+}
+
+struct CatchLogScenario {
+    let viewModel: CatchLogViewModel
+    let thumbnailProvider: (Catch) -> Data?
+    let detailViewModelFactory: @MainActor (Catch) -> CatchDetailViewModel
+}
+
+enum UITestLogFixture {
+    static let bassDate = Date(timeIntervalSince1970: 1_751_653_800)
+    static let bluegillDate = Date(timeIntervalSince1970: 1_750_000_000)
+
+    static func seed(into repository: LocalFileCatchRepository) {
+        let photoData = UITestImageFixture.makeJPEGData()
+        let entries: [(species: Species, date: Date, notes: String)] = [
+            (UITestScenarios.reliableBass.species, bassDate, "Registrada desde el escáner"),
+            (UITestScenarios.lowConfidenceBluegill.species, bluegillDate, "Pequeño ejemplar de primavera"),
+        ]
+
+        let semaphore = DispatchSemaphore(value: 0)
+        let savedCount = SavedCount()
+        Task.detached {
+            defer { semaphore.signal() }
+            for entry in entries {
+                if let saved = try? await repository.saveCatch(
+                    species: entry.species,
+                    photoData: photoData,
+                    date: entry.date,
+                    location: nil,
+                    notes: entry.notes
+                ) {
+                    savedCount.value += 1
+                }
+            }
+        }
+        _ = semaphore.wait(timeout: .now() + 15)
+
+        guard savedCount.value == entries.count else {
+            assertionFailure("No se pudieron sembrar los fixtures de capturas del log")
+            return
+        }
+    }
+
+    private final class SavedCount: @unchecked Sendable {
+        var value = 0
     }
 }
 
