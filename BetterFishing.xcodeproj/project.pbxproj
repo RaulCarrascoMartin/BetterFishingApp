@@ -49,6 +49,8 @@
 		0000000000000000000000B35 /* BetterFishingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A35 /* BetterFishingUITests.swift */; };
 		0000000000000000000000B36 /* AppCompositionSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A07 /* AppCompositionSupport.swift */; };
 		0000000000000000000000B37 /* CameraManagerUITestDouble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A37 /* CameraManagerUITestDouble.swift */; };
+		0000000000000000000000B39 /* CatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A39 /* CatchTests.swift */; };
+		0000000000000000000000B38 /* Catch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A38 /* Catch.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +119,8 @@
 		0000000000000000000000A35 /* BetterFishingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterFishingUITests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A37 /* CameraManagerUITestDouble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManagerUITestDouble.swift; sourceTree = "<group>"; };
 		0000000000000000000000A36 /* BetterFishingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BetterFishingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0000000000000000000000A39 /* CatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A38 /* Catch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catch.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,6 +223,7 @@
 				0000000000000000000000A15 /* Species.swift */,
 				0000000000000000000000A1C /* CatchDraft.swift */,
 				0000000000000000000000C10 /* Fishial */,
+				0000000000000000000000A38 /* Catch.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -255,6 +260,7 @@
 				0000000000000000000000A2E /* PhotoPickerViewTests.swift */,
 				0000000000000000000000A30 /* FishScannerViewModelTests.swift */,
 				0000000000000000000000A34 /* LocalDraftCatchSaverTests.swift */,
+				0000000000000000000000A39 /* CatchTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -403,6 +409,7 @@ isa = PBXSourcesBuildPhase;
 			0000000000000000000000B36 /* AppCompositionSupport.swift in Sources */,
 			0000000000000000000000B15 /* Species.swift in Sources */,
 			0000000000000000000000B1C /* CatchDraft.swift in Sources */,
+			0000000000000000000000B38 /* Catch.swift in Sources */,
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
 			0000000000000000000000B1A /* IdentificationResult.swift in Sources */,
@@ -445,6 +452,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B2E /* PhotoPickerViewTests.swift in Sources */,
 				0000000000000000000000B30 /* FishScannerViewModelTests.swift in Sources */,
 				0000000000000000000000B34 /* LocalDraftCatchSaverTests.swift in Sources */,
+				0000000000000000000000B39 /* CatchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

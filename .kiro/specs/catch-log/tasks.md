@@ -1,7 +1,7 @@
 # Implementation Plan
 
 ## 1. Foundation: modelos, contratos y localización
-- [ ] 1.1 Crear el modelo definitivo `Catch` y `LocationCoordinate2D`
+- [x] 1.1 Crear el modelo definitivo `Catch` y `LocationCoordinate2D`
   - Definir `Catch` (id, species: Species, photoPath, date, location opcional, notes, createdAt) y `LocationCoordinate2D` (latitude, longitude) como Codable/Sendable/Identifiable.
   - Asegurar que `CatchDraft` provisional queda intacto para la migración de borradores existentes.
   - Observable: test en verde de round-trip Codable de una captura completa con especie, fecha, ubicación y notas.
