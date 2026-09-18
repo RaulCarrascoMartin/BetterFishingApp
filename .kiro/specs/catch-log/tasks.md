@@ -47,7 +47,7 @@
   - _Boundary: Services/CatchLog/ProvisionalDraftsMigrator_
 
 ## 3. Core: detalle, edición y borrado de una captura
-- [ ] 3.1 (P) Modelar el flujo de detalle, edición y borrado
+- [x] 3.1 (P) Modelar el flujo de detalle, edición y borrado
   - _Depends: 2.1_
   - Gestionar el modo vista/edición de una captura: editar fecha, ubicación y notas; cancelar la edición descartando cambios; confirmar y persistir los cambios; borrar con confirmación y traducir fallos a estados accionables.
   - Observable: tests del ViewModel verifican que editar guarda los cambios y el detalle se refleja, que cancelar no modifica la captura, que borrar elimina la captura y que un fallo de borrado conserva la captura e informa.
@@ -116,6 +116,8 @@
   - _Boundary: Services/CatchLog/ProvisionalDraftsMigrator, Composition Root_
 
 ## Implementation Notes
+- `CatchDetailViewModel` (3.1) añade un seam `photoProvider` (closure, opcional por defecto) para resolve la miniatura, porque `photoData(for:)` no es parte del protocolo `CatchRepository` y la tarea no permitía nuevos protocolos. Aprobado por el reviewer; la vista (3.2) decide el caso real.
+- En `CatchDetailViewModel` (3.1) `cancel()` o `dismissError()` desde un estado `loadFailed` dejan `.loaded` con `catchEntry == nil`; la vista (3.2) debe guardar el renderizado en `.loaded` para Req 3.1 (mostrar la foto) — el VM es seguro (accessors opcionales), pero la vista no debe asumir catch no-nil.
 - Un fallo real de `saveCatch` a mitad de la migración (2.3) propaga el error y NO escribe el marker `.migrated`, por lo que un reintento posterior reconvertiría los válidos ya migrados → duplicados. Riesgo inherente al diseño aprobado; aceptado.
 - El migrador (2.3) escribe el marker también si el directorio de borradores existe pero está vacío; design.md sugiere "directorio vacío → sin cambios", pero es inofensivo (hay `no-op` cuando el directorio no existe o el marker ya está).
 - Los implementadores deben pegar el output real de la fase RED (fallo de compilación/test con la implementación ausente) en `RED_PHASE_OUTPUT`; el reviewer lo exige como evidencia y rechaza si falta (tarea 2.1). El patrón para regenerarlo: mover temporalmente el fichero de implementación, compilar los tests, restaurarlo.

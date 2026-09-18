@@ -61,6 +61,8 @@
 		0000000000000000000000B47 /* CatchSavingIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */; };
 		0000000000000000000000B49 /* ProvisionalDraftsMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A49 /* ProvisionalDraftsMigratorTests.swift */; };
 		0000000000000000000000B48 /* ProvisionalDraftsMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */; };
+		0000000000000000000000B50 /* CatchDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A50 /* CatchDetailViewModel.swift */; };
+		0000000000000000000000B51 /* CatchDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A51 /* CatchDetailViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +143,8 @@
 		0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSavingIntegrationTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A49 /* ProvisionalDraftsMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisionalDraftsMigratorTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisionalDraftsMigrator.swift; sourceTree = "<group>"; };
+		0000000000000000000000A50 /* CatchDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDetailViewModel.swift; sourceTree = "<group>"; };
+		0000000000000000000000A51 /* CatchDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDetailViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000C04 /* FishScanner */,
+				0000000000000000000000C15 /* CatchLog */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -199,6 +204,14 @@
 				0000000000000000000000A37 /* CameraManagerUITestDouble.swift */,
 			);
 			path = FishScanner;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C15 /* CatchLog */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A50 /* CatchDetailViewModel.swift */,
+			);
+			path = CatchLog;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C05 /* Services */ = {
@@ -307,6 +320,7 @@
 				0000000000000000000000A46 /* LocalFileCatchRepositoryTests.swift */,
 				0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */,
 				0000000000000000000000A49 /* ProvisionalDraftsMigratorTests.swift */,
+				0000000000000000000000A51 /* CatchDetailViewModelTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -459,6 +473,7 @@ isa = PBXSourcesBuildPhase;
 			0000000000000000000000B40 /* CatchRepository.swift in Sources */,
 			0000000000000000000000B45 /* LocalFileCatchRepository.swift in Sources */,
 				0000000000000000000000B48 /* ProvisionalDraftsMigrator.swift in Sources */,
+				0000000000000000000000B50 /* CatchDetailViewModel.swift in Sources */,
 				0000000000000000000000B43 /* DeviceLocationProvider.swift in Sources */,
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
@@ -509,6 +524,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B46 /* LocalFileCatchRepositoryTests.swift in Sources */,
 				0000000000000000000000B47 /* CatchSavingIntegrationTests.swift in Sources */,
 				0000000000000000000000B49 /* ProvisionalDraftsMigratorTests.swift in Sources */,
+				0000000000000000000000B51 /* CatchDetailViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
