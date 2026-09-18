@@ -57,4 +57,29 @@ final class BetterFishingUITests: XCTestCase {
         let warning = app.descendants(matching: .any)["scanner.lowConfidenceWarning"]
         XCTAssertTrue(warning.waitForExistence(timeout: 10), "El aviso de fiabilidad debe aparecer con confianza baja")
     }
+
+    func testNoMatchFlowShowsMessageAndRetryReturnsToSourceSelector() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["--ui-test-double", "noMatch"]
+        app.launch()
+
+        let sourceSelector = app.otherElements["scanner.sourceSelector"]
+        XCTAssertTrue(sourceSelector.waitForExistence(timeout: 10), "El selector de fuente debe aparecer tras el arranque")
+
+        app.buttons["scanner.gallerySource"].tap()
+
+        let identifying = app.otherElements["scanner.identifying"]
+        XCTAssertTrue(identifying.waitForExistence(timeout: 10), "El estado de carga debe aparecer al identificar la imagen de galería")
+
+        let noMatch = app.descendants(matching: .any)["scanner.noMatch"]
+        XCTAssertTrue(noMatch.waitForExistence(timeout: 10), "El aviso de no identificación debe aparecer cuando no hay coincidencia")
+
+        let noMatchTitle = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "No se pudo identificar"))
+        XCTAssertTrue(noMatchTitle.firstMatch.exists, "El aviso debe informar de que no se ha podido identificar la especie")
+
+        app.buttons["scanner.retry"].tap()
+
+        XCTAssertTrue(sourceSelector.waitForExistence(timeout: 10), "El reintento debe volver al selector de fuente para una nueva imagen")
+        XCTAssertFalse(noMatch.exists, "El aviso de no identificación debe desaparecer tras el reintento")
+    }
 }
