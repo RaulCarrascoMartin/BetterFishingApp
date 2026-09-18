@@ -126,7 +126,7 @@
   - _Requirements: 1.1, 1.3, 1.4, 2.2, 3.3, 5.1, 5.3_
   - _Boundary: Features/FishScanner/FishScannerView_
 
-- [ ] 7.2 Añadir la confirmación de guardado y sus errores
+- [x] 7.2 Añadir la confirmación de guardado y sus errores
   - Mostrar confirmación de guardar la captura con la especie pre-rellena; en `saveFailed` mostrar mensaje accionable con opción de reintentar; en `saved` confirmar el éxito y volver al inicio.
   - Observable: UI test de confirmación y de error/reintento de guardado con el estado del ViewModel.
   - _Requirements: 4.1, 4.2, 3.3_
