@@ -63,6 +63,8 @@
 		0000000000000000000000B48 /* ProvisionalDraftsMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */; };
 		0000000000000000000000B50 /* CatchDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A50 /* CatchDetailViewModel.swift */; };
 		0000000000000000000000B51 /* CatchDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A51 /* CatchDetailViewModelTests.swift */; };
+		0000000000000000000000B53 /* CatchDetailUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A53 /* CatchDetailUITests.swift */; };
+		0000000000000000000000B52 /* CatchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A52 /* CatchDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,7 +146,9 @@
 		0000000000000000000000A49 /* ProvisionalDraftsMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisionalDraftsMigratorTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisionalDraftsMigrator.swift; sourceTree = "<group>"; };
 		0000000000000000000000A50 /* CatchDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDetailViewModel.swift; sourceTree = "<group>"; };
+		0000000000000000000000A52 /* CatchDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDetailView.swift; sourceTree = "<group>"; };
 		0000000000000000000000A51 /* CatchDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDetailViewModelTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A53 /* CatchDetailUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchDetailUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000A50 /* CatchDetailViewModel.swift */,
+				0000000000000000000000A52 /* CatchDetailView.swift */,
 			);
 			path = CatchLog;
 			sourceTree = "<group>";
@@ -329,6 +334,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000A35 /* BetterFishingUITests.swift */,
+				0000000000000000000000A53 /* CatchDetailUITests.swift */,
 			);
 			path = BetterFishingUITests;
 			sourceTree = "<group>";
@@ -474,6 +480,7 @@ isa = PBXSourcesBuildPhase;
 			0000000000000000000000B45 /* LocalFileCatchRepository.swift in Sources */,
 				0000000000000000000000B48 /* ProvisionalDraftsMigrator.swift in Sources */,
 				0000000000000000000000B50 /* CatchDetailViewModel.swift in Sources */,
+				0000000000000000000000B52 /* CatchDetailView.swift in Sources */,
 				0000000000000000000000B43 /* DeviceLocationProvider.swift in Sources */,
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
@@ -533,6 +540,7 @@ isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				0000000000000000000000B35 /* BetterFishingUITests.swift in Sources */,
+				0000000000000000000000B53 /* CatchDetailUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

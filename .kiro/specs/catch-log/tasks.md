@@ -54,7 +54,7 @@
   - _Requirements: 3.2, 3.4, 3.5, 4.1, 4.2, 4.3_
   - _Boundary: Features/CatchLog/CatchDetailViewModel_
 
-- [ ] 3.2 Construir la vista de detalle y edición
+- [x] 3.2 Construir la vista de detalle y edición
   - _Depends: 3.1_
   - Mostrar la especie (nombre común y científico), la foto, la fecha/hora, la ubicación y las notas; modo edición con campos para fecha, ubicación y notas; especie y foto de solo lectura; borrado con diálogo de confirmación.
   - Observable: cada estado del ViewModel (vista, edición, confirmación de borrado, fallo) se renderiza en la UI; se verifica en UI test.
@@ -116,7 +116,9 @@
   - _Boundary: Services/CatchLog/ProvisionalDraftsMigrator, Composition Root_
 
 ## Implementation Notes
-- `CatchDetailViewModel` (3.1) añade un seam `photoProvider` (closure, opcional por defecto) para resolve la miniatura, porque `photoData(for:)` no es parte del protocolo `CatchRepository` y la tarea no permitía nuevos protocolos. Aprobado por el reviewer; la vista (3.2) decide el caso real.
+- Enmienda aprobada (OPTION A): el borrado con confirmación (Req 4.1, 4.2, 4.3; design.md:384) usa `.alert` en lugar de `.confirmationDialog`. Mismo título, mensaje y acciones (confirmar destructivo `detail.confirmDelete` / cancelar `detail.cancelDelete` con los mismos identificadores de accesibilidad). Razón: en los simuladores iOS 26/27 los taps sobre las acciones de un action-sheet no llegan a los gestos de SwiftUI, mientras que los alerts con botones con identificador de accesibilidad se han probado fiables en esta repo (suite de escáner). La semántica de confirmación previa al borrado se mantiene intacta para Req 4.1.
+- La edición de ubicación en `CatchDetailView` (design.md:382) reserva el botón "Usar ubicación actual" sin implementar: la ubicación se edita únicamente mediante los campos manuales de latitud/longitud. `CatchDetailViewModel` no dispone de un seam de localización del dispositivo; el provider (Req 1.3) solo se usa en el guardado desde el escáner.
+- El detalle renderizado en `.loaded` con `catchEntry == nil` se conserva: `loadedContainer` mantiene su guard (`speciesCommonName == nil` → `ContentUnavailableView`), ver nota previa sobre `cancel()`/`dismissError()`.
 - En `CatchDetailViewModel` (3.1) `cancel()` o `dismissError()` desde un estado `loadFailed` dejan `.loaded` con `catchEntry == nil`; la vista (3.2) debe guardar el renderizado en `.loaded` para Req 3.1 (mostrar la foto) — el VM es seguro (accessors opcionales), pero la vista no debe asumir catch no-nil.
 - Un fallo real de `saveCatch` a mitad de la migración (2.3) propaga el error y NO escribe el marker `.migrated`, por lo que un reintento posterior reconvertiría los válidos ya migrados → duplicados. Riesgo inherente al diseño aprobado; aceptado.
 - El migrador (2.3) escribe el marker también si el directorio de borradores existe pero está vacío; design.md sugiere "directorio vacío → sin cambios", pero es inofensivo (hay `no-op` cuando el directorio no existe o el marker ya está).
