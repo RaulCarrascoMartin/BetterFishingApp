@@ -165,7 +165,7 @@
   - _Requirements: 3.1, 3.3_
   - _Boundary: Features/FishScanner_
 
-- [ ] 9.4 E2E guardado con éxito y con fallo
+- [x] 9.4 E2E guardado con éxito y con fallo
   - Con `CatchSaving` real (provisional) y con un fake que lanza error, verificar confirmación de guardado con especie pre-rellena y el mensaje de error con reintento respectivamente.
   - Observable: UI tests en verde cubriendo 4.1 y 4.2.
   - _Requirements: 4.1, 4.2_
