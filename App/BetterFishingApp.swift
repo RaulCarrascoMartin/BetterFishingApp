@@ -11,7 +11,7 @@ struct BetterFishingApp: App {
 
 @MainActor
 struct RootView: View {
-    private let viewModel: FishScannerViewModel
+    private let services: AppRootServices
     private let cameraManager: CameraManager
     private let gallerySelectionProvider: (@MainActor () -> Data?)?
     #if DEBUG
@@ -20,10 +20,10 @@ struct RootView: View {
     #endif
 
     init(
-        viewModel: FishScannerViewModel = AppComposition.makeScannerViewModel(),
+        services: AppRootServices = AppComposition.makeRootServices(),
         cameraManager: CameraManager = AppComposition.makeCameraManager()
     ) {
-        self.viewModel = viewModel
+        self.services = services
         self.cameraManager = cameraManager
         #if DEBUG
         self.gallerySelectionProvider = AppComposition.makeGallerySelectionProvider()
@@ -59,10 +59,20 @@ struct RootView: View {
     private var scannerNavigation: some View {
         NavigationStack {
             FishScannerView(
-                viewModel: viewModel,
+                viewModel: services.scannerViewModel,
                 cameraManager: cameraManager,
                 gallerySelectionProvider: gallerySelectionProvider
             )
+            #if DEBUG
+            .task {
+                guard UITestScenario.requested(in: ProcessInfo.processInfo.arguments) == nil else { return }
+                try? await services.migrator.migrateIfNeeded()
+            }
+            #else
+            .task {
+                try? await services.migrator.migrateIfNeeded()
+            }
+            #endif
         }
     }
 }

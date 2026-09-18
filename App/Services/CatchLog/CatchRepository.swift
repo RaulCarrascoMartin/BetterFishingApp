@@ -1,5 +1,9 @@
 import Foundation
 
+enum CatchSaveError: Error, Equatable {
+    case writeFailed
+}
+
 protocol CatchRepository: Sendable {
     func saveCatch(species: Species, photoData: Data, date: Date, location: LocationCoordinate2D?, notes: String) async throws -> Catch
     func listCatches() async throws -> [Catch]

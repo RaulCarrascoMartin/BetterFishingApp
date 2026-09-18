@@ -77,7 +77,7 @@
   - _Boundary: Features/CatchLog/CatchLogView_
 
 ## 5. Integration: composition root y navegación
-- [ ] 5.1 Inyectar el repositorio real y sustituir el guardado provisional
+- [x] 5.1 Inyectar el repositorio real y sustituir el guardado provisional
   - Construir el repositorio local en el composition root e inyectarlo como `any CatchSaving` (escáner) y como `any CatchRepository` (registro); ejecutar la migración de borradores al arranque de forma asíncrona sin bloquear la UI.
   - Eliminar `LocalDraftCatchSaver` y sus tests obsoletos en el mismo cambio atómico (el repositorio real pasa a cumplir el rol); conservar `CatchDraft` únicamente para la migración.
   - Observable: `xcodebuild build` compila sin referencias al saver provisional; los borradores previos de `ProvisionalDrafts/` existen como capturas del registro al arrancar; el escáner guarda directamente en el registro real.

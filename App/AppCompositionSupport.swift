@@ -15,24 +15,77 @@ struct FishialCredentials: Equatable {
     }
 }
 
+@MainActor
+struct AppRootServices {
+    let scannerViewModel: FishScannerViewModel
+    let catchSaver: any CatchSaving
+    let catchLogViewModel: CatchLogViewModel
+    let thumbnailProvider: @MainActor (Catch) -> Data?
+    let detailViewModelFactory: @MainActor (Catch) -> CatchDetailViewModel
+    let migrator: ProvisionalDraftsMigrator
+}
+
 enum AppComposition {
     @MainActor
-    static func makeScannerViewModel(
-        credentials: FishialCredentials = FishialCredentials(bundle: .main),
-        arguments: [String] = ProcessInfo.processInfo.arguments
-    ) -> FishScannerViewModel {
-        let identifier: any FishIdentifying
-        let catchSaver: any CatchSaving
+    static func makeRootServices(
+        arguments: [String] = ProcessInfo.processInfo.arguments,
+        repository: LocalFileCatchRepository? = nil,
+        draftsDirectory: URL? = nil
+    ) -> AppRootServices {
         #if DEBUG
-        if let scenario = UITestScenario.requested(in: arguments) {
-            (identifier, catchSaver) = makeUITestDoubles(scenario: scenario)
-        } else {
-            (identifier, catchSaver) = makeProductionServices(credentials: credentials)
+        if let scenario = UITestScenario.requested(in: arguments), scenario.isScannerDriving {
+            let (identifier, catchSaver) = makeUITestDoubles(scenario: scenario)
+            let throwawayRepository = LocalFileCatchRepository(
+                directoryURL: FileManager.default.temporaryDirectory
+                    .appendingPathComponent("UITestRoot-\(UUID().uuidString)", isDirectory: true)
+            )
+            return AppRootServices(
+                scannerViewModel: FishScannerViewModel(identifier: identifier, catchSaver: catchSaver),
+                catchSaver: catchSaver,
+                catchLogViewModel: CatchLogViewModel(repository: throwawayRepository),
+                thumbnailProvider: { throwawayRepository.photoData(for: $0) },
+                detailViewModelFactory: { catchEntry in
+                    CatchDetailViewModel(
+                        id: catchEntry.id,
+                        repository: throwawayRepository,
+                        photoProvider: { throwawayRepository.photoData(for: $0) }
+                    )
+                },
+                migrator: ProvisionalDraftsMigrator(catchRepository: throwawayRepository, draftsDirectory: draftsDirectory)
+            )
         }
-        #else
-        (identifier, catchSaver) = makeProductionServices(credentials: credentials)
         #endif
-        return FishScannerViewModel(identifier: identifier, catchSaver: catchSaver)
+
+        let realRepository = repository ?? LocalFileCatchRepository(
+            deviceLocationProvider: DeviceLocationProvider(
+                authorization: CLLocationAuthorization(),
+                fetcher: CLLocationFetcher()
+            )
+        )
+
+        let credentials = FishialCredentials(bundle: .main)
+        let tokenStore = FishialTokenStore(
+            clientID: credentials.clientID,
+            clientSecret: credentials.clientSecret
+        )
+
+        return AppRootServices(
+            scannerViewModel: FishScannerViewModel(
+                identifier: FishialClient(tokenStore: tokenStore),
+                catchSaver: realRepository
+            ),
+            catchSaver: realRepository,
+            catchLogViewModel: CatchLogViewModel(repository: realRepository),
+            thumbnailProvider: { realRepository.photoData(for: $0) },
+            detailViewModelFactory: { catchEntry in
+                CatchDetailViewModel(
+                    id: catchEntry.id,
+                    repository: realRepository,
+                    photoProvider: { realRepository.photoData(for: $0) }
+                )
+            },
+            migrator: ProvisionalDraftsMigrator(catchRepository: realRepository, draftsDirectory: draftsDirectory)
+        )
     }
 
     @MainActor
@@ -55,16 +108,6 @@ enum AppComposition {
         return { UITestImageFixture.makeJPEGData() }
     }
     #endif
-
-    private static func makeProductionServices(
-        credentials: FishialCredentials
-    ) -> (any FishIdentifying, any CatchSaving) {
-        let tokenStore = FishialTokenStore(
-            clientID: credentials.clientID,
-            clientSecret: credentials.clientSecret
-        )
-        return (FishialClient(tokenStore: tokenStore), LocalDraftCatchSaver())
-    }
 }
 
 #if DEBUG
@@ -91,6 +134,15 @@ enum UITestScenario: String {
         switch self {
         case .logLoading, .logLoaded, .logEmpty: return true
         default: return false
+        }
+    }
+
+    var isScannerDriving: Bool {
+        switch self {
+        case .identifiedReliable, .identifiedLowConfidence, .noMatch, .saveSucceeds, .saveFails:
+            return true
+        case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty:
+            return false
         }
     }
 
