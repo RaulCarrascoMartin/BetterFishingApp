@@ -2,6 +2,21 @@
 import AVFoundation
 import UIKit
 
+enum UITestImageFixture {
+    static func makeJPEGData() -> Data {
+        let size = CGSize(width: 640, height: 480)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let image = renderer.image { context in
+            context.cgContext.setFillColor(UIColor.systemBlue.cgColor)
+            context.cgContext.fill(CGRect(origin: .zero, size: size))
+        }
+        guard let jpeg = image.jpegData(compressionQuality: 0.8) else {
+            preconditionFailure("No se pudo generar el JPEG del fixture de UI test")
+        }
+        return jpeg
+    }
+}
+
 struct UITestCameraAuthorization: CameraAuthorizationManaging {
     func authorizationStatus() -> CameraAccessStatus {
         .authorized
@@ -24,7 +39,7 @@ final class UITestCameraDevice: CameraSession, CameraPhotoOutputting, @unchecked
 
     init() {
         preview = AVCaptureSession()
-        jpegData = Self.makeJPEGData()
+        jpegData = UITestImageFixture.makeJPEGData()
     }
 
     @discardableResult
@@ -47,19 +62,6 @@ final class UITestCameraDevice: CameraSession, CameraPhotoOutputting, @unchecked
             return
         }
         onResult(.success(jpegData))
-    }
-
-    private static func makeJPEGData() -> Data {
-        let size = CGSize(width: 640, height: 480)
-        let renderer = UIGraphicsImageRenderer(size: size)
-        let image = renderer.image { context in
-            context.cgContext.setFillColor(UIColor.systemBlue.cgColor)
-            context.cgContext.fill(CGRect(origin: .zero, size: size))
-        }
-        guard let jpeg = image.jpegData(compressionQuality: 0.8) else {
-            preconditionFailure("No se pudo generar el JPEG del doble de cámara de UI test")
-        }
-        return jpeg
     }
 }
 #endif

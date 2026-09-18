@@ -46,6 +46,16 @@ enum AppComposition {
         return CameraManager()
     }
 
+    #if DEBUG
+    @MainActor
+    static func makeGallerySelectionProvider(
+        arguments: [String] = ProcessInfo.processInfo.arguments
+    ) -> (@MainActor () -> Data?)? {
+        guard UITestScenario.requested(in: arguments) != nil else { return nil }
+        return { UITestImageFixture.makeJPEGData() }
+    }
+    #endif
+
     private static func makeProductionServices(
         credentials: FishialCredentials
     ) -> (any FishIdentifying, any CatchSaving) {

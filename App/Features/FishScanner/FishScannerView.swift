@@ -11,9 +11,15 @@ struct FishScannerView: View {
     @State private var showingSavedSuccess = false
 
     let viewModel: FishScannerViewModel
+    private let gallerySelectionProvider: (@MainActor () -> Data?)?
 
-    init(viewModel: FishScannerViewModel, cameraManager: CameraManager = CameraManager()) {
+    init(
+        viewModel: FishScannerViewModel,
+        cameraManager: CameraManager = CameraManager(),
+        gallerySelectionProvider: (@MainActor () -> Data?)? = nil
+    ) {
         self.viewModel = viewModel
+        self.gallerySelectionProvider = gallerySelectionProvider
         _cameraManager = State(initialValue: cameraManager)
     }
 
@@ -102,11 +108,23 @@ struct FishScannerView: View {
             .buttonStyle(.borderedProminent)
             .accessibilityIdentifier("scanner.cameraSource")
 
-            PhotoPickerView { data in
-                viewModel.setImage(data: data)
+            if let gallerySelectionProvider {
+                Button {
+                    if let data = gallerySelectionProvider() {
+                        viewModel.setImage(data: data)
+                    }
+                } label: {
+                    Label("Elegir de la galería", systemImage: "photo.on.rectangle")
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier("scanner.gallerySource")
+            } else {
+                PhotoPickerView { data in
+                    viewModel.setImage(data: data)
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier("scanner.gallerySource")
             }
-            .buttonStyle(.bordered)
-            .accessibilityIdentifier("scanner.gallerySource")
 
             Spacer()
         }
