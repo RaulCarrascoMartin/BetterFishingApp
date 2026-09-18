@@ -147,7 +147,7 @@
   - _Boundary: Composition Root_
 
 ## 9. Validación E2E
-- [ ] 9.1 E2E cámara → identificado
+- [x] 9.1 E2E cámara → identificado
   - Con permiso concedido (stub) y fake de `FishIdentifying`, capturar foto, ver estado de carga y resultado con el nombre de la especie.
   - Observable: UI test en verde cubriendo 1.2, 2.2 y 5.1.
   - _Requirements: 1.2, 2.2, 5.1_
