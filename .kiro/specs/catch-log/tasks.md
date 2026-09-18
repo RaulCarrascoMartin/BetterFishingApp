@@ -30,7 +30,7 @@
   - _Requirements: 1.1, 1.7, 2.1, 2.3, 3.1, 3.4, 4.2_
   - _Boundary: Services/CatchLog/LocalFileCatchRepository_
 
-- [ ] 2.2 Guardar desde el escáner directamente en el registro
+- [x] 2.2 Guardar desde el escáner directamente en el registro
   - _Depends: 1.3, 2.1_
   - Hacer que el repositorio real implemente el seam `CatchSaving`: `saveDraft(species:photoData:)` convierte al guardado del registro con la fecha actual, solicitando el permiso de ubicación en ese momento y registrando la coordenada si está concedida; guarda sin ubicación si el permiso está denegado o la ubicación no está disponible.
   - Observación: el fallo de escritura se propaga como `CatchSaveError` para que el escáner conserve la especie en pantalla y ofrezca reintento.

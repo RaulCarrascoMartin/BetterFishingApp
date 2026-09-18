@@ -58,6 +58,7 @@
 		0000000000000000000000B43 /* DeviceLocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A43 /* DeviceLocationProvider.swift */; };
 		0000000000000000000000B44 /* DeviceLocationProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A44 /* DeviceLocationProviderTests.swift */; };
 		0000000000000000000000B46 /* LocalFileCatchRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A46 /* LocalFileCatchRepositoryTests.swift */; };
+		0000000000000000000000B47 /* CatchSavingIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +136,7 @@
 		0000000000000000000000A43 /* DeviceLocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLocationProvider.swift; sourceTree = "<group>"; };
 		0000000000000000000000A44 /* DeviceLocationProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLocationProviderTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A46 /* LocalFileCatchRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFileCatchRepositoryTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSavingIntegrationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -298,6 +300,7 @@
 				0000000000000000000000A42 /* CatchRepositoryTests.swift */,
 				0000000000000000000000A44 /* DeviceLocationProviderTests.swift */,
 				0000000000000000000000A46 /* LocalFileCatchRepositoryTests.swift */,
+				0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -497,6 +500,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B42 /* CatchRepositoryTests.swift in Sources */,
 				0000000000000000000000B44 /* DeviceLocationProviderTests.swift in Sources */,
 				0000000000000000000000B46 /* LocalFileCatchRepositoryTests.swift in Sources */,
+				0000000000000000000000B47 /* CatchSavingIntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

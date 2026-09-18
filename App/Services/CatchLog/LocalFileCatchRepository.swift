@@ -5,8 +5,9 @@ final class LocalFileCatchRepository: CatchRepository, @unchecked Sendable {
     private static let logger = Logger(subsystem: "com.betterfishing.BetterFishing", category: "LocalFileCatchRepository")
 
     private let directoryURL: URL
+    private let deviceLocationProvider: (any DeviceLocationProviding)?
 
-    init(directoryURL: URL? = nil) {
+    init(directoryURL: URL? = nil, deviceLocationProvider: (any DeviceLocationProviding)? = nil) {
         if let directoryURL {
             self.directoryURL = directoryURL
         } else {
@@ -16,6 +17,7 @@ final class LocalFileCatchRepository: CatchRepository, @unchecked Sendable {
             ).first ?? FileManager.default.temporaryDirectory
             self.directoryURL = applicationSupport.appendingPathComponent("Catches", isDirectory: true)
         }
+        self.deviceLocationProvider = deviceLocationProvider
     }
 
     func saveCatch(species: Species, photoData: Data, date: Date, location: LocationCoordinate2D?, notes: String) async throws -> Catch {
@@ -121,5 +123,33 @@ final class LocalFileCatchRepository: CatchRepository, @unchecked Sendable {
         let photoURL = directoryURL.appendingPathComponent(`catch`.photoPath)
         guard let data = try? Data(contentsOf: photoURL) else { return nil }
         return data
+    }
+
+    private func effectiveLocationProvider() async -> (any DeviceLocationProviding)? {
+        if let deviceLocationProvider { return deviceLocationProvider }
+        return await MainActor.run {
+            DeviceLocationProvider(
+                authorization: CLLocationAuthorization(),
+                fetcher: CLLocationFetcher()
+            )
+        }
+    }
+}
+
+extension LocalFileCatchRepository: CatchSaving {
+    func saveDraft(species: Species, photoData: Data) async throws {
+        let location: LocationCoordinate2D?
+        if let provider = await effectiveLocationProvider() {
+            location = await provider.currentLocation()
+        } else {
+            location = nil
+        }
+        _ = try await saveCatch(
+            species: species,
+            photoData: photoData,
+            date: Date(),
+            location: location,
+            notes: ""
+        )
     }
 }
