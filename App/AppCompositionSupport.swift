@@ -127,13 +127,19 @@ struct UITestDoubleFishIdentifier: FishIdentifying {
     }
 }
 
-struct UITestDoubleCatchSaver: CatchSaving {
+actor UITestDoubleCatchSaver: CatchSaving {
     let scenario: UITestScenario
+    private var remainingFailures: Int
+
+    init(scenario: UITestScenario, failuresBeforeSuccess: Int = 1) {
+        self.scenario = scenario
+        self.remainingFailures = failuresBeforeSuccess
+    }
 
     func saveDraft(species: Species, photoData: Data) async throws {
-        if scenario == .saveFails {
-            throw UITestCatchSaveError.failed
-        }
+        guard scenario == .saveFails, remainingFailures > 0 else { return }
+        remainingFailures -= 1
+        throw UITestCatchSaveError.failed
     }
 }
 

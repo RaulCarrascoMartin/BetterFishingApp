@@ -82,4 +82,94 @@ final class BetterFishingUITests: XCTestCase {
         XCTAssertTrue(sourceSelector.waitForExistence(timeout: 10), "El reintento debe volver al selector de fuente para una nueva imagen")
         XCTAssertFalse(noMatch.exists, "El aviso de no identificación debe desaparecer tras el reintento")
     }
+
+    func testSaveSuccessFlowConfirmsPrefilledDraftAndSaves() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["--ui-test-double", "saveSucceeds"]
+        app.launch()
+
+        let sourceSelector = app.otherElements["scanner.sourceSelector"]
+        XCTAssertTrue(sourceSelector.waitForExistence(timeout: 10), "El selector de fuente debe aparecer tras el arranque")
+
+        app.buttons["scanner.gallerySource"].tap()
+
+        let identifying = app.otherElements["scanner.identifying"]
+        XCTAssertTrue(identifying.waitForExistence(timeout: 10), "El estado de carga debe aparecer al identificar la imagen de galería")
+
+        let speciesName = app.staticTexts["scanner.speciesName"]
+        XCTAssertTrue(speciesName.waitForExistence(timeout: 10), "El resultado debe mostrar el nombre de la especie")
+        XCTAssertTrue(speciesName.label.contains("Largemouth Bass"), "El identificador debe devolver Largemouth Bass (saveSucceeds), obtenido: \(speciesName.label)")
+
+        let saveCatch = app.buttons["scanner.saveCatch"]
+        XCTAssertTrue(saveCatch.waitForExistence(timeout: 5), "Con la especie identificada debe ofrecerse guardar la captura")
+        saveCatch.tap()
+
+        let confirmationAlert = app.alerts["Guardar la captura"]
+        XCTAssertTrue(confirmationAlert.waitForExistence(timeout: 5), "Debe aparecer la confirmación de guardado con la especie pre-rellena")
+        let confirmationPrefill = confirmationAlert.staticTexts.containing(
+            NSPredicate(format: "label CONTAINS %@", "Largemouth Bass")
+        )
+        XCTAssertTrue(confirmationPrefill.firstMatch.exists, "La confirmación debe pre-rellenar la especie identificada")
+        let confirmationScientific = confirmationAlert.staticTexts.containing(
+            NSPredicate(format: "label CONTAINS %@", "Micropterus salmoides")
+        )
+        XCTAssertTrue(confirmationScientific.firstMatch.exists, "La confirmación debe pre-rellenar también el nombre científico")
+
+        let saveConfirm = app.alerts["Guardar la captura"].buttons["scanner.saveConfirm"].firstMatch
+        XCTAssertTrue(saveConfirm.exists, "La confirmación debe permitir guardar la captura")
+        saveConfirm.tap()
+
+        let savedSuccessAlert = app.alerts["Captura guardada"]
+        XCTAssertTrue(savedSuccessAlert.waitForExistence(timeout: 10), "El guardado con éxito debe confirmar que la captura se ha guardado")
+        XCTAssertFalse(app.buttons["scanner.saveRetry"].firstMatch.exists, "En el flujo de éxito no debe mostrarse error de guardado")
+
+        app.alerts["Captura guardada"].buttons["scanner.saveSuccessContinue"].firstMatch.tap()
+
+        XCTAssertTrue(sourceSelector.waitForExistence(timeout: 10), "Volver al inicio debe regresar al selector de fuente")
+    }
+
+    func testSaveFailureFlowShowsRetryAndRecoversOnRetry() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["--ui-test-double", "saveFails"]
+        app.launch()
+
+        let sourceSelector = app.otherElements["scanner.sourceSelector"]
+        XCTAssertTrue(sourceSelector.waitForExistence(timeout: 10), "El selector de fuente debe aparecer tras el arranque")
+
+        app.buttons["scanner.gallerySource"].tap()
+
+        let identifying = app.otherElements["scanner.identifying"]
+        XCTAssertTrue(identifying.waitForExistence(timeout: 10), "El estado de carga debe aparecer al identificar la imagen de galería")
+
+        let speciesName = app.staticTexts["scanner.speciesName"]
+        XCTAssertTrue(speciesName.waitForExistence(timeout: 10), "El resultado debe mostrar el nombre de la especie")
+
+        let saveCatch = app.buttons["scanner.saveCatch"]
+        XCTAssertTrue(saveCatch.waitForExistence(timeout: 5), "Con la especie identificada debe ofrecerse guardar la captura")
+        saveCatch.tap()
+
+        let confirmationAlert = app.alerts["Guardar la captura"]
+        XCTAssertTrue(confirmationAlert.waitForExistence(timeout: 5), "Debe aparecer la confirmación de guardado pre-rellena")
+        let confirmationPrefill = confirmationAlert.staticTexts.containing(
+            NSPredicate(format: "label CONTAINS %@", "Largemouth Bass")
+        )
+        XCTAssertTrue(confirmationPrefill.firstMatch.exists, "La confirmación debe pre-rellenar la especie identificada")
+
+        app.alerts["Guardar la captura"].buttons["scanner.saveConfirm"].firstMatch.tap()
+
+        let retry = app.buttons["scanner.saveRetry"].firstMatch
+        XCTAssertTrue(retry.waitForExistence(timeout: 10), "Un fallo de guardado debe informar del fallo y ofrecer reintento")
+        let failedAlert = app.alerts["No se pudo guardar la captura"]
+        XCTAssertTrue(failedAlert.exists, "El aviso de fallo debe explicar que la especie se mantiene en pantalla")
+        let failedMessage = failedAlert.staticTexts.containing(
+            NSPredicate(format: "label CONTAINS %@", "La especie identificada se mantiene en pantalla")
+        )
+        XCTAssertTrue(failedMessage.firstMatch.exists, "El aviso de fallo debe indicar que la especie se mantiene en pantalla")
+
+        retry.tap()
+
+        let savedSuccessAlert = app.alerts["Captura guardada"]
+        XCTAssertTrue(savedSuccessAlert.waitForExistence(timeout: 10), "El reintento tras el fallo debe conseguir guardar la captura")
+        XCTAssertFalse(retry.exists, "Tras el reintento con éxito, el error de guardado debe desaparecer")
+    }
 }
