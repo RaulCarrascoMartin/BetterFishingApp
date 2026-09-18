@@ -133,7 +133,7 @@
   - _Boundary: Features/FishScanner/FishScannerView_
 
 ## 8. Guardado provisional e integración
-- [ ] 8.1 Implementar `LocalDraftCatchSaver` (provisional de `CatchSaving`)
+- [x] 8.1 Implementar `LocalDraftCatchSaver` (provisional de `CatchSaving`)
   - Persistir en `Application Support/ProvisionalDrafts/` el JPEG (`<uuid>.jpg`) y el `CatchDraft` JSON (`<uuid>.json`) con la especie pre-rellena; escritura atómica (write + rename) y propagación de `CatchSaveError` ante fallo.
   - Observable: test de integración con FileManager (directorio temporal) confirma relectura del draft con la especie correcta y que un fallo de escritura propaga el error.
   - _Requirements: 4.1, 4.2_
