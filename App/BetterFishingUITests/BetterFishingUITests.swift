@@ -172,4 +172,39 @@ final class BetterFishingUITests: XCTestCase {
         XCTAssertTrue(savedSuccessAlert.waitForExistence(timeout: 10), "El reintento tras el fallo debe conseguir guardar la captura")
         XCTAssertFalse(retry.exists, "Tras el reintento con éxito, el error de guardado debe desaparecer")
     }
+
+    func testTabsAccessibleAndStatePreservedBetweenTabs() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["--ui-test-double", "identifiedReliable"]
+        app.launch()
+
+        let tabBar = app.tabBars.firstMatch
+        XCTAssertTrue(tabBar.waitForExistence(timeout: 10), "La navegación principal debe ofrecer una barra de pestañas")
+
+        let identifyTab = tabBar.buttons["Identificar"]
+        let catchesTab = tabBar.buttons["Capturas"]
+        XCTAssertTrue(identifyTab.exists, "La navegación principal debe ofrecer la pestaña Identificar")
+        XCTAssertTrue(catchesTab.exists, "La navegación principal debe ofrecer la pestaña Capturas")
+
+        let gallerySource = app.buttons["scanner.gallerySource"]
+        XCTAssertTrue(gallerySource.waitForExistence(timeout: 10), "El tab Identificar debe mostrar el selector de fuente")
+        gallerySource.tap()
+
+        let identifying = app.otherElements["scanner.identifying"]
+        XCTAssertTrue(identifying.waitForExistence(timeout: 10), "El estado de carga debe aparecer al identificar la imagen de galería")
+
+        let speciesName = app.staticTexts["scanner.speciesName"]
+        XCTAssertTrue(speciesName.waitForExistence(timeout: 10), "El resultado debe mostrar el nombre de la especie")
+        XCTAssertTrue(speciesName.label.contains("Largemouth Bass"), "La especie identificada debe ser Largemouth Bass (identifiedReliable), obtenido: \(speciesName.label)")
+
+        catchesTab.tap()
+
+        let emptyState = app.otherElements["log.emptyState"]
+        XCTAssertTrue(emptyState.waitForExistence(timeout: 10), "El tab Capturas con registro vacío debe mostrar el estado vacío")
+
+        identifyTab.tap()
+
+        XCTAssertTrue(speciesName.waitForExistence(timeout: 10), "Volver a Identificar debe conservar el resultado de la identificación")
+        XCTAssertTrue(speciesName.label.contains("Largemouth Bass"), "El estado del escáner debe conservarse al alternar de tab, obtenido: \(speciesName.label)")
+    }
 }

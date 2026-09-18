@@ -49,31 +49,43 @@ struct RootView: View {
                 )
             }
         } else {
-            scannerNavigation
+            mainTabs
         }
         #else
-        scannerNavigation
+        mainTabs
         #endif
     }
 
-    private var scannerNavigation: some View {
-        NavigationStack {
-            FishScannerView(
-                viewModel: services.scannerViewModel,
-                cameraManager: cameraManager,
-                gallerySelectionProvider: gallerySelectionProvider
-            )
-            #if DEBUG
-            .task {
-                guard UITestScenario.requested(in: ProcessInfo.processInfo.arguments) == nil else { return }
-                try? await services.migrator.migrateIfNeeded()
+    private var mainTabs: some View {
+        TabView {
+            NavigationStack {
+                FishScannerView(
+                    viewModel: services.scannerViewModel,
+                    cameraManager: cameraManager,
+                    gallerySelectionProvider: gallerySelectionProvider
+                )
             }
-            #else
-            .task {
-                try? await services.migrator.migrateIfNeeded()
+            .tabItem { Label("Identificar", systemImage: "fish.circle") }
+
+            NavigationStack {
+                CatchLogView(
+                    viewModel: services.catchLogViewModel,
+                    thumbnailProvider: services.thumbnailProvider,
+                    detailViewModelFactory: services.detailViewModelFactory
+                )
             }
-            #endif
+            .tabItem { Label("Capturas", systemImage: "list.bullet.rectangle.portrait") }
         }
+        #if DEBUG
+        .task {
+            guard UITestScenario.requested(in: ProcessInfo.processInfo.arguments) == nil else { return }
+            try? await services.migrator.migrateIfNeeded()
+        }
+        #else
+        .task {
+            try? await services.migrator.migrateIfNeeded()
+        }
+        #endif
     }
 }
 

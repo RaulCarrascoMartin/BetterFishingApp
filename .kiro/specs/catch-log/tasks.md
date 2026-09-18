@@ -84,7 +84,7 @@
   - _Requirements: 1.1, 5.1_
   - _Boundary: Composition Root, Services/CatchLog, Services/FishID/LocalDraftCatchSaver_
 
-- [ ] 5.2 Convertir la navegación principal en tabs
+- [x] 5.2 Convertir la navegación principal en tabs
   - Sustituir el `NavigationStack` raíz único por un `TabView` con dos tabs: Identificar y Capturas.
   - Observable: ambas features son accesibles desde la navegación principal y el estado de cada tab se conserva al alternar entre ellas.
   - _Requirements: 6.1, 6.2_
