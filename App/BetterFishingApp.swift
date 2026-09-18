@@ -9,15 +9,17 @@ struct BetterFishingApp: App {
     }
 }
 
+@MainActor
 struct RootView: View {
+    private let viewModel: FishScannerViewModel
+
+    init(viewModel: FishScannerViewModel = AppComposition.makeScannerViewModel()) {
+        self.viewModel = viewModel
+    }
+
     var body: some View {
         NavigationStack {
-            ContentUnavailableView(
-                "BetterFishing",
-                systemImage: "fish",
-                description: Text("Próximamente: escáner de peces, puntos de pesca y registro de capturas.")
-            )
-            .navigationTitle("BetterFishing")
+            FishScannerView(viewModel: viewModel)
         }
     }
 }

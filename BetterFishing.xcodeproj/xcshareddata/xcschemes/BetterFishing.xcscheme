@@ -34,6 +34,20 @@
                ReferencedContainer = "container:BetterFishing.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0000000000000000000000D03"
+               BuildableName = "BetterFishingUITests.xctest"
+               BlueprintName = "BetterFishingUITests"
+               ReferencedContainer = "container:BetterFishing.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -50,6 +64,16 @@
                BlueprintIdentifier = "0000000000000000000000D02"
                BuildableName = "BetterFishingTests.xctest"
                BlueprintName = "BetterFishingTests"
+               ReferencedContainer = "container:BetterFishing.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0000000000000000000000D03"
+               BuildableName = "BetterFishingUITests.xctest"
+               BlueprintName = "BetterFishingUITests"
                ReferencedContainer = "container:BetterFishing.xcodeproj">
             </BuildableReference>
          </TestableReference>

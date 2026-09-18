@@ -46,10 +46,19 @@
 		0000000000000000000000B31 /* FishScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A31 /* FishScannerView.swift */; };
 		0000000000000000000000B32 /* FishScannerPreviewSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A32 /* FishScannerPreviewSupport.swift */; };
 		0000000000000000000000B34 /* LocalDraftCatchSaverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A34 /* LocalDraftCatchSaverTests.swift */; };
+		0000000000000000000000B35 /* BetterFishingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A35 /* BetterFishingUITests.swift */; };
+		0000000000000000000000B36 /* AppCompositionSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A07 /* AppCompositionSupport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		0000000000000000000000F09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0000000000000000000000E01 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0000000000000000000000D01;
+			remoteInfo = BetterFishing;
+		};
+		0000000000000000000000F13 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0000000000000000000000E01 /* Project object */;
 			proxyType = 1;
@@ -69,6 +78,8 @@
 		0000000000000000000000A04 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		0000000000000000000000A05 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		0000000000000000000000A06 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		0000000000000000000000A07 /* AppCompositionSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCompositionSupport.swift; sourceTree = "<group>"; };
+		0000000000000000000000A08 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0000000000000000000000A10 /* BetterFishingSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterFishingSmokeTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A11 /* MockURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
 		0000000000000000000000A12 /* HTTPStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPStub.swift; sourceTree = "<group>"; };
@@ -102,6 +113,8 @@
 		0000000000000000000000A31 /* FishScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishScannerView.swift; sourceTree = "<group>"; };
 		0000000000000000000000A32 /* FishScannerPreviewSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishScannerPreviewSupport.swift; sourceTree = "<group>"; };
 		0000000000000000000000A34 /* LocalDraftCatchSaverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDraftCatchSaverTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A35 /* BetterFishingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterFishingUITests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A36 /* BetterFishingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BetterFishingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,7 +141,9 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000A01 /* BetterFishingApp.swift */,
+				0000000000000000000000A07 /* AppCompositionSupport.swift */,
 				0000000000000000000000C11 /* BetterFishingTests */,
+				0000000000000000000000C12 /* BetterFishingUITests */,
 				0000000000000000000000C03 /* Features */,
 				0000000000000000000000C05 /* Services */,
 				0000000000000000000000C07 /* Core */,
@@ -241,10 +256,19 @@
 			path = BetterFishingTests;
 			sourceTree = "<group>";
 		};
+		0000000000000000000000C12 /* BetterFishingUITests */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A35 /* BetterFishingUITests.swift */,
+			);
+			path = BetterFishingUITests;
+			sourceTree = "<group>";
+		};
 		0000000000000000000000C0A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000A02 /* Assets.xcassets */,
+				0000000000000000000000A08 /* Info.plist */,
 				0000000000000000000000A04 /* Debug.xcconfig */,
 				0000000000000000000000A05 /* Release.xcconfig */,
 			);
@@ -256,6 +280,7 @@
 			children = (
 				0000000000000000000000A03 /* BetterFishing.app */,
 				0000000000000000000000A14 /* BetterFishingTests.xctest */,
+				0000000000000000000000A36 /* BetterFishingUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -296,6 +321,22 @@
 			productReference = 0000000000000000000000A14 /* BetterFishingTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		0000000000000000000000D03 /* BetterFishingUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0000000000000000000000F12 /* Build configuration list for PBXNativeTarget "BetterFishingUITests" */;
+			buildPhases = (
+				0000000000000000000000F15 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0000000000000000000000F14 /* PBXTargetDependency */,
+			);
+			name = BetterFishingUITests;
+			productName = BetterFishingUITests;
+			productReference = 0000000000000000000000A36 /* BetterFishingUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -310,6 +351,10 @@
 						CreatedOnToolsVersion = 27.0;
 					};
 					0000000000000000000000D02 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 0000000000000000000000D01;
+					};
+					0000000000000000000000D03 = {
 						CreatedOnToolsVersion = 27.0;
 						TestTargetID = 0000000000000000000000D01;
 					};
@@ -330,6 +375,7 @@
 			targets = (
 				0000000000000000000000D01 /* BetterFishing */,
 				0000000000000000000000D02 /* BetterFishingTests */,
+				0000000000000000000000D03 /* BetterFishingUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -351,6 +397,7 @@ isa = PBXSourcesBuildPhase;
 		buildActionMask = 2147483647;
 		files = (
 			0000000000000000000000B01 /* BetterFishingApp.swift in Sources */,
+			0000000000000000000000B36 /* AppCompositionSupport.swift in Sources */,
 			0000000000000000000000B15 /* Species.swift in Sources */,
 			0000000000000000000000B1C /* CatchDraft.swift in Sources */,
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
@@ -397,6 +444,14 @@ isa = PBXSourcesBuildPhase;
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0000000000000000000000F15 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0000000000000000000000B35 /* BetterFishingUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -404,6 +459,11 @@ isa = PBXSourcesBuildPhase;
 			isa = PBXTargetDependency;
 			target = 0000000000000000000000D01 /* BetterFishing */;
 			targetProxy = 0000000000000000000000F09 /* PBXContainerItemProxy */;
+		};
+		0000000000000000000000F14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0000000000000000000000D01 /* BetterFishing */;
+			targetProxy = 0000000000000000000000F13 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -539,7 +599,8 @@ isa = PBXSourcesBuildPhase;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Resources/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Se usa la cámara para fotografiar el pez capturado e identificar su especie.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -571,7 +632,8 @@ isa = PBXSourcesBuildPhase;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Resources/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Se usa la cámara para fotografiar el pez capturado e identificar su especie.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -630,6 +692,43 @@ isa = PBXSourcesBuildPhase;
 			};
 			name = Release;
 		};
+		0000000000000000000000F10 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.betterfishing.BetterFishingUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BetterFishing;
+			};
+			name = Debug;
+		};
+		0000000000000000000000F11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.betterfishing.BetterFishingUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BetterFishing;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -656,6 +755,15 @@ isa = PBXSourcesBuildPhase;
 			buildConfigurations = (
 				0000000000000000000000F0D /* Debug */,
 				0000000000000000000000F0E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0000000000000000000000F12 /* Build configuration list for PBXNativeTarget "BetterFishingUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0000000000000000000000F10 /* Debug */,
+				0000000000000000000000F11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
