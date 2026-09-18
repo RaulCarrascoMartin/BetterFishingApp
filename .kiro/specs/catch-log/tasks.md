@@ -38,7 +38,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
   - _Boundary: Services/CatchLog/LocalFileCatchRepository_
 
-- [ ] 2.3 Migrar los borradores provisionales al registro
+- [x] 2.3 Migrar los borradores provisionales al registro
   - _Depends: 2.1_
   - Leer los borradores de `Application Support/ProvisionalDrafts/` (JSON `CatchDraft` + JPEG), convertirlos en capturas del registro conservando la especie, la foto y la fecha, y escribir un marker `.migrated` en el directorio.
   - Omitir borradores corruptos o con datos incompletos sin impedir el arranque; no re-migrar los borradores ya migrados en sesiones posteriores.
@@ -116,6 +116,8 @@
   - _Boundary: Services/CatchLog/ProvisionalDraftsMigrator, Composition Root_
 
 ## Implementation Notes
+- Un fallo real de `saveCatch` a mitad de la migración (2.3) propaga el error y NO escribe el marker `.migrated`, por lo que un reintento posterior reconvertiría los válidos ya migrados → duplicados. Riesgo inherente al diseño aprobado; aceptado.
+- El migrador (2.3) escribe el marker también si el directorio de borradores existe pero está vacío; design.md sugiere "directorio vacío → sin cambios", pero es inofensivo (hay `no-op` cuando el directorio no existe o el marker ya está).
 - Los implementadores deben pegar el output real de la fase RED (fallo de compilación/test con la implementación ausente) en `RED_PHASE_OUTPUT`; el reviewer lo exige como evidencia y rechaza si falta (tarea 2.1). El patrón para regenerarlo: mover temporalmente el fichero de implementación, compilar los tests, restaurarlo.
 - Xcode 27 trata un `baseConfigurationReference` ausente como ERROR de build: `Debug.xcconfig`/`Release.xcconfig` están gitignored, así que un checkout limpio debe copiarlos desde las plantillas `.example` (App/Resources) antes del primer build.
 - `xcode-select` del sistema puede apuntar a CommandLineTools: usar `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` antepuesto a `xcodebuild` si no encuentra Xcode.

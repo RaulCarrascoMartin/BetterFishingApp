@@ -59,6 +59,8 @@
 		0000000000000000000000B44 /* DeviceLocationProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A44 /* DeviceLocationProviderTests.swift */; };
 		0000000000000000000000B46 /* LocalFileCatchRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A46 /* LocalFileCatchRepositoryTests.swift */; };
 		0000000000000000000000B47 /* CatchSavingIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */; };
+		0000000000000000000000B49 /* ProvisionalDraftsMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A49 /* ProvisionalDraftsMigratorTests.swift */; };
+		0000000000000000000000B48 /* ProvisionalDraftsMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,6 +139,8 @@
 		0000000000000000000000A44 /* DeviceLocationProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLocationProviderTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A46 /* LocalFileCatchRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFileCatchRepositoryTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSavingIntegrationTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A49 /* ProvisionalDraftsMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisionalDraftsMigratorTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvisionalDraftsMigrator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +227,7 @@
 			children = (
 				0000000000000000000000A40 /* CatchRepository.swift */,
 				0000000000000000000000A45 /* LocalFileCatchRepository.swift */,
+				0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */,
 			);
 			path = CatchLog;
 			sourceTree = "<group>";
@@ -301,6 +306,7 @@
 				0000000000000000000000A44 /* DeviceLocationProviderTests.swift */,
 				0000000000000000000000A46 /* LocalFileCatchRepositoryTests.swift */,
 				0000000000000000000000A47 /* CatchSavingIntegrationTests.swift */,
+				0000000000000000000000A49 /* ProvisionalDraftsMigratorTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -452,6 +458,7 @@ isa = PBXSourcesBuildPhase;
 			0000000000000000000000B38 /* Catch.swift in Sources */,
 			0000000000000000000000B40 /* CatchRepository.swift in Sources */,
 			0000000000000000000000B45 /* LocalFileCatchRepository.swift in Sources */,
+				0000000000000000000000B48 /* ProvisionalDraftsMigrator.swift in Sources */,
 				0000000000000000000000B43 /* DeviceLocationProvider.swift in Sources */,
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
@@ -501,6 +508,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B44 /* DeviceLocationProviderTests.swift in Sources */,
 				0000000000000000000000B46 /* LocalFileCatchRepositoryTests.swift in Sources */,
 				0000000000000000000000B47 /* CatchSavingIntegrationTests.swift in Sources */,
+				0000000000000000000000B49 /* ProvisionalDraftsMigratorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
