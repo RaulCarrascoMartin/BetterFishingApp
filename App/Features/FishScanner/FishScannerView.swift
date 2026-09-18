@@ -6,6 +6,9 @@ struct FishScannerView: View {
     @State private var cameraManager: CameraManager
     @State private var isShowingCamera = false
     @State private var presentingCameraError = false
+    @State private var showingSaveConfirmation = false
+    @State private var showingSaveFailed = false
+    @State private var showingSavedSuccess = false
 
     let viewModel: FishScannerViewModel
 
@@ -31,6 +34,30 @@ struct FishScannerView: View {
         }
         .navigationTitle("Identificar pez")
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: viewModel.saveState) { _, newState in
+            showingSaveFailed = (newState == .saveFailed)
+            showingSavedSuccess = (newState == .saved)
+        }
+        .alert("No se pudo guardar la captura", isPresented: $showingSaveFailed) {
+            Button("Reintentar") {
+                Task { await viewModel.saveCapturedCatch() }
+            }
+            .accessibilityIdentifier("scanner.saveRetry")
+            Button("Cancelar", role: .cancel) {}
+                .accessibilityIdentifier("scanner.saveCancel")
+        } message: {
+            Text("La especie identificada se mantiene en pantalla. Comprueba tu conexión e inténtalo de nuevo.")
+                .accessibilityIdentifier("scanner.saveFailedMessage")
+        }
+        .alert("Captura guardada", isPresented: $showingSavedSuccess) {
+            Button("Volver al inicio") {
+                viewModel.retryWithAnotherPhoto()
+            }
+            .accessibilityIdentifier("scanner.saveSuccessContinue")
+        } message: {
+            Text("Tu captura se ha guardado con la especie identificada.")
+                .accessibilityIdentifier("scanner.saveSuccessMessage")
+        }
         .alert("No se pudo capturar la foto", isPresented: $presentingCameraError) {
             Button("Reintentar") {}
             Button("Cancelar", role: .cancel) { isShowingCamera = false }
@@ -213,7 +240,10 @@ struct FishScannerView: View {
 
     // MARK: - Resultado
 
+    @ViewBuilder
     private func identifiedView(_ result: IdentificationResult) -> some View {
+        let speciesName = result.species.localizedName ?? result.species.commonName
+
         ScrollView {
             VStack(spacing: 20) {
                 Image(systemName: "checkmark.seal.fill")
@@ -223,7 +253,7 @@ struct FishScannerView: View {
                     .accessibilityHidden(true)
 
                 VStack(spacing: 4) {
-                    Text(result.species.localizedName ?? result.species.commonName)
+                    Text(speciesName)
                         .font(.title.bold())
                         .multilineTextAlignment(.center)
                         .accessibilityIdentifier("scanner.speciesName")
@@ -250,6 +280,33 @@ struct FishScannerView: View {
                     .accessibilityIdentifier("scanner.lowConfidenceWarning")
                 }
 
+                Group {
+                    switch viewModel.saveState {
+                    case .idle, .saveFailed:
+                        Button {
+                            showingSaveConfirmation = true
+                        } label: {
+                            Label("Guardar captura", systemImage: "square.and.arrow.down")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .accessibilityIdentifier("scanner.saveCatch")
+                    case .saving:
+                        HStack(spacing: 12) {
+                            ProgressView()
+                            Text("Guardando captura…")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityIdentifier("scanner.saving")
+                    case .saved:
+                        EmptyView()
+                    }
+                }
+
                 Button {
                     viewModel.retryWithAnotherPhoto()
                 } label: {
@@ -260,6 +317,16 @@ struct FishScannerView: View {
                 .accessibilityIdentifier("scanner.scanAnother")
                 .padding(.horizontal)
             }
+        }
+        .alert("Guardar la captura", isPresented: $showingSaveConfirmation) {
+            Button("Guardar") {
+                Task { await viewModel.saveCapturedCatch() }
+            }
+            .accessibilityIdentifier("scanner.saveConfirm")
+            Button("Cancelar", role: .cancel) {}
+        } message: {
+            Text("Se guardará la captura con la especie pre-rellena: \(speciesName) (\(result.species.scientificName)).")
+                .accessibilityIdentifier("scanner.saveConfirmationSpecies")
         }
     }
 
@@ -347,5 +414,17 @@ struct FishScannerView: View {
             )
         )
     }
+}
+
+#Preview("Guardando captura") {
+    SaveStatePreviewView(target: .saving)
+}
+
+#Preview("Guardado fallido") {
+    SaveStatePreviewView(target: .saveFailed)
+}
+
+#Preview("Guardado con éxito") {
+    SaveStatePreviewView(target: .saved)
 }
 #endif
