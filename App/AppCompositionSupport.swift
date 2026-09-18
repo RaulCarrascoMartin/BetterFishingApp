@@ -35,6 +35,17 @@ enum AppComposition {
         return FishScannerViewModel(identifier: identifier, catchSaver: catchSaver)
     }
 
+    @MainActor
+    static func makeCameraManager(arguments: [String] = ProcessInfo.processInfo.arguments) -> CameraManager {
+        #if DEBUG
+        if UITestScenario.requested(in: arguments) != nil {
+            let device = UITestCameraDevice()
+            return CameraManager(authorization: UITestCameraAuthorization(), session: device, photoOutput: device)
+        }
+        #endif
+        return CameraManager()
+    }
+
     private static func makeProductionServices(
         credentials: FishialCredentials
     ) -> (any FishIdentifying, any CatchSaving) {
@@ -94,6 +105,7 @@ struct UITestDoubleFishIdentifier: FishIdentifying {
     let scenario: UITestScenario
 
     func recognize(imageData: Data) async throws -> IdentificationOutcome {
+        try await Task.sleep(for: .milliseconds(3000))
         switch scenario {
         case .identifiedReliable, .saveSucceeds, .saveFails:
             return .identified(UITestScenarios.reliableBass)

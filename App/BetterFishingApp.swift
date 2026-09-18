@@ -12,14 +12,19 @@ struct BetterFishingApp: App {
 @MainActor
 struct RootView: View {
     private let viewModel: FishScannerViewModel
+    private let cameraManager: CameraManager
 
-    init(viewModel: FishScannerViewModel = AppComposition.makeScannerViewModel()) {
+    init(
+        viewModel: FishScannerViewModel = AppComposition.makeScannerViewModel(),
+        cameraManager: CameraManager = AppComposition.makeCameraManager()
+    ) {
         self.viewModel = viewModel
+        self.cameraManager = cameraManager
     }
 
     var body: some View {
         NavigationStack {
-            FishScannerView(viewModel: viewModel)
+            FishScannerView(viewModel: viewModel, cameraManager: cameraManager)
         }
     }
 }

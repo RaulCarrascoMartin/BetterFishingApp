@@ -48,6 +48,7 @@
 		0000000000000000000000B34 /* LocalDraftCatchSaverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A34 /* LocalDraftCatchSaverTests.swift */; };
 		0000000000000000000000B35 /* BetterFishingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A35 /* BetterFishingUITests.swift */; };
 		0000000000000000000000B36 /* AppCompositionSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A07 /* AppCompositionSupport.swift */; };
+		0000000000000000000000B37 /* CameraManagerUITestDouble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A37 /* CameraManagerUITestDouble.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +115,7 @@
 		0000000000000000000000A32 /* FishScannerPreviewSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishScannerPreviewSupport.swift; sourceTree = "<group>"; };
 		0000000000000000000000A34 /* LocalDraftCatchSaverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDraftCatchSaverTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A35 /* BetterFishingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterFishingUITests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A37 /* CameraManagerUITestDouble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManagerUITestDouble.swift; sourceTree = "<group>"; };
 		0000000000000000000000A36 /* BetterFishingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BetterFishingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -170,6 +172,7 @@
 				0000000000000000000000A2F /* FishScannerViewModel.swift */,
 				0000000000000000000000A31 /* FishScannerView.swift */,
 				0000000000000000000000A32 /* FishScannerPreviewSupport.swift */,
+				0000000000000000000000A37 /* CameraManagerUITestDouble.swift */,
 			);
 			path = FishScanner;
 			sourceTree = "<group>";
@@ -415,6 +418,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B2F /* FishScannerViewModel.swift in Sources */,
 				0000000000000000000000B31 /* FishScannerView.swift in Sources */,
 				0000000000000000000000B32 /* FishScannerPreviewSupport.swift in Sources */,
+				0000000000000000000000B37 /* CameraManagerUITestDouble.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
