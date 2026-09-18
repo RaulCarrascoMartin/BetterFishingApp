@@ -51,6 +51,9 @@
 		0000000000000000000000B37 /* CameraManagerUITestDouble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A37 /* CameraManagerUITestDouble.swift */; };
 		0000000000000000000000B39 /* CatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A39 /* CatchTests.swift */; };
 		0000000000000000000000B38 /* Catch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A38 /* Catch.swift */; };
+		0000000000000000000000B40 /* CatchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A40 /* CatchRepository.swift */; };
+		0000000000000000000000B41 /* CatchRepositoryFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A41 /* CatchRepositoryFake.swift */; };
+		0000000000000000000000B42 /* CatchRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A42 /* CatchRepositoryTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +124,9 @@
 		0000000000000000000000A36 /* BetterFishingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BetterFishingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0000000000000000000000A39 /* CatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A38 /* Catch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catch.swift; sourceTree = "<group>"; };
+		0000000000000000000000A40 /* CatchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchRepository.swift; sourceTree = "<group>"; };
+		0000000000000000000000A41 /* CatchRepositoryFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchRepositoryFake.swift; sourceTree = "<group>"; };
+		0000000000000000000000A42 /* CatchRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchRepositoryTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000C06 /* FishID */,
+				0000000000000000000000C13 /* CatchLog */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -199,6 +206,14 @@
 				0000000000000000000000A33 /* LocalDraftCatchSaver.swift */,
 			);
 			path = FishID;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C13 /* CatchLog */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A40 /* CatchRepository.swift */,
+			);
+			path = CatchLog;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C07 /* Core */ = {
@@ -261,6 +276,8 @@
 				0000000000000000000000A30 /* FishScannerViewModelTests.swift */,
 				0000000000000000000000A34 /* LocalDraftCatchSaverTests.swift */,
 				0000000000000000000000A39 /* CatchTests.swift */,
+				0000000000000000000000A41 /* CatchRepositoryFake.swift */,
+				0000000000000000000000A42 /* CatchRepositoryTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -410,6 +427,7 @@ isa = PBXSourcesBuildPhase;
 			0000000000000000000000B15 /* Species.swift in Sources */,
 			0000000000000000000000B1C /* CatchDraft.swift in Sources */,
 			0000000000000000000000B38 /* Catch.swift in Sources */,
+			0000000000000000000000B40 /* CatchRepository.swift in Sources */,
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
 			0000000000000000000000B1A /* IdentificationResult.swift in Sources */,
@@ -453,6 +471,8 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B30 /* FishScannerViewModelTests.swift in Sources */,
 				0000000000000000000000B34 /* LocalDraftCatchSaverTests.swift in Sources */,
 				0000000000000000000000B39 /* CatchTests.swift in Sources */,
+				0000000000000000000000B41 /* CatchRepositoryFake.swift in Sources */,
+				0000000000000000000000B42 /* CatchRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

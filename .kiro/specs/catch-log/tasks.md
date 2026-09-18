@@ -8,7 +8,7 @@
   - _Requirements: 3.1_
   - _Boundary: Models_
 
-- [ ] 1.2 Declarar el protocolo `CatchRepository`
+- [x] 1.2 Declarar el protocolo `CatchRepository`
   - Definir el contrato CRUD: `saveCatch(species:photoData:date:location:notes:)` → `Catch`, `listCatches()` → `[Catch]`, `getCatch(id:)` → `Catch?`, `updateCatch(id:date:location:notes:)` y `deleteCatch(id:)`.
   - Añadir un fake de `CatchRepository` en el test target (éxito/fallo programables) consumible por los ViewModels.
   - Observable: el protocolo compila en el target del app y el fake compila en el test target, sin acoplar a la implementación concreta.
