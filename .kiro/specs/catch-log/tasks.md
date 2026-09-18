@@ -15,7 +15,7 @@
   - _Requirements: 1.1, 2.1, 3.1, 4.1_
   - _Boundary: Services/CatchLog/CatchRepository_
 
-- [ ] 1.3 Implementar el proveedor de ubicación del dispositivo
+- [x] 1.3 Implementar el proveedor de ubicación del dispositivo
   - Encapsular CoreLocation detrás de un protocolo con `requestPermissionIfNeeded()` y `currentLocation() → LocationCoordinate2D?`.
   - Solicitar el permiso solo si aún no se ha decidido; obtener la coordenada actual con un timeout corto; devolver nil si el permiso está denegado o la ubicación no está disponible.
   - Observable: test en verde con un double del proveedor: permiso concedido devuelve coordenadas, permiso denegado devuelve nil, y el permiso no se vuelve a solicitar una vez decidido.

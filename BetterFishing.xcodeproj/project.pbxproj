@@ -54,6 +54,8 @@
 		0000000000000000000000B40 /* CatchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A40 /* CatchRepository.swift */; };
 		0000000000000000000000B41 /* CatchRepositoryFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A41 /* CatchRepositoryFake.swift */; };
 		0000000000000000000000B42 /* CatchRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A42 /* CatchRepositoryTests.swift */; };
+		0000000000000000000000B43 /* DeviceLocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A43 /* DeviceLocationProvider.swift */; };
+		0000000000000000000000B44 /* DeviceLocationProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A44 /* DeviceLocationProviderTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +129,8 @@
 		0000000000000000000000A40 /* CatchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchRepository.swift; sourceTree = "<group>"; };
 		0000000000000000000000A41 /* CatchRepositoryFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchRepositoryFake.swift; sourceTree = "<group>"; };
 		0000000000000000000000A42 /* CatchRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchRepositoryTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A43 /* DeviceLocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLocationProvider.swift; sourceTree = "<group>"; };
+		0000000000000000000000A44 /* DeviceLocationProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLocationProviderTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,8 +224,17 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000C08 /* Image */,
+				0000000000000000000000C14 /* Location */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C14 /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A43 /* DeviceLocationProvider.swift */,
+			);
+			path = Location;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C08 /* Image */ = {
@@ -278,6 +291,7 @@
 				0000000000000000000000A39 /* CatchTests.swift */,
 				0000000000000000000000A41 /* CatchRepositoryFake.swift */,
 				0000000000000000000000A42 /* CatchRepositoryTests.swift */,
+				0000000000000000000000A44 /* DeviceLocationProviderTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -428,6 +442,7 @@ isa = PBXSourcesBuildPhase;
 			0000000000000000000000B1C /* CatchDraft.swift in Sources */,
 			0000000000000000000000B38 /* Catch.swift in Sources */,
 			0000000000000000000000B40 /* CatchRepository.swift in Sources */,
+				0000000000000000000000B43 /* DeviceLocationProvider.swift in Sources */,
 			0000000000000000000000B17 /* FishialToken.swift in Sources */,
 			0000000000000000000000B18 /* FishialRecognition.swift in Sources */,
 			0000000000000000000000B1A /* IdentificationResult.swift in Sources */,
@@ -473,6 +488,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B39 /* CatchTests.swift in Sources */,
 				0000000000000000000000B41 /* CatchRepositoryFake.swift in Sources */,
 				0000000000000000000000B42 /* CatchRepositoryTests.swift in Sources */,
+				0000000000000000000000B44 /* DeviceLocationProviderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
