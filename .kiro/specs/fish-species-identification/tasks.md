@@ -153,7 +153,7 @@
   - _Requirements: 1.2, 2.2, 5.1_
   - _Boundary: Features/FishScanner_
 
-- [ ] 9.2 E2E galería → confianza baja
+- [x] 9.2 E2E galería → confianza baja
   - Seleccionar imagen de galería con fake que devuelve certainty baja y verificar que se muestra la especie con el aviso de fiabilidad.
   - Observable: UI test en verde cubriendo 1.3 y 3.2.
   - _Requirements: 1.3, 3.2_
