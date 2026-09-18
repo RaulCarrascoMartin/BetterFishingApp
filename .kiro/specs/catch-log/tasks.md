@@ -62,7 +62,7 @@
   - _Boundary: Features/CatchLog/CatchDetailView_
 
 ## 4. Core: historial de capturas
-- [ ] 4.1 (P) Modelar el listado de capturas
+- [x] 4.1 (P) Modelar el listado de capturas
   - _Depends: 2.1_
   - Cargar el listado del repositorio ordenado de más reciente a más antigua; exponer un estado vacío; refrescar el listado cuando llega una captura nueva o editada para reflejar el cambio sin reiniciar la app.
   - Observable: tests del ViewModel verifican el orden del listado, el estado vacío y que el listado se actualiza en vivo tras guardar o editar.
@@ -116,6 +116,7 @@
   - _Boundary: Services/CatchLog/ProvisionalDraftsMigrator, Composition Root_
 
 ## Implementation Notes
+- `CatchLogViewModel` (4.1) ordena de forma defensiva (`ordered(_:)`) los mismos criterios que el repositorio (date desc → createdAt desc → id) porque el fake de test devuelve el orden de un diccionario; el reviewer acepta el riesgo de deriva y lo registra. Tras un fallo de refresco, `catches` conserva datos obsoletos y `state == .loadFailed`: la vista (4.2) debe renderizar el estado de error ANTES que el `.loaded`/listado.
 - Enmienda aprobada (OPTION A): el borrado con confirmación (Req 4.1, 4.2, 4.3; design.md:384) usa `.alert` en lugar de `.confirmationDialog`. Mismo título, mensaje y acciones (confirmar destructivo `detail.confirmDelete` / cancelar `detail.cancelDelete` con los mismos identificadores de accesibilidad). Razón: en los simuladores iOS 26/27 los taps sobre las acciones de un action-sheet no llegan a los gestos de SwiftUI, mientras que los alerts con botones con identificador de accesibilidad se han probado fiables en esta repo (suite de escáner). La semántica de confirmación previa al borrado se mantiene intacta para Req 4.1.
 - La edición de ubicación en `CatchDetailView` (design.md:382) reserva el botón "Usar ubicación actual" sin implementar: la ubicación se edita únicamente mediante los campos manuales de latitud/longitud. `CatchDetailViewModel` no dispone de un seam de localización del dispositivo; el provider (Req 1.3) solo se usa en el guardado desde el escáner.
 - El detalle renderizado en `.loaded` con `catchEntry == nil` se conserva: `loadedContainer` mantiene su guard (`speciesCommonName == nil` → `ContentUnavailableView`), ver nota previa sobre `cancel()`/`dismissError()`.

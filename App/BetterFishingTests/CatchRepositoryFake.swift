@@ -7,6 +7,7 @@ enum CatchRepositoryFakeError: Error, Equatable {
     case saveFailed
     case updateFailed
     case deleteFailed
+    case listFailed
 }
 
 final class CatchRepositoryFake: CatchRepository, @unchecked Sendable {
@@ -15,6 +16,7 @@ final class CatchRepositoryFake: CatchRepository, @unchecked Sendable {
         var saveStub: Result<Catch, Error>?
         var updateStub: Result<Void, Error>?
         var deleteStub: Result<Void, Error>?
+        var listStub: Result<[Catch], Error>?
         var receivedSpecies: [Species] = []
         var receivedPhotoData: [Data] = []
         var receivedDates: [Date] = []
@@ -40,6 +42,11 @@ final class CatchRepositoryFake: CatchRepository, @unchecked Sendable {
     var deleteStub: Result<Void, Error>? {
         get { state.withLock { $0.deleteStub } }
         set { state.withLock { $0.deleteStub = newValue } }
+    }
+
+    var listStub: Result<[Catch], Error>? {
+        get { state.withLock { $0.listStub } }
+        set { state.withLock { $0.listStub = newValue } }
     }
 
     var receivedSpecies: [Species] {
@@ -78,6 +85,14 @@ final class CatchRepositoryFake: CatchRepository, @unchecked Sendable {
         state.withLock { Array($0.store.values) }
     }
 
+    func seed(_ catches: [Catch]) {
+        state.withLock { state in
+            for catchEntry in catches {
+                state.store[catchEntry.id] = catchEntry
+            }
+        }
+    }
+
     func saveCatch(species: Species, photoData: Data, date: Date, location: LocationCoordinate2D?, notes: String) async throws -> Catch {
         let stub: Result<Catch, Error>? = state.withLock { state in
             state.receivedSpecies.append(species)
@@ -109,7 +124,11 @@ final class CatchRepositoryFake: CatchRepository, @unchecked Sendable {
     }
 
     func listCatches() async throws -> [Catch] {
-        state.withLock { Array($0.store.values) }
+        let stub: Result<[Catch], Error>? = state.withLock { $0.listStub }
+        if let stub {
+            return try stub.get()
+        }
+        return state.withLock { Array($0.store.values) }
     }
 
     func getCatch(id: UUID) async throws -> Catch? {
