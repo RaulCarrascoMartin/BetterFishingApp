@@ -139,7 +139,7 @@
   - _Requirements: 4.1, 4.2_
   - _Boundary: Services/FishID/LocalDraftCatchSaver_
 
-- [ ] 8.2 Integrar en el composition root de la app
+- [x] 8.2 Integrar en el composition root de la app
   - Construir e inyectar `FishialClient` (credenciales de 1.2 y base URL de 3.3) como `FishIdentifying` y `LocalDraftCatchSaver` como `CatchSaving`; presentar `FishScannerView` con su ViewModel en la app.
   - Habilitar la inyección de doubles por launch-arguments para los UI tests (el composition root permite sustituir `FishIdentifying`/`CatchSaving` por fakes al arrancar la app de test).
   - Observable: un smoke test/`xcodebuild` confirma que el flujo completo compila y arranca; un UI test de humo con doubles vía launch-arguments pasa.
