@@ -159,7 +159,7 @@
   - _Requirements: 1.3, 3.2_
   - _Boundary: Features/FishScanner_
 
-- [ ] 9.3 E2E sin coincidencia → reintento
+- [x] 9.3 E2E sin coincidencia → reintento
   - Fake que devuelve `noMatch`; verificar aviso de no identificado y que el reintento vuelve al selector de fuente para una nueva imagen.
   - Observable: UI test en verde cubriendo 3.1 y 3.3.
   - _Requirements: 3.1, 3.3_
