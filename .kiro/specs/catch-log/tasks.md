@@ -23,7 +23,7 @@
   - _Boundary: Core/Location/DeviceLocationProvider_
 
 ## 2. Core: repositorio local, guardado desde el escáner y migración
-- [ ] 2.1 Implementar el repositorio local de capturas
+- [x] 2.1 Implementar el repositorio local de capturas
   - Persistir en `Application Support/Catches/` el JPEG (`<uuid>.jpg`) y el JSON de metadatos `Catch` (`<uuid>.json`) con escritura atómica.
   - Implementar save/list/get/update/delete; listar ordenado de más reciente a más antigua; borrar ambos ficheros asociados.
   - Observable: test de integración con directorio temporal confirma guardar → listar → obtener → actualizar → borrar y que la foto y los metadatos se releen iguales entre sesiones.
@@ -116,6 +116,7 @@
   - _Boundary: Services/CatchLog/ProvisionalDraftsMigrator, Composition Root_
 
 ## Implementation Notes
+- Los implementadores deben pegar el output real de la fase RED (fallo de compilación/test con la implementación ausente) en `RED_PHASE_OUTPUT`; el reviewer lo exige como evidencia y rechaza si falta (tarea 2.1). El patrón para regenerarlo: mover temporalmente el fichero de implementación, compilar los tests, restaurarlo.
 - Xcode 27 trata un `baseConfigurationReference` ausente como ERROR de build: `Debug.xcconfig`/`Release.xcconfig` están gitignored, así que un checkout limpio debe copiarlos desde las plantillas `.example` (App/Resources) antes del primer build.
 - `xcode-select` del sistema puede apuntar a CommandLineTools: usar `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` antepuesto a `xcodebuild` si no encuentra Xcode.
 - Los tests de guardado existentes del escáner (`saveSucceeds`/`saveFails`) usan doubles vía launch-arguments; tras esta spec, la persistencia real con `LocalFileCatchRepository` queda cubierta por los tests de integración del repositorio (2.1, 2.2) y por los E2E (6.x).
