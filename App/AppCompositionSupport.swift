@@ -33,26 +33,8 @@ enum AppComposition {
         draftsDirectory: URL? = nil
     ) -> AppRootServices {
         #if DEBUG
-        if let scenario = UITestScenario.requested(in: arguments), scenario.isScannerDriving {
-            let (identifier, catchSaver) = makeUITestDoubles(scenario: scenario)
-            let throwawayRepository = LocalFileCatchRepository(
-                directoryURL: FileManager.default.temporaryDirectory
-                    .appendingPathComponent("UITestRoot-\(UUID().uuidString)", isDirectory: true)
-            )
-            return AppRootServices(
-                scannerViewModel: FishScannerViewModel(identifier: identifier, catchSaver: catchSaver),
-                catchSaver: catchSaver,
-                catchLogViewModel: CatchLogViewModel(repository: throwawayRepository),
-                thumbnailProvider: { throwawayRepository.photoData(for: $0) },
-                detailViewModelFactory: { catchEntry in
-                    CatchDetailViewModel(
-                        id: catchEntry.id,
-                        repository: throwawayRepository,
-                        photoProvider: { throwawayRepository.photoData(for: $0) }
-                    )
-                },
-                migrator: ProvisionalDraftsMigrator(catchRepository: throwawayRepository, draftsDirectory: draftsDirectory)
-            )
+        if let services = makeUITestRootServices(arguments: arguments, draftsDirectory: draftsDirectory) {
+            return services
         }
         #endif
 
@@ -101,6 +83,58 @@ enum AppComposition {
 
     #if DEBUG
     @MainActor
+    static func makeUITestRootServices(
+        arguments: [String],
+        draftsDirectory: URL?
+    ) -> AppRootServices? {
+        guard let scenario = UITestScenario.requested(in: arguments), scenario.isScannerDriving else {
+            return nil
+        }
+
+        let identifier = UITestDoubleFishIdentifier(scenario: scenario)
+
+        let catchSaver: any CatchSaving
+        let repository: LocalFileCatchRepository
+
+        switch scenario {
+        case .registrySaveSucceeds, .registrySaveFailsRetry:
+            repository = LocalFileCatchRepository(
+                directoryURL: FileManager.default.temporaryDirectory
+                    .appendingPathComponent("UITestRegistry-\(UUID().uuidString)", isDirectory: true),
+                deviceLocationProvider: UITestNoLocationProvider()
+            )
+            if scenario == .registrySaveSucceeds {
+                catchSaver = repository
+            } else {
+                catchSaver = UITestDoubleCatchSaver(scenario: scenario, inner: repository)
+            }
+        default:
+            repository = LocalFileCatchRepository(
+                directoryURL: FileManager.default.temporaryDirectory
+                    .appendingPathComponent("UITestRoot-\(UUID().uuidString)", isDirectory: true)
+            )
+            catchSaver = UITestDoubleCatchSaver(scenario: scenario)
+        }
+
+        return AppRootServices(
+            scannerViewModel: FishScannerViewModel(identifier: identifier, catchSaver: catchSaver),
+            catchSaver: catchSaver,
+            catchLogViewModel: CatchLogViewModel(repository: repository),
+            thumbnailProvider: { repository.photoData(for: $0) },
+            detailViewModelFactory: { catchEntry in
+                CatchDetailViewModel(
+                    id: catchEntry.id,
+                    repository: repository,
+                    photoProvider: { repository.photoData(for: $0) }
+                )
+            },
+            migrator: ProvisionalDraftsMigrator(catchRepository: repository, draftsDirectory: draftsDirectory)
+        )
+    }
+    #endif
+
+    #if DEBUG
+    @MainActor
     static func makeGallerySelectionProvider(
         arguments: [String] = ProcessInfo.processInfo.arguments
     ) -> (@MainActor () -> Data?)? {
@@ -117,6 +151,8 @@ enum UITestScenario: String {
     case noMatch
     case saveSucceeds
     case saveFails
+    case registrySaveSucceeds
+    case registrySaveFailsRetry
     case detailLoaded
     case detailDeleteFails
     case logLoading
@@ -139,7 +175,8 @@ enum UITestScenario: String {
 
     var isScannerDriving: Bool {
         switch self {
-        case .identifiedReliable, .identifiedLowConfidence, .noMatch, .saveSucceeds, .saveFails:
+        case .identifiedReliable, .identifiedLowConfidence, .noMatch, .saveSucceeds, .saveFails,
+             .registrySaveSucceeds, .registrySaveFailsRetry:
             return true
         case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty:
             return false
@@ -183,17 +220,13 @@ enum UITestScenarios {
     )
 }
 
-private func makeUITestDoubles(scenario: UITestScenario) -> (any FishIdentifying, any CatchSaving) {
-    (UITestDoubleFishIdentifier(scenario: scenario), UITestDoubleCatchSaver(scenario: scenario))
-}
-
 struct UITestDoubleFishIdentifier: FishIdentifying {
     let scenario: UITestScenario
 
     func recognize(imageData: Data) async throws -> IdentificationOutcome {
         try await Task.sleep(for: .milliseconds(3000))
         switch scenario {
-        case .identifiedReliable, .saveSucceeds, .saveFails:
+        case .identifiedReliable, .saveSucceeds, .saveFails, .registrySaveSucceeds, .registrySaveFailsRetry:
             return .identified(UITestScenarios.reliableBass)
         case .identifiedLowConfidence:
             return .identified(UITestScenarios.lowConfidenceBluegill)
@@ -401,20 +434,32 @@ actor UITestDoubleDetailRepository: CatchRepository {
 actor UITestDoubleCatchSaver: CatchSaving {
     let scenario: UITestScenario
     private var remainingFailures: Int
+    private let inner: (any CatchSaving)?
 
-    init(scenario: UITestScenario, failuresBeforeSuccess: Int = 1) {
+    init(scenario: UITestScenario, failuresBeforeSuccess: Int = 1, inner: (any CatchSaving)? = nil) {
         self.scenario = scenario
         self.remainingFailures = failuresBeforeSuccess
+        self.inner = inner
     }
 
     func saveDraft(species: Species, photoData: Data) async throws {
-        guard scenario == .saveFails, remainingFailures > 0 else { return }
-        remainingFailures -= 1
-        throw UITestCatchSaveError.failed
+        if (scenario == .saveFails || scenario == .registrySaveFailsRetry), remainingFailures > 0 {
+            remainingFailures -= 1
+            throw UITestCatchSaveError.failed
+        }
+        if let inner {
+            try await inner.saveDraft(species: species, photoData: photoData)
+        }
     }
 }
 
 private enum UITestCatchSaveError: Error {
     case failed
+}
+
+@MainActor
+private struct UITestNoLocationProvider: DeviceLocationProviding {
+    func requestPermissionIfNeeded() async -> Bool { false }
+    func currentLocation() async -> LocationCoordinate2D? { nil }
 }
 #endif

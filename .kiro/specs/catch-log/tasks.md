@@ -91,7 +91,7 @@
   - _Boundary: RootView_
 
 ## 6. Validation: E2E
-- [ ] 6.1 E2E guardado desde el escáner → aparece en el historial
+- [x] 6.1 E2E guardado desde el escáner → aparece en el historial
   - Identificar con double → guardar → la captura aparece en el tab de capturas; verificar también el caso de fallo de guardado con reintento.
   - Observable: UI tests en verde.
   - _Requirements: 1.1, 1.5, 1.6, 1.7, 2.1_
