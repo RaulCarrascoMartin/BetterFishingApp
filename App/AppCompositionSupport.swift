@@ -97,13 +97,16 @@ enum AppComposition {
         let repository: LocalFileCatchRepository
 
         switch scenario {
-        case .registrySaveSucceeds, .registrySaveFailsRetry:
+        case .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded:
             repository = LocalFileCatchRepository(
                 directoryURL: FileManager.default.temporaryDirectory
                     .appendingPathComponent("UITestRegistry-\(UUID().uuidString)", isDirectory: true),
                 deviceLocationProvider: UITestNoLocationProvider()
             )
-            if scenario == .registrySaveSucceeds {
+            if scenario == .registryLogSeeded {
+                UITestLogFixture.seed(into: repository)
+                catchSaver = repository
+            } else if scenario == .registrySaveSucceeds {
                 catchSaver = repository
             } else {
                 catchSaver = UITestDoubleCatchSaver(scenario: scenario, inner: repository)
@@ -153,6 +156,7 @@ enum UITestScenario: String {
     case saveFails
     case registrySaveSucceeds
     case registrySaveFailsRetry
+    case registryLogSeeded
     case detailLoaded
     case detailDeleteFails
     case logLoading
@@ -176,7 +180,7 @@ enum UITestScenario: String {
     var isScannerDriving: Bool {
         switch self {
         case .identifiedReliable, .identifiedLowConfidence, .noMatch, .saveSucceeds, .saveFails,
-             .registrySaveSucceeds, .registrySaveFailsRetry:
+             .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded:
             return true
         case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty:
             return false
@@ -226,7 +230,7 @@ struct UITestDoubleFishIdentifier: FishIdentifying {
     func recognize(imageData: Data) async throws -> IdentificationOutcome {
         try await Task.sleep(for: .milliseconds(3000))
         switch scenario {
-        case .identifiedReliable, .saveSucceeds, .saveFails, .registrySaveSucceeds, .registrySaveFailsRetry:
+        case .identifiedReliable, .saveSucceeds, .saveFails, .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded:
             return .identified(UITestScenarios.reliableBass)
         case .identifiedLowConfidence:
             return .identified(UITestScenarios.lowConfidenceBluegill)

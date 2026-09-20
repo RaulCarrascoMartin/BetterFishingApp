@@ -97,7 +97,7 @@
   - _Requirements: 1.1, 1.5, 1.6, 1.7, 2.1_
   - _Boundary: Features/FishScanner, Features/CatchLog_
 
-- [ ] 6.2 E2E listado → detalle → edición
+- [x] 6.2 E2E listado → detalle → edición
   - Navegar del listado a una captura, editar fecha/notas, guardar y verificar que el listado lo refleja; cancelar una edición y verificar que no cambia.
   - Observable: UI tests en verde.
   - _Requirements: 2.1, 2.4, 2.5, 3.1, 3.2, 3.4, 3.5_
