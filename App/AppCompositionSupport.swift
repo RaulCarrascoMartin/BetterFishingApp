@@ -95,6 +95,7 @@ enum AppComposition {
 
         let catchSaver: any CatchSaving
         let repository: LocalFileCatchRepository
+        var fixedDraftsDirectory: URL?
 
         switch scenario {
         case .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded, .registryLogDeleteFails:
@@ -111,6 +112,21 @@ enum AppComposition {
             } else {
                 catchSaver = UITestDoubleCatchSaver(scenario: scenario, inner: repository)
             }
+        case .migrationLaunch1, .migrationLaunch2:
+            let suffix = UITestPersistenceArgument.suffix(in: arguments)
+            let registryURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("UITestRegistry-\(suffix)", isDirectory: true)
+            let draftsURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("UITestDrafts-\(suffix)", isDirectory: true)
+            fixedDraftsDirectory = draftsURL
+            repository = LocalFileCatchRepository(
+                directoryURL: registryURL,
+                deviceLocationProvider: UITestNoLocationProvider()
+            )
+            if scenario.seedsLegacyDrafts {
+                UITestLegacyDraftFixture.seedDraft(into: draftsURL, date: UITestLogFixture.bassDate)
+            }
+            catchSaver = repository
         default:
             repository = LocalFileCatchRepository(
                 directoryURL: FileManager.default.temporaryDirectory
@@ -138,7 +154,10 @@ enum AppComposition {
                     photoProvider: { repository.photoData(for: $0) }
                 )
             },
-            migrator: ProvisionalDraftsMigrator(catchRepository: repository, draftsDirectory: draftsDirectory)
+            migrator: ProvisionalDraftsMigrator(
+                catchRepository: repository,
+                draftsDirectory: fixedDraftsDirectory ?? draftsDirectory
+            )
         )
     }
     #endif
@@ -165,6 +184,8 @@ enum UITestScenario: String {
     case registrySaveFailsRetry
     case registryLogSeeded
     case registryLogDeleteFails
+    case migrationLaunch1
+    case migrationLaunch2
     case detailLoaded
     case detailDeleteFails
     case logLoading
@@ -188,10 +209,22 @@ enum UITestScenario: String {
     var isScannerDriving: Bool {
         switch self {
         case .identifiedReliable, .identifiedLowConfidence, .noMatch, .saveSucceeds, .saveFails,
-             .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded, .registryLogDeleteFails:
+             .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded, .registryLogDeleteFails,
+             .migrationLaunch1, .migrationLaunch2:
             return true
         case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty:
             return false
+        }
+    }
+
+    var seedsLegacyDrafts: Bool {
+        self == .migrationLaunch1
+    }
+
+    var allowsLaunchMigration: Bool {
+        switch self {
+        case .migrationLaunch1, .migrationLaunch2: return true
+        default: return false
         }
     }
 
@@ -232,6 +265,45 @@ enum UITestScenarios {
     )
 }
 
+enum UITestPersistenceArgument {
+    static func suffix(in arguments: [String]) -> String {
+        guard let index = arguments.firstIndex(of: "--ui-persistence"),
+              arguments.indices.contains(index + 1),
+              !arguments[index + 1].isEmpty else {
+            return UUID().uuidString
+        }
+        return arguments[index + 1]
+    }
+}
+
+enum UITestLegacyDraftFixture {
+    static func seedDraft(
+        into draftsDirectory: URL,
+        species: Species = UITestScenarios.reliableBass.species,
+        date: Date
+    ) {
+        let fileManager = FileManager.default
+        try? fileManager.createDirectory(at: draftsDirectory, withIntermediateDirectories: true)
+
+        let draft = CatchDraft(
+            id: UUID(),
+            species: species,
+            photoPath: "provisional.png",
+            createdAt: date,
+            status: .draft
+        )
+        do {
+            try JSONEncoder()
+                .encode(draft)
+                .write(to: draftsDirectory.appendingPathComponent("metadata.json"), options: .atomic)
+            try UITestImageFixture.makeJPEGData()
+                .write(to: draftsDirectory.appendingPathComponent("provisional.png"), options: .atomic)
+        } catch {
+            assertionFailure("No se pudo sembrar el borrador provisional legacy: \(error)")
+        }
+    }
+}
+
 struct UITestDoubleFishIdentifier: FishIdentifying {
     let scenario: UITestScenario
 
@@ -242,7 +314,8 @@ struct UITestDoubleFishIdentifier: FishIdentifying {
             return .identified(UITestScenarios.reliableBass)
         case .identifiedLowConfidence:
             return .identified(UITestScenarios.lowConfidenceBluegill)
-        case .noMatch, .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty:
+        case .noMatch, .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty,
+             .migrationLaunch1, .migrationLaunch2:
             return .noMatch
         }
     }

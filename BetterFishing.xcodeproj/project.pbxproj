@@ -70,6 +70,7 @@
 		0000000000000000000000B60 /* RegistryE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A60 /* RegistryE2ETests.swift */; };
 		0000000000000000000000B61 /* RegistryEditE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A61 /* RegistryEditE2ETests.swift */; };
 		0000000000000000000000B62 /* RegistryDeleteE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A62 /* RegistryDeleteE2ETests.swift */; };
+		0000000000000000000000B63 /* MigrationE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A63 /* MigrationE2ETests.swift */; };
 		0000000000000000000000B59 /* CompositionIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A59 /* CompositionIntegrationTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -161,6 +162,7 @@
 		0000000000000000000000A60 /* RegistryE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistryE2ETests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A61 /* RegistryEditE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistryEditE2ETests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A62 /* RegistryDeleteE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistryDeleteE2ETests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A63 /* MigrationE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationE2ETests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -353,6 +355,7 @@
 				0000000000000000000000A60 /* RegistryE2ETests.swift */,
 				0000000000000000000000A61 /* RegistryEditE2ETests.swift */,
 				0000000000000000000000A62 /* RegistryDeleteE2ETests.swift */,
+				0000000000000000000000A63 /* MigrationE2ETests.swift */,
 			);
 			path = BetterFishingUITests;
 			sourceTree = "<group>";
@@ -565,6 +568,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B60 /* RegistryE2ETests.swift in Sources */,
 				0000000000000000000000B61 /* RegistryEditE2ETests.swift in Sources */,
 				0000000000000000000000B62 /* RegistryDeleteE2ETests.swift in Sources */,
+				0000000000000000000000B63 /* MigrationE2ETests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

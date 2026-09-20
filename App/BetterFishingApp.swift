@@ -78,7 +78,10 @@ struct RootView: View {
         }
         #if DEBUG
         .task {
-            guard UITestScenario.requested(in: ProcessInfo.processInfo.arguments) == nil else { return }
+            let scenario = UITestScenario.requested(in: ProcessInfo.processInfo.arguments)
+            if let scenario, !scenario.allowsLaunchMigration {
+                return
+            }
             try? await services.migrator.migrateIfNeeded()
         }
         #else

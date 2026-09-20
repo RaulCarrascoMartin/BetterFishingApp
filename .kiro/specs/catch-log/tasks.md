@@ -109,7 +109,7 @@
   - _Requirements: 4.1, 4.2, 4.3_
   - _Boundary: Features/CatchLog_
 
-- [ ] 6.4 E2E migración de borradores al primer arranque
+- [x] 6.4 E2E migración de borradores al primer arranque
   - Sembrar borradores en `ProvisionalDrafts/`, arrancar la app y verificar que aparecen como capturas del registro y que no se duplican en arranques posteriores.
   - Observable: UI/integration test en verde cubriendo la migración única.
   - _Requirements: 5.1, 5.2, 5.3_
