@@ -97,13 +97,13 @@ enum AppComposition {
         let repository: LocalFileCatchRepository
 
         switch scenario {
-        case .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded:
+        case .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded, .registryLogDeleteFails:
             repository = LocalFileCatchRepository(
                 directoryURL: FileManager.default.temporaryDirectory
                     .appendingPathComponent("UITestRegistry-\(UUID().uuidString)", isDirectory: true),
                 deviceLocationProvider: UITestNoLocationProvider()
             )
-            if scenario == .registryLogSeeded {
+            if scenario == .registryLogSeeded || scenario == .registryLogDeleteFails {
                 UITestLogFixture.seed(into: repository)
                 catchSaver = repository
             } else if scenario == .registrySaveSucceeds {
@@ -119,6 +119,13 @@ enum AppComposition {
             catchSaver = UITestDoubleCatchSaver(scenario: scenario)
         }
 
+        let detailRepository: any CatchRepository
+        if scenario == .registryLogDeleteFails {
+            detailRepository = UITestDoubleDetailRepository(real: repository, failuresBeforeSuccess: 1)
+        } else {
+            detailRepository = repository
+        }
+
         return AppRootServices(
             scannerViewModel: FishScannerViewModel(identifier: identifier, catchSaver: catchSaver),
             catchSaver: catchSaver,
@@ -127,7 +134,7 @@ enum AppComposition {
             detailViewModelFactory: { catchEntry in
                 CatchDetailViewModel(
                     id: catchEntry.id,
-                    repository: repository,
+                    repository: detailRepository,
                     photoProvider: { repository.photoData(for: $0) }
                 )
             },
@@ -157,6 +164,7 @@ enum UITestScenario: String {
     case registrySaveSucceeds
     case registrySaveFailsRetry
     case registryLogSeeded
+    case registryLogDeleteFails
     case detailLoaded
     case detailDeleteFails
     case logLoading
@@ -180,7 +188,7 @@ enum UITestScenario: String {
     var isScannerDriving: Bool {
         switch self {
         case .identifiedReliable, .identifiedLowConfidence, .noMatch, .saveSucceeds, .saveFails,
-             .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded:
+             .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded, .registryLogDeleteFails:
             return true
         case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty:
             return false
@@ -230,7 +238,7 @@ struct UITestDoubleFishIdentifier: FishIdentifying {
     func recognize(imageData: Data) async throws -> IdentificationOutcome {
         try await Task.sleep(for: .milliseconds(3000))
         switch scenario {
-        case .identifiedReliable, .saveSucceeds, .saveFails, .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded:
+        case .identifiedReliable, .saveSucceeds, .saveFails, .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded, .registryLogDeleteFails:
             return .identified(UITestScenarios.reliableBass)
         case .identifiedLowConfidence:
             return .identified(UITestScenarios.lowConfidenceBluegill)

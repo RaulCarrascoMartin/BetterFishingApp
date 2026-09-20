@@ -103,7 +103,7 @@
   - _Requirements: 2.1, 2.4, 2.5, 3.1, 3.2, 3.4, 3.5_
   - _Boundary: Features/CatchLog_
 
-- [ ] 6.3 E2E borrado con confirmación
+- [x] 6.3 E2E borrado con confirmación
   - Solicitar borrar una captura, confirmar en el diálogo y verificar que desaparece del historial; verificar que un fallo de borrado conserva la captura.
   - Observable: UI tests en verde.
   - _Requirements: 4.1, 4.2, 4.3_
