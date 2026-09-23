@@ -49,7 +49,7 @@
   - _Boundary: Services/Supabase/SupabaseStorageService_
 
 ## 4. Core: seam de base de datos
-- [ ] 4.1 (P) Declarar el protocolo de base de datos y sus tipos de valor
+- [x] 4.1 (P) Declarar el protocolo de base de datos y sus tipos de valor
   - Declarar `SupabaseDatabaseAccess` (`Sendable`) con select(columns:from:filters:limit:) y rpc(function:arguments:), más los tipos de valor `SupabaseFilter`, `SupabaseFilterOperator`, `SupabaseJSONValue` y `SupabaseRPCArguments` según el contrato del diseño.
   - Garantizar que el seam es agnóstico al esquema (no menciona tablas de ninguna feature) y no filtra tipos del query builder del SDK.
   - Observable: el protocolo y los tipos compilan en el target de la app y un double mínimo conforma el protocolo sin importar el SDK.
@@ -113,3 +113,4 @@
 - 3.1: `SupabaseStoring` + `SupabaseUploadOptions` declarados solo con Foundation (sin tipos del SDK) en `Services/Supabase/SupabaseStoring.swift`; `SupabaseStoringFakeConformanceTests` define `StorageTestDouble` con caja `Sendable` que registra uploads y devuelve ruta fija o error programable (5 tests; suite 181 en verde tras RED `Cannot find type 'SupabaseStoring' in scope`).
 - 3.2: endpoints exactos de los stubs (base `https://project-ref.supabase.co`, sin `useNewHostname`) — upload POST y download GET `/storage/v1/object/{bucket}/{path}`; el SDK v2.55 devuelve `FileUploadResponse` y el servicio devuelve `fullPath` (el `Key`/ruta almacenada, p. ej. `catches/2026/season/catch-1.jpg`).
 - RED 3.2: evidencia reproducida moviendo `App/Services/Supabase/SupabaseStorageService.swift` fuera de los sources del target (`Build input file cannot be found: '.../SupabaseStorageService.swift' ... ** TEST FAILED **`); fichero restaurado y suite 185 en verde tras ello (reproducido por el reviewer en ronda de revisión de 3.2).
+- 4.1: `SupabaseDatabaseAccess` + `SupabaseFilter`/`SupabaseFilterOperator`/`SupabaseJSONValue`/`SupabaseRPCArguments` declarados solo con Foundation (sin tipos del SDK ni tablas de features) en `Services/Supabase/SupabaseDatabaseAccess.swift`; `SupabaseDatabaseFakeConformanceTests` define `DatabaseTestDouble` (`any SupabaseDatabaseAccess`) que registra select (filtros/límite) y rpc (función/argumentos) con caja `Sendable` (5 tests; suite 190 en verde tras RED `Cannot find 'SupabaseDatabaseAccess' in scope`).
