@@ -20,7 +20,7 @@
   - _Requirements: 4.2, 6.2_
 
 ## 2. Core: repositorio, dobles y feature de descubrimiento
-- [ ] 2.1 Declarar el contrato `SpotRepository` y su error tipado
+- [x] 2.1 Declarar el contrato `SpotRepository` y su error tipado
   - Definir en `App/Services/Spots/SpotRepository.swift` el protocolo `SpotRepository: Sendable` (listSpots(region:), nearbySpots(from:radiusKilometers:), spot(id:), favoriteSpotIDs(), favoriteSpots(), setFavorite(spotID:isFavorite:)) y `SpotRepositoryError` (`backendUnavailable`, `queryFailed`, `authenticationRequired`), según el contrato del diseño.
   - Garantizar que un doble mínimo del test target puede conformar el protocolo sin importar Supabase.
   - Observable: el protocolo y el error compilan y un double mínimo conforma `SpotRepository` en el test target (sin dependencias externas).
@@ -113,3 +113,4 @@
 - 1.2: semilla (18 spots) al final de `001_spot_discovery_init.sql` tras los grants, con `spots_name_uidx` para que `on conflict (name)` funcione al re-ejecutar. `nearby_spots(41.4,2.2,50)` → 10 filas en radio en orden ascendente: Barceloneta (~2.5 km), Besòs (~2.9), Port de Barcelona (~3.8), Badalona (~6.8), Delta Llobregat (~14.4), Llobregat Sant Boi (~15.2), Castelldefels (~25.0), Anoia Martorell (~31.2), Tordera Sant Celoni (~43.9), Vallforners (~46.4); fuera de radio: Sau (~67), Banyoles (~92), Cambrils (~100), Boadella (~116), Cap de Creus (~133), Segre Lleida (~133), Ebre Fangar (~137), Tierra Alta (~152).
 - 1.2 (categorías sembradas): river (Besòs, Llobregat Sant Boi, Anoia, Tordera, Segre Lleida), lake (Sau, Tierra Alta, Vallforners, Boadella, Banyoles), sea (Port Barcelona, Ebre Fangar, Cap de Creus), shore (Barceloneta, Badalona, Delta Llobregat, Castelldefels, Cambrils).
 - 1.3: `Spot` (`Hashable` incluye `Equatable` del diseño) con `LocationCoordinate2D` compartida de Catch.swift (no movida); `SpotRegion` deriva esquinas del bbox con 111_320 m/grado lat y `111_320*cos(lat)` para lon (aislado de MapKit). 8 tests `SpotModelsTests` en verde; suite completa 227/227.
+- 2.1: `SpotRepository` (`Sendable`) + `SpotRepositoryError` (`Sendable`/`Equatable`, `queryFailed(String)`) en `App/Services/Spots/SpotRepository.swift`; `SpotRepositoryContractTests` con un doble Foundation-only ejerce los 6 métodos y los 3 casos de error. Suite 232/232 (227 base + 5 nuevos).

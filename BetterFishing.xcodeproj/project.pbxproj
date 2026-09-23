@@ -102,6 +102,8 @@
 		0000000000000000000000B84 /* Spot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7C /* Spot.swift */; };
 		0000000000000000000000B85 /* SpotCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7D /* SpotCategory.swift */; };
 		0000000000000000000000B86 /* SpotRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7E /* SpotRegion.swift */; };
+		0000000000000000000000B88 /* SpotRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A80 /* SpotRepository.swift */; };
+		0000000000000000000000B89 /* SpotRepositoryContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A81 /* SpotRepositoryContractTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -221,6 +223,8 @@
 		0000000000000000000000A7C /* Spot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spot.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7D /* SpotCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotCategory.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7E /* SpotRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRegion.swift; sourceTree = "<group>"; };
+		0000000000000000000000A80 /* SpotRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRepository.swift; sourceTree = "<group>"; };
+		0000000000000000000000A81 /* SpotRepositoryContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRepositoryContractTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -308,6 +312,7 @@
 				0000000000000000000000C06 /* FishID */,
 				0000000000000000000000C13 /* CatchLog */,
 				0000000000000000000000C16 /* Supabase */,
+				0000000000000000000000C19 /* Spots */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -346,6 +351,14 @@
 				0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */,
 			);
 			path = CatchLog;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C19 /* Spots */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A80 /* SpotRepository.swift */,
+			);
+			path = Spots;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C07 /* Core */ = {
@@ -461,6 +474,7 @@
 				0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */,
 				0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */,
 				0000000000000000000000A7F /* SpotModelsTests.swift */,
+				0000000000000000000000A81 /* SpotRepositoryContractTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -661,11 +675,12 @@ isa = PBXSourcesBuildPhase;
 0000000000000000000000B7D /* SupabaseDatabaseService.swift in Sources */,
 			0000000000000000000000B84 /* Spot.swift in Sources */,
 			0000000000000000000000B85 /* SpotCategory.swift in Sources */,
-			0000000000000000000000B86 /* SpotRegion.swift in Sources */,
-		);
+0000000000000000000000B86 /* SpotRegion.swift in Sources */,
+				0000000000000000000000B88 /* SpotRepository.swift in Sources */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-	0000000000000000000000F0C /* Sources */ = {
+		0000000000000000000000F0C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -712,6 +727,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B82 /* SupabaseBaseFakeTests.swift in Sources */,
 				0000000000000000000000B83 /* SupabaseSessionFlowIntegrationTests.swift in Sources */,
 				0000000000000000000000B87 /* SpotModelsTests.swift in Sources */,
+				0000000000000000000000B89 /* SpotRepositoryContractTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
