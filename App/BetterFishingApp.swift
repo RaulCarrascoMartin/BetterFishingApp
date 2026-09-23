@@ -75,6 +75,22 @@ struct RootView: View {
                 )
             }
             .tabItem { Label("Capturas", systemImage: "list.bullet.rectangle.portrait") }
+
+            if let spotMapViewModel = services.spotMapViewModel,
+               let spotDetailViewModelFactory = services.spotDetailViewModelFactory {
+                SpotMapView(
+                    viewModel: spotMapViewModel,
+                    detailFactory: { spot in
+                        SpotDetailView(viewModel: spotDetailViewModelFactory(spot))
+                    }
+                )
+                .tabItem { Label("Mapa", systemImage: "map") }
+            } else {
+                NavigationStack {
+                    mapUnavailableView
+                }
+                .tabItem { Label("Mapa", systemImage: "map") }
+            }
         }
         #if DEBUG
         .task {
@@ -89,6 +105,16 @@ struct RootView: View {
             try? await services.migrator.migrateIfNeeded()
         }
         #endif
+    }
+
+    private var mapUnavailableView: some View {
+        ContentUnavailableView {
+            Label(SpotMapViewModel.unavailableMessage, systemImage: "map")
+        } description: {
+            Text("La capa de datos no está disponible en este momento.")
+        }
+        .navigationTitle("Mapa")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

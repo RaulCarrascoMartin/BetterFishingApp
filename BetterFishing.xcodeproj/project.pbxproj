@@ -115,6 +115,7 @@
 		0000000000000000000000B93 /* SpotMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A8A /* SpotMapView.swift */; };
 		0000000000000000000000B94 /* SpotMapViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A8B /* SpotMapViewModelTests.swift */; };
 		0000000000000000000000B95 /* SpotDiscoveryCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */; };
+		0000000000000000000000B96 /* SpotMapTabTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A96 /* SpotMapTabTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -247,6 +248,7 @@
 		0000000000000000000000A8A /* SpotMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapView.swift; sourceTree = "<group>"; };
 		0000000000000000000000A8B /* SpotMapViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapViewModelTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDiscoveryCompositionTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A96 /* SpotMapTabTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapTabTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -532,6 +534,7 @@
 				0000000000000000000000A88 /* SpotDetailViewModelTests.swift */,
 				0000000000000000000000A8B /* SpotMapViewModelTests.swift */,
 				0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */,
+				0000000000000000000000A96 /* SpotMapTabTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -796,6 +799,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B91 /* SpotDetailViewModelTests.swift in Sources */,
 				0000000000000000000000B94 /* SpotMapViewModelTests.swift in Sources */,
 				0000000000000000000000B95 /* SpotDiscoveryCompositionTests.swift in Sources */,
+				0000000000000000000000B96 /* SpotMapTabTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
