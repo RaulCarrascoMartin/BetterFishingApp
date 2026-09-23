@@ -42,7 +42,7 @@
   - _Requirements: 1.2, 4.4, 7.4_
   - _Boundary: Services/Supabase/SupabaseStoring_
 
-- [ ] 3.2 Implementar el servicio de storage sobre Supabase
+- [x] 3.2 Implementar el servicio de storage sobre Supabase
   - Implementar `SupabaseStorageService` como actor que cumple `SupabaseStoring` sobre `supabase.storage.from(bucket)`, devolviendo la ruta en upload y los `Data` en download, y traduciendo fallos a `SupabaseBaseError` tipado.
   - Observable: suite de tests con stubs HTTP en verde: upload devuelve la ruta del objeto, download devuelve los `Data`, y un 404/error en descarga → `downloadFailed`.
   - _Requirements: 4.1, 4.2, 4.3_
@@ -111,3 +111,5 @@
 - RED 2.2: evidencia reproducida moviendo `app/Services/Supabase/SupabaseAuthService.swift` fuera de los sources del target: `/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project BetterFishing.xcodeproj -scheme BetterFishing -destination 'platform=iOS Simulator,name=iPhone 18 Pro Max' -only-testing:BetterFishingTests/SupabaseAuthServiceTests` → `error: Build input file cannot be found: '.../App/Services/Supabase/SupabaseAuthService.swift'. Did you forget to declare this file as an output of a script phase or custom build rule which produces it? ... ** TEST FAILED ** (3 failures)`; fichero restaurado y suite 176 en verde tras ello.
 - 2.2: `currentSession()` se declara `throws` por el protocolo aprobado, pero devuelve `nil` cuando no hay sesión (`.sessionUnavailable` queda sin usar en la superficie); `signUp` sin sesión (confirmación de email pendiente → `AuthResponse.user`) traduce a `.signUpFailed` porque la Req 3.1 exige sesión devuelta.
 - 3.1: `SupabaseStoring` + `SupabaseUploadOptions` declarados solo con Foundation (sin tipos del SDK) en `Services/Supabase/SupabaseStoring.swift`; `SupabaseStoringFakeConformanceTests` define `StorageTestDouble` con caja `Sendable` que registra uploads y devuelve ruta fija o error programable (5 tests; suite 181 en verde tras RED `Cannot find type 'SupabaseStoring' in scope`).
+- 3.2: endpoints exactos de los stubs (base `https://project-ref.supabase.co`, sin `useNewHostname`) — upload POST y download GET `/storage/v1/object/{bucket}/{path}`; el SDK v2.55 devuelve `FileUploadResponse` y el servicio devuelve `fullPath` (el `Key`/ruta almacenada, p. ej. `catches/2026/season/catch-1.jpg`).
+- RED 3.2: evidencia reproducida moviendo `App/Services/Supabase/SupabaseStorageService.swift` fuera de los sources del target (`Build input file cannot be found: '.../SupabaseStorageService.swift' ... ** TEST FAILED **`); fichero restaurado y suite 185 en verde tras ello (reproducido por el reviewer en ronda de revisión de 3.2).
