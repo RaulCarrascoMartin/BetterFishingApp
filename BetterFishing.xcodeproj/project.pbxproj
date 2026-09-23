@@ -108,6 +108,9 @@
 		0000000000000000000000B8D /* SpotRepositoryFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A84 /* SpotRepositoryFake.swift */; };
 		0000000000000000000000B8E /* SpotRepositoryFakeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A85 /* SpotRepositoryFakeTests.swift */; };
 		0000000000000000000000B8A /* SupabaseSpotRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A82 /* SupabaseSpotRepository.swift */; };
+		0000000000000000000000B91 /* SpotDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A88 /* SpotDetailViewModelTests.swift */; };
+		0000000000000000000000B8F /* SpotDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A86 /* SpotDetailViewModel.swift */; };
+		0000000000000000000000B90 /* SpotDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A87 /* SpotDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -233,6 +236,9 @@
 		0000000000000000000000A84 /* SpotRepositoryFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRepositoryFake.swift; sourceTree = "<group>"; };
 		0000000000000000000000A85 /* SpotRepositoryFakeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRepositoryFakeTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A82 /* SupabaseSpotRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSpotRepository.swift; sourceTree = "<group>"; };
+		0000000000000000000000A88 /* SpotDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailViewModelTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A86 /* SpotDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailViewModel.swift; sourceTree = "<group>"; };
+		0000000000000000000000A87 /* SpotDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -285,8 +291,26 @@
 			children = (
 				0000000000000000000000C04 /* FishScanner */,
 				0000000000000000000000C15 /* CatchLog */,
+				0000000000000000000000C1A /* SpotDiscovery */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C1A /* SpotDiscovery */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000C1B /* SpotDetail */,
+			);
+			path = SpotDiscovery;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C1B /* SpotDetail */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A86 /* SpotDetailViewModel.swift */,
+				0000000000000000000000A87 /* SpotDetailView.swift */,
+			);
+			path = SpotDetail;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C04 /* FishScanner */ = {
@@ -487,6 +511,7 @@
 				0000000000000000000000A83 /* SupabaseSpotRepositoryTests.swift */,
 				0000000000000000000000A84 /* SpotRepositoryFake.swift */,
 				0000000000000000000000A85 /* SpotRepositoryFakeTests.swift */,
+				0000000000000000000000A88 /* SpotDetailViewModelTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -690,6 +715,8 @@ isa = PBXSourcesBuildPhase;
 0000000000000000000000B86 /* SpotRegion.swift in Sources */,
 				0000000000000000000000B88 /* SpotRepository.swift in Sources */,
 				0000000000000000000000B8A /* SupabaseSpotRepository.swift in Sources */,
+				0000000000000000000000B8F /* SpotDetailViewModel.swift in Sources */,
+				0000000000000000000000B90 /* SpotDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -744,6 +771,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B8B /* SupabaseSpotRepositoryTests.swift in Sources */,
 				0000000000000000000000B8D /* SpotRepositoryFake.swift in Sources */,
 				0000000000000000000000B8E /* SpotRepositoryFakeTests.swift in Sources */,
+				0000000000000000000000B91 /* SpotDetailViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
