@@ -114,6 +114,7 @@
 		0000000000000000000000B92 /* SpotMapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A89 /* SpotMapViewModel.swift */; };
 		0000000000000000000000B93 /* SpotMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A8A /* SpotMapView.swift */; };
 		0000000000000000000000B94 /* SpotMapViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A8B /* SpotMapViewModelTests.swift */; };
+		0000000000000000000000B95 /* SpotDiscoveryCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -245,6 +246,7 @@
 		0000000000000000000000A89 /* SpotMapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapViewModel.swift; sourceTree = "<group>"; };
 		0000000000000000000000A8A /* SpotMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapView.swift; sourceTree = "<group>"; };
 		0000000000000000000000A8B /* SpotMapViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapViewModelTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDiscoveryCompositionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -529,6 +531,7 @@
 				0000000000000000000000A85 /* SpotRepositoryFakeTests.swift */,
 				0000000000000000000000A88 /* SpotDetailViewModelTests.swift */,
 				0000000000000000000000A8B /* SpotMapViewModelTests.swift */,
+				0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -792,6 +795,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B8E /* SpotRepositoryFakeTests.swift in Sources */,
 				0000000000000000000000B91 /* SpotDetailViewModelTests.swift in Sources */,
 				0000000000000000000000B94 /* SpotMapViewModelTests.swift in Sources */,
+				0000000000000000000000B95 /* SpotDiscoveryCompositionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

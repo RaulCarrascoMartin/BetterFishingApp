@@ -26,6 +26,9 @@ struct AppRootServices {
     let detailViewModelFactory: @MainActor (Catch) -> CatchDetailViewModel
     let migrator: ProvisionalDraftsMigrator
     let supabase: SupabaseStack?
+    let spotRepository: (any SpotRepository)?
+    let spotMapViewModel: SpotMapViewModel?
+    let spotDetailViewModelFactory: (@MainActor (Spot) -> SpotDetailViewModel)?
 }
 
 enum AppComposition {
@@ -35,7 +38,8 @@ enum AppComposition {
         repository: LocalFileCatchRepository? = nil,
         draftsDirectory: URL? = nil,
         supabaseConfiguration: SupabaseClientConfiguration? = nil,
-        supabaseOptions: SupabaseClientOptions? = nil
+        supabaseOptions: SupabaseClientOptions? = nil,
+        supabaseStack: SupabaseStack? = nil
     ) -> AppRootServices {
         #if DEBUG
         if let services = makeUITestRootServices(arguments: arguments, draftsDirectory: draftsDirectory) {
@@ -43,18 +47,44 @@ enum AppComposition {
         }
         #endif
 
-        let realRepository = repository ?? LocalFileCatchRepository(
-            deviceLocationProvider: DeviceLocationProvider(
-                authorization: CLLocationAuthorization(),
-                fetcher: CLLocationFetcher()
-            )
+        let deviceLocationProvider = DeviceLocationProvider(
+            authorization: CLLocationAuthorization(),
+            fetcher: CLLocationFetcher()
         )
+        let realRepository = repository ?? LocalFileCatchRepository(deviceLocationProvider: deviceLocationProvider)
 
         let credentials = FishialCredentials(bundle: .main)
         let tokenStore = FishialTokenStore(
             clientID: credentials.clientID,
             clientSecret: credentials.clientSecret
         )
+
+        let supabase = supabaseStack ?? makeSupabaseStack(configuration: supabaseConfiguration, options: supabaseOptions)
+
+        let spotRepository: (any SpotRepository)?
+        let spotMapViewModel: SpotMapViewModel?
+        let spotDetailViewModelFactory: (@MainActor (Spot) -> SpotDetailViewModel)?
+        if let stack = supabase {
+            let supabaseSpotRepository = SupabaseSpotRepository(database: stack.database, auth: stack.auth)
+            spotRepository = supabaseSpotRepository
+            spotMapViewModel = SpotMapViewModel(
+                repository: supabaseSpotRepository,
+                locationProvider: deviceLocationProvider
+            )
+            spotDetailViewModelFactory = { spot in
+                SpotDetailViewModel(
+                    repository: supabaseSpotRepository,
+                    auth: stack.auth,
+                    spot: spot
+                )
+            }
+            spotsLogger.info("Spots conectados sobre el stack de Supabase: repositorio y mapa construidos")
+        } else {
+            spotsLogger.info("Sin capa de datos de Supabase: el repositorio de spots y la pestaña Mapa quedan en nil (degradación, Req 2)")
+            spotRepository = nil
+            spotMapViewModel = nil
+            spotDetailViewModelFactory = nil
+        }
 
         return AppRootServices(
             scannerViewModel: FishScannerViewModel(
@@ -72,7 +102,10 @@ enum AppComposition {
                 )
             },
             migrator: ProvisionalDraftsMigrator(catchRepository: realRepository, draftsDirectory: draftsDirectory),
-            supabase: makeSupabaseStack(configuration: supabaseConfiguration, options: supabaseOptions)
+            supabase: supabase,
+            spotRepository: spotRepository,
+            spotMapViewModel: spotMapViewModel,
+            spotDetailViewModelFactory: spotDetailViewModelFactory
         )
     }
 
@@ -96,6 +129,7 @@ enum AppComposition {
     }
 
     private static let supabaseLogger = Logger(subsystem: "BetterFishing", category: "Supabase")
+    private static let spotsLogger = Logger(subsystem: "BetterFishing", category: "Spots")
 
     @MainActor
     static func makeCameraManager(arguments: [String] = ProcessInfo.processInfo.arguments) -> CameraManager {
@@ -114,7 +148,7 @@ enum AppComposition {
         arguments: [String],
         draftsDirectory: URL?
     ) -> AppRootServices? {
-        guard let scenario = UITestScenario.requested(in: arguments), scenario.isScannerDriving else {
+        guard let scenario = UITestScenario.requested(in: arguments), scenario.isScannerDriving || scenario.isMapSeeded else {
             return nil
         }
 
@@ -154,6 +188,13 @@ enum AppComposition {
                 UITestLegacyDraftFixture.seedDraft(into: draftsURL, date: UITestLogFixture.bassDate)
             }
             catchSaver = repository
+        case .spotMapSeeded:
+            repository = LocalFileCatchRepository(
+                directoryURL: FileManager.default.temporaryDirectory
+                    .appendingPathComponent("UITestSpotMap-\(UUID().uuidString)", isDirectory: true),
+                deviceLocationProvider: UITestNoLocationProvider()
+            )
+            catchSaver = repository
         default:
             repository = LocalFileCatchRepository(
                 directoryURL: FileManager.default.temporaryDirectory
@@ -167,6 +208,29 @@ enum AppComposition {
             detailRepository = UITestDoubleDetailRepository(real: repository, failuresBeforeSuccess: 1)
         } else {
             detailRepository = repository
+        }
+
+        let spotRepository: (any SpotRepository)?
+        let spotMapViewModel: SpotMapViewModel?
+        let spotDetailViewModelFactory: (@MainActor (Spot) -> SpotDetailViewModel)?
+        if scenario.isMapSeeded {
+            let seededRepository = UITestSpotRepository.seededSpots
+            spotRepository = seededRepository
+            spotMapViewModel = SpotMapViewModel(
+                repository: seededRepository,
+                locationProvider: UITestNoLocationProvider()
+            )
+            spotDetailViewModelFactory = { spot in
+                SpotDetailViewModel(
+                    repository: seededRepository,
+                    auth: UITestNoAuthProvider(),
+                    spot: spot
+                )
+            }
+        } else {
+            spotRepository = nil
+            spotMapViewModel = nil
+            spotDetailViewModelFactory = nil
         }
 
         return AppRootServices(
@@ -185,7 +249,10 @@ enum AppComposition {
                 catchRepository: repository,
                 draftsDirectory: fixedDraftsDirectory ?? draftsDirectory
             ),
-            supabase: nil
+            supabase: nil,
+            spotRepository: spotRepository,
+            spotMapViewModel: spotMapViewModel,
+            spotDetailViewModelFactory: spotDetailViewModelFactory
         )
     }
     #endif
@@ -219,6 +286,7 @@ enum UITestScenario: String {
     case logLoading
     case logLoaded
     case logEmpty
+    case spotMapSeeded
 
     var isDetail: Bool {
         switch self {
@@ -240,9 +308,13 @@ enum UITestScenario: String {
              .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded, .registryLogDeleteFails,
              .migrationLaunch1, .migrationLaunch2:
             return true
-        case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty:
+        case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty, .spotMapSeeded:
             return false
         }
+    }
+
+    var isMapSeeded: Bool {
+        self == .spotMapSeeded
     }
 
     var seedsLegacyDrafts: Bool {
@@ -343,7 +415,7 @@ struct UITestDoubleFishIdentifier: FishIdentifying {
         case .identifiedLowConfidence:
             return .identified(UITestScenarios.lowConfidenceBluegill)
         case .noMatch, .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty,
-             .migrationLaunch1, .migrationLaunch2:
+             .migrationLaunch1, .migrationLaunch2, .spotMapSeeded:
             return .noMatch
         }
     }
@@ -575,4 +647,52 @@ private struct UITestNoLocationProvider: DeviceLocationProviding {
     func requestPermissionIfNeeded() async -> Bool { false }
     func currentLocation() async -> LocationCoordinate2D? { nil }
 }
+
+struct UITestSpotRepository: SpotRepository, Sendable {
+    static let seededSpots = UITestSpotRepository(
+        spots: [
+            Spot(
+                id: UUID(uuidString: "55555555-5555-5555-5555-555555555555")!,
+                name: "Embalse de Sau",
+                category: .lake,
+                summary: "Amplia lámina de agua cerca de Barcelona.",
+                longitude: 2.2486,
+                latitude: 42.0037,
+                distanceMeters: nil
+            ),
+        ]
+    )
+
+    let spots: [Spot]
+
+    func listSpots(region: SpotRegion) async throws -> [Spot] { spots }
+    func nearbySpots(from coordinate: LocationCoordinate2D, radiusKilometers: Double) async throws -> [Spot] { spots }
+    func spot(id: UUID) async throws -> Spot? { spots.first { $0.id == id } }
+    func favoriteSpotIDs() async throws -> Set<UUID> { [] }
+    func favoriteSpots() async throws -> [Spot] { [] }
+    func setFavorite(spotID: UUID, isFavorite: Bool) async throws {}
+}
+
+struct UITestNoAuthProvider: SupabaseAuthProviding, Sendable {
+    func signUp(email: String, password: String) async throws -> SupabaseSession {
+        throw UITestAuthUnavailable()
+    }
+
+    func signIn(email: String, password: String) async throws -> SupabaseSession {
+        throw UITestAuthUnavailable()
+    }
+
+    func signOut() async throws {}
+
+    func currentUser() async -> SupabaseUser? { nil }
+
+    func currentSession() async throws -> SupabaseSession? { nil }
+
+    func stateChanges() -> AsyncStream<SupabaseAuthEvent> {
+        AsyncStream { $0.finish() }
+    }
+}
+
+private struct UITestAuthUnavailable: Error {}
+
 #endif
