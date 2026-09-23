@@ -79,8 +79,10 @@
 		0000000000000000000000B68 /* SupabaseClientProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A66 /* SupabaseClientProvider.swift */; };
 		0000000000000000000000B70 /* SupabaseUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A68 /* SupabaseUser.swift */; };
 		0000000000000000000000B71 /* SupabaseSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A69 /* SupabaseSession.swift */; };
+		0000000000000000000000B73 /* SupabaseAuthProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A6B /* SupabaseAuthProviding.swift */; };
 		0000000000000000000000B66 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0000000000000000000000E52 /* Supabase */; };
 		0000000000000000000000B59 /* CompositionIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A59 /* CompositionIntegrationTests.swift */; };
+		0000000000000000000000B74 /* SupabaseAuthFakeConformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A6C /* SupabaseAuthFakeConformanceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -179,6 +181,8 @@
 		0000000000000000000000A66 /* SupabaseClientProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClientProvider.swift; sourceTree = "<group>"; };
 		0000000000000000000000A68 /* SupabaseUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseUser.swift; sourceTree = "<group>"; };
 		0000000000000000000000A69 /* SupabaseSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSession.swift; sourceTree = "<group>"; };
+		0000000000000000000000A6B /* SupabaseAuthProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthProviding.swift; sourceTree = "<group>"; };
+		0000000000000000000000A6C /* SupabaseAuthFakeConformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthFakeConformanceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +279,7 @@
 			children = (
 				0000000000000000000000A65 /* SupabaseConfiguration.swift */,
 				0000000000000000000000A66 /* SupabaseClientProvider.swift */,
+				0000000000000000000000A6B /* SupabaseAuthProviding.swift */,
 			);
 			path = Supabase;
 			sourceTree = "<group>";
@@ -390,6 +395,7 @@
 				0000000000000000000000A64 /* SupabaseSmokeTests.swift */,
 				0000000000000000000000A67 /* SupabaseConfigurationTests.swift */,
 				0000000000000000000000A6A /* SupabaseModelsTests.swift */,
+				0000000000000000000000A6C /* SupabaseAuthFakeConformanceTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -582,6 +588,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B68 /* SupabaseClientProvider.swift in Sources */,
 				0000000000000000000000B70 /* SupabaseUser.swift in Sources */,
 				0000000000000000000000B71 /* SupabaseSession.swift in Sources */,
+				0000000000000000000000B73 /* SupabaseAuthProviding.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,6 +627,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B64 /* SupabaseSmokeTests.swift in Sources */,
 				0000000000000000000000B69 /* SupabaseConfigurationTests.swift in Sources */,
 				0000000000000000000000B72 /* SupabaseModelsTests.swift in Sources */,
+				0000000000000000000000B74 /* SupabaseAuthFakeConformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

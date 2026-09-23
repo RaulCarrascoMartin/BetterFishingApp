@@ -21,7 +21,7 @@
   - _Requirements: 6.1_
 
 ## 2. Core: seam de auth
-- [ ] 2.1 (P) Declarar el protocolo de auth y los eventos de sesión
+- [x] 2.1 (P) Declarar el protocolo de auth y los eventos de sesión
   - Declarar `SupabaseAuthProviding` (`Sendable`) con signUp/signIn/signOut/currentUser/currentSession y `stateChanges()`, y `SupabaseAuthEvent` (signedIn, sessionRestored, signedOut), según el contrato del diseño.
   - Garantizar que el protocolo no referencia tipos del SDK de Supabase y que cualquier tipo `Sendable` puede conformarlo (sustituible por fake).
   - Observable: el protocolo y el evento compilan en el target de la app y un double mínimo del test target conforma el protocolo sin importar el SDK.
@@ -106,3 +106,4 @@
 - La integración SPM de la dependencia `supabase-swift` (resuelta v2.55.2, producto `Supabase`, fromVersion 2.0.0) se registra con una nueva PBXFrameworksBuildPhase (F16) en el target de la app y en la fase F0B del test target; verificado en Swift 6 estricto: `SupabaseClient` declara `Sendable` en el SDK (`public final class SupabaseClient: Sendable`), por lo que el patrón de actores del diseño se mantiene por aislamiento del cliente compartido y consistencia, no por necesidad de conformidad.
 - 1.2: `SupabaseClientConfiguration.init?(bundle:)` exige URL con esquema http/https y host no vacío (Foundation `URL(string:)` es laxo y acepta "not a url" como URL relativa), y recorta espacios en blanco en ambos valores; los tests de config leen un Bundle temporal con Info.plist generado, sin red ni credenciales reales (5 tests, suite 161 en verde).
 - 1.3: modelos con Codable sintetizado (claves = nombres de propiedad) y fechas por estrategia por defecto `deferredToDate` en encoder/decoder; `SupabaseModelsTests` cubre round-trip de usuario (email presente y ausente) y sesión completa más claves JSON e igualdad/identidad (5 tests; suite 166 en verde).
+- 2.1: `SupabaseAuthProviding` y `SupabaseAuthEvent` declarados sin importar el SDK; `SupabaseAuthFakeConformanceTests` define un `AuthTestDouble` solo con Foundation que conforma el protocolo y consume el `AsyncStream` (3 tests; suite 169 en verde).
