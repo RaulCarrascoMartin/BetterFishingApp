@@ -4,7 +4,7 @@ Fases: Foundation → Core → Integración → Validación.
 
 ## 1. Foundation
 
-- [ ] 1.1 Crear el esquema remoto de la cuenta (DDL idempotente)
+- [x] 1.1 Crear el esquema remoto de la cuenta (DDL idempotente)
   - Escribir `Supabase/schema/account_personal.sql` con: extensión `pgcrypto`, tablas `public.profiles` (user_id PK → auth.users, display_name, avatar_path, updated_at) y `public.catches` (id PK, user_id con índice, species jsonb, date, location jsonb, notes, created_at, updated_at, photo_path, unique(id, user_id)).
   - Incluir políticas RLS (`profiles_own`, `catches_own` con `auth.uid() = user_id`) para las dos tablas y `security invoker` en las funciones.
   - Incluir RPCs `upsert_profile` (insert/on conflict con guard `auth.uid()`) y `upsert_catch` (jsonb de `Catch` a columnas, on conflict por id con guard `auth.uid()`).
@@ -19,7 +19,7 @@ Fases: Foundation → Core → Integración → Validación.
   - Observable: `xcodebuild` compila el target de la app y los targets de test con todos los ficheros nuevos de la feature sin errores de "no such file" ni de equivalencia de objetos.
   - _Requirements: 6.1_
 
-- [ ] 1.3 Modelos de dominio de cuenta
+- [x] 1.3 Modelos de dominio de cuenta
   - Crear `AccountProfile` (userID, displayName, avatarPath) `Codable` para el perfil en `profiles`.
   - Crear `FavoriteSpot` (spotID, name, category) `Codable/Sendable/Equatable/Identifiable` sin ningún campo geométrico.
   - Crear `RemoteCatch` (id, userID, species, date, location, notes, createdAt, updatedAt, photoPath) con CodingKeys en snake_case (`photo_path`, `user_id`, `created_at`, `updated_at`) y `asCatch()` que conserva el `id`.
@@ -27,7 +27,7 @@ Fases: Foundation → Core → Integración → Validación.
   - Observable: los tres tipos compilan y `RemoteCatchTests` pasan.
   - _Requirements: 3.1, 4.8, 5.2_
 
-- [ ] 1.4 Ledger de sincronización y huellas
+- [x] 1.4 Ledger de sincronización y huellas
   - Definir `enum Fingerprint` (sha256) y las structs `CatchSyncLedgerSnapshot` (entries, tombstonedIDs, lastSyncedRemoteIDs), `CatchSyncLedgerEntry` (lastLocalFingerprint, lastRemoteUpdatedAt, lastLocalPushedAt).
   - Implementar el actor `CatchSyncLedger` con `snapshot()` y `commit(_:)` persistido en `Application Support/CatchSync/sync-ledger.json` con escritura atómica (fichero temporal + rename) y directorio inyectable para tests.
   - Añadir `CatchSyncLedgerTests`: round-trip del snapshot en directorio temporal y commit fallido no altera el snapshot previo.
@@ -172,3 +172,9 @@ Fases: Foundation → Core → Integración → Validación.
   - Verificar que cada criterio de aceptación (39 en 6 requerimientos) aparece en al menos una tarea ejecutada y que ningún componente del diseño quedó sin tarea.
   - Observable: la suite completa pasa y la traza requerimientos → tareas está completa sin huecos.
   - _Requirements: 5.5, 5.8_
+## Implementation Notes
+- 1.1: DDL idempotente en `Supabase/schema/account_personal.sql` calcado del design.md (pgcrypto, profiles, catches + índice, RLS `profiles_own`/`catches_own`, `upsert_profile` language sql, `upsert_catch` language plpgsql con `security invoker`). Notas de clarificación: sin esquema/RPC de favoritos (spot-discovery) y buckets `avatars`/`catches` vía dashboard/CLI.
+- 1.3: CodingKeys snake_case en `AccountProfile` (user_id/display_name/avatar_path) y `RemoteCatch` (photo_path/user_id/created_at/updated_at). `asCatch()` async throws es síncrono sin I/O; `photoPath` nil → `"<id>.jpg"`.
+- 1.4: `Fingerprint` (CryptoKit SHA256) sobre `CatchFingerprintPayload` (id/species/date/location/notes; excluye photoPath/createdAt). Canonical fijo: `JSONEncoder.outputFormatting = [.sortedKeys]` para determinismo (RED detectó orden de claves no determinista entre llamadas).
+- 1.4: Ledger en `<directoryURL>/sync-ledger.json`; `snapshot()` devuelve snapshot vacío si falta el fichero; `commit` atómico (temp + `replaceItemAt`) tras `createDirectory`. Directorio inyectable (fileURL derivado de directoryURL).
+- RED: probe deliberado falló (`XCTAssertEqual(1, 2)`) y huella no determinista falló antes del fix `sortedKeys`; tras fix: RemoteCatchTests 4/4 y CatchSyncLedgerTests 4/4 verdes.

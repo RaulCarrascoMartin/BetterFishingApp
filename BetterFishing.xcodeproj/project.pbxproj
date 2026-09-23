@@ -117,6 +117,12 @@
 		0000000000000000000000B95 /* SpotDiscoveryCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */; };
 		0000000000000000000000B96 /* SpotMapTabTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A96 /* SpotMapTabTests.swift */; };
 		0000000000000000000000B97 /* SpotDiscoveryFlowIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A97 /* SpotDiscoveryFlowIntegrationTests.swift */; };
+		0000000000000000000000B98 /* AccountProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A98 /* AccountProfile.swift */; };
+		0000000000000000000000B99 /* FavoriteSpot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A99 /* FavoriteSpot.swift */; };
+		0000000000000000000000B9A /* RemoteCatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9A /* RemoteCatch.swift */; };
+		0000000000000000000000B9B /* CatchSyncLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9B /* CatchSyncLedger.swift */; };
+		0000000000000000000000B9C /* RemoteCatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9C /* RemoteCatchTests.swift */; };
+		0000000000000000000000B9D /* CatchSyncLedgerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9D /* CatchSyncLedgerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -251,6 +257,12 @@
 		0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDiscoveryCompositionTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A96 /* SpotMapTabTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapTabTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A97 /* SpotDiscoveryFlowIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDiscoveryFlowIntegrationTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A98 /* AccountProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountProfile.swift; sourceTree = "<group>"; };
+		0000000000000000000000A99 /* FavoriteSpot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSpot.swift; sourceTree = "<group>"; };
+		0000000000000000000000A9A /* RemoteCatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteCatch.swift; sourceTree = "<group>"; };
+		0000000000000000000000A9B /* CatchSyncLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncLedger.swift; sourceTree = "<group>"; };
+		0000000000000000000000A9C /* RemoteCatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteCatchTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A9D /* CatchSyncLedgerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncLedgerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -403,6 +415,7 @@
 				0000000000000000000000A40 /* CatchRepository.swift */,
 				0000000000000000000000A45 /* LocalFileCatchRepository.swift */,
 				0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */,
+				0000000000000000000000A9B /* CatchSyncLedger.swift */,
 			);
 			path = CatchLog;
 			sourceTree = "<group>";
@@ -450,6 +463,7 @@
 				0000000000000000000000A38 /* Catch.swift */,
 				0000000000000000000000C17 /* Supabase */,
 				0000000000000000000000C18 /* Spots */,
+				0000000000000000000000C1D /* Account */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -462,6 +476,16 @@
 				0000000000000000000000A7E /* SpotRegion.swift */,
 			);
 			path = Spots;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C1D /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A98 /* AccountProfile.swift */,
+				0000000000000000000000A99 /* FavoriteSpot.swift */,
+				0000000000000000000000A9A /* RemoteCatch.swift */,
+			);
+			path = Account;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C17 /* Supabase */ = {
@@ -538,6 +562,8 @@
 				0000000000000000000000A95 /* SpotDiscoveryCompositionTests.swift */,
 				0000000000000000000000A96 /* SpotMapTabTests.swift */,
 				0000000000000000000000A97 /* SpotDiscoveryFlowIntegrationTests.swift */,
+				0000000000000000000000A9C /* RemoteCatchTests.swift */,
+				0000000000000000000000A9D /* CatchSyncLedgerTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -745,6 +771,10 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B90 /* SpotDetailView.swift in Sources */,
 				0000000000000000000000B92 /* SpotMapViewModel.swift in Sources */,
 				0000000000000000000000B93 /* SpotMapView.swift in Sources */,
+				0000000000000000000000B98 /* AccountProfile.swift in Sources */,
+				0000000000000000000000B99 /* FavoriteSpot.swift in Sources */,
+				0000000000000000000000B9A /* RemoteCatch.swift in Sources */,
+				0000000000000000000000B9B /* CatchSyncLedger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -804,6 +834,8 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B95 /* SpotDiscoveryCompositionTests.swift in Sources */,
 				0000000000000000000000B96 /* SpotMapTabTests.swift in Sources */,
 				0000000000000000000000B97 /* SpotDiscoveryFlowIntegrationTests.swift in Sources */,
+				0000000000000000000000B9C /* RemoteCatchTests.swift in Sources */,
+				0000000000000000000000B9D /* CatchSyncLedgerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
