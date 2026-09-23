@@ -82,7 +82,7 @@
   - _Boundary: BetterFishingApp (RootView), project.pbxproj_
 
 ## 4. Validation: flujos E2E y verificación de la suite
-- [ ] 4.1 Validación E2E de descubrimiento y favoritos con sesión
+- [x] 4.1 Validación E2E de descubrimiento y favoritos con sesión
   - _Depends: 3.2, 2.2_
   - Añadir un test de integración (test target) que, con la composición construida sobre `SupabaseBaseFake` y una sesión simulada, verifica el flujo completo: abrir el mapa → listar anotaciones de la región → «cerca de mí» con ubicación simulada ordena por distancia → seleccionar un spot → marcar/quitar favorito (RPC correcta) → cambio de sesión refresca el estado.
   - Verificar el mismo flujo con `supabase == nil`: la pestaña queda en «no disponible» y ninguna operación rompe la app.
@@ -128,3 +128,7 @@
 - 3.2: pestaña «Mapa» en `RootView.mainTabs`: `SpotMapView` con el VM y la factory de detalle inyectados (factory mapeada a `SpotDetailView`) sin un segundo `NavigationStack` (la vista es dueña del suyo); con `spotMapViewModel`/factory nil la pestaña persiste en «no disponible» (`ContentUnavailableView` reutilizando `SpotMapViewModel.unavailableMessage`) y las otras pestañas no cambian.
 - 3.2 (pbxproj): `SpotMapTabTests.swift` registrado en el test target (fileRef …A96 / buildFile …B96 + Sources) con fake-hex contiguo; sin cambios de build settings — MapKit/CoreLocation se enlazan por auto-linking ya cubierto por catch-log y `SpotMapView`.
 - RED 3.2: `SpotMapTabTests` antes del wiring — falla el test de presencia de la pestaña en nil-services («La pestaña Mapa debe existir aunque no haya capa de datos (Req 2.1)», TEST FAILED; el reviewer reprodujo 1 failure: el test de hosting directo de `SpotMapView` pasa al margen del wiring); tras el wiring la suite completa queda 283/283 en verde.
+- 4.1: `SpotDiscoveryFlowIntegrationTests` (D02/C11) E2E sobre `SupabaseBaseFake` vía composición con stack: `cannedRows` siembra el select de región y `cannedRPCValue` se re-programa por fase (`nearby_spots` con `distance_m`, `my_favorite_spot_ids` con `spot_id`, `"{}"` para las mutaciones); `recordedSelects`/`recordedRPCs` asercionan el contrato (rpc `add_spot_favorite`/`remove_spot_favorite` con `spot_id`).
+- 4.1: el mapa E2E se construye con `services.spotRepository` + doble de localización en-test (la composición no expone un inyector de localización; se reutiliza el patrón `DeviceLocationProviderDouble`, sin tocar código de app); el detalle sale de `services.spotDetailViewModelFactory` y su `stateChangesTask` procesa eventos pre-cableados en `stateChangesEvents`.
+- 4.1: la emisión de `stateChanges()` del fake es snapshot al suscribirse (en `load()`); el cambio de sesión se simula re-ejecutando `load()` tras mutar `isSessionActive` + `stateChangesEvents` (`.signedOut`/`.signedIn`) y `await stateChangesTask.value` — `.signedIn` re-consulta `my_favorite_spot_ids` en `load()` y en el evento (3 rpc en total, no 2; RED capturó el fallo real antes de ajustar la aserción).
+- 4.1: degradación sin stack verifica composición en nil + `SpotMapViewModel(repository: nil)` en `unavailable` (load y cerca-de-mí no rompen y no piden permiso de ubicación); suite completa 285/285 en verde (283 base + 2 nuevos).
