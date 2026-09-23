@@ -8,11 +8,10 @@ import UIKit
 final class SpotMapTabTests: XCTestCase {
     private var window: UIWindow?
 
-    override func tearDown() {
+    override func tearDown() async throws {
         window?.isHidden = true
         window?.rootViewController = nil
         window = nil
-        super.tearDown()
     }
 
     func testRootViewWithoutSpotServicesKeepsMapTabInUnavailableState() {
