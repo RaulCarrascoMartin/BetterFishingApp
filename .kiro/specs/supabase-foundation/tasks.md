@@ -15,7 +15,7 @@
   - Observable: tests en verde que verifican config válida, clave ausente, clave vacía y URL malformada → `nil`; las plantillas `.example` versionadas quedan sin valores.
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-- [ ] 1.3 Modelos comunes de sesión y usuario
+- [x] 1.3 Modelos comunes de sesión y usuario
   - Definir `SupabaseUser` (id UUID, email opcional, createdAt) y `SupabaseSession` (accessToken, refreshToken, expiresAt, user) como `Codable`, `Equatable`, `Sendable`.
   - Observable: tests de round-trip Codable de sesión y usuario completos en verde.
   - _Requirements: 6.1_
@@ -105,3 +105,4 @@
 - Los tests de servicios usan `MockURLProtocol`/`HTTPStub` (patrón ya existente en la repo) inyectando la `URLSession` vía `SupabaseClientOptions.global.session`; no se construye ni se firma ningún request Supabase a mano.
 - La integración SPM de la dependencia `supabase-swift` (resuelta v2.55.2, producto `Supabase`, fromVersion 2.0.0) se registra con una nueva PBXFrameworksBuildPhase (F16) en el target de la app y en la fase F0B del test target; verificado en Swift 6 estricto: `SupabaseClient` declara `Sendable` en el SDK (`public final class SupabaseClient: Sendable`), por lo que el patrón de actores del diseño se mantiene por aislamiento del cliente compartido y consistencia, no por necesidad de conformidad.
 - 1.2: `SupabaseClientConfiguration.init?(bundle:)` exige URL con esquema http/https y host no vacío (Foundation `URL(string:)` es laxo y acepta "not a url" como URL relativa), y recorta espacios en blanco en ambos valores; los tests de config leen un Bundle temporal con Info.plist generado, sin red ni credenciales reales (5 tests, suite 161 en verde).
+- 1.3: modelos con Codable sintetizado (claves = nombres de propiedad) y fechas por estrategia por defecto `deferredToDate` en encoder/decoder; `SupabaseModelsTests` cubre round-trip de usuario (email presente y ausente) y sesión completa más claves JSON e igualdad/identidad (5 tests; suite 166 en verde).
