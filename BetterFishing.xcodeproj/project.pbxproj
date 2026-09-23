@@ -73,6 +73,9 @@
 		0000000000000000000000B63 /* MigrationE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A63 /* MigrationE2ETests.swift */; };
 		0000000000000000000000B64 /* SupabaseSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A64 /* SupabaseSmokeTests.swift */; };
 		0000000000000000000000B65 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0000000000000000000000E52 /* Supabase */; };
+		0000000000000000000000B69 /* SupabaseConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A67 /* SupabaseConfigurationTests.swift */; };
+		0000000000000000000000B67 /* SupabaseConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A65 /* SupabaseConfiguration.swift */; };
+		0000000000000000000000B68 /* SupabaseClientProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A66 /* SupabaseClientProvider.swift */; };
 		0000000000000000000000B66 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0000000000000000000000E52 /* Supabase */; };
 		0000000000000000000000B59 /* CompositionIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A59 /* CompositionIntegrationTests.swift */; };
 /* End PBXBuildFile section */
@@ -167,6 +170,9 @@
 		0000000000000000000000A62 /* RegistryDeleteE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistryDeleteE2ETests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A63 /* MigrationE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationE2ETests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A64 /* SupabaseSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSmokeTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A67 /* SupabaseConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseConfigurationTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A65 /* SupabaseConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseConfiguration.swift; sourceTree = "<group>"; };
+		0000000000000000000000A66 /* SupabaseClientProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClientProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +267,8 @@
 		0000000000000000000000C16 /* Supabase */ = {
 			isa = PBXGroup;
 			children = (
+				0000000000000000000000A65 /* SupabaseConfiguration.swift */,
+				0000000000000000000000A66 /* SupabaseClientProvider.swift */,
 			);
 			path = Supabase;
 			sourceTree = "<group>";
@@ -372,6 +380,7 @@
 				0000000000000000000000A55 /* CatchLogViewModelTests.swift */,
 				0000000000000000000000A59 /* CompositionIntegrationTests.swift */,
 				0000000000000000000000A64 /* SupabaseSmokeTests.swift */,
+				0000000000000000000000A67 /* SupabaseConfigurationTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -560,6 +569,8 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B31 /* FishScannerView.swift in Sources */,
 				0000000000000000000000B32 /* FishScannerPreviewSupport.swift in Sources */,
 				0000000000000000000000B37 /* CameraManagerUITestDouble.swift in Sources */,
+				0000000000000000000000B67 /* SupabaseConfiguration.swift in Sources */,
+				0000000000000000000000B68 /* SupabaseClientProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,6 +607,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B55 /* CatchLogViewModelTests.swift in Sources */,
 				0000000000000000000000B59 /* CompositionIntegrationTests.swift in Sources */,
 				0000000000000000000000B64 /* SupabaseSmokeTests.swift in Sources */,
+				0000000000000000000000B69 /* SupabaseConfigurationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

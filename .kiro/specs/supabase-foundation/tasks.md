@@ -8,7 +8,7 @@
   - Observable: `xcodebuild build` compila con la dependencia resuelta y un test de humo que referencia el producto `Supabase` compila.
   - _Requirements: 1.3_
 
-- [ ] 1.2 Configuración centralizada de URL y anon key
+- [x] 1.2 Configuración centralizada de URL y anon key
   - Añadir `SUPABASE_PROJECT_URL` y `SUPABASE_ANON_KEY` a `Debug.xcconfig.example` y `Release.xcconfig.example` (vacías) y las claves `SupabaseProjectURL`/`SupabaseAnonKey` (mapeadas a `$()` ) en `Info.plist`, respetando el patrón de `FishialCredentials`.
   - Implementar `SupabaseClientConfiguration` con `init?(bundle:)` que devuelve `nil` si la URL o la anon key faltan, están vacías o la URL no es parseable.
   - Definir `SupabaseBaseError` (configurationMissing, invalidProjectURL, signUpFailed/signInFailed/signOutFailed, sessionUnavailable, uploadFailed/downloadFailed, queryFailed/rpcFailed) como `Error`/`Sendable`/`LocalizedError`.
@@ -104,3 +104,4 @@
 - Con xcconfig vacío (no hay infra de Supabase todavía) la capa base debe degradar a `supabase == nil` con log; ninguna feature incorporada consume aún los seams, por lo que el resto de la app no se ve afectado (verificado en 5.2 y 6.2).
 - Los tests de servicios usan `MockURLProtocol`/`HTTPStub` (patrón ya existente en la repo) inyectando la `URLSession` vía `SupabaseClientOptions.global.session`; no se construye ni se firma ningún request Supabase a mano.
 - La integración SPM de la dependencia `supabase-swift` (resuelta v2.55.2, producto `Supabase`, fromVersion 2.0.0) se registra con una nueva PBXFrameworksBuildPhase (F16) en el target de la app y en la fase F0B del test target; verificado en Swift 6 estricto: `SupabaseClient` declara `Sendable` en el SDK (`public final class SupabaseClient: Sendable`), por lo que el patrón de actores del diseño se mantiene por aislamiento del cliente compartido y consistencia, no por necesidad de conformidad.
+- 1.2: `SupabaseClientConfiguration.init?(bundle:)` exige URL con esquema http/https y host no vacío (Foundation `URL(string:)` es laxo y acepta "not a url" como URL relativa), y recorta espacios en blanco en ambos valores; los tests de config leen un Bundle temporal con Info.plist generado, sin red ni credenciales reales (5 tests, suite 161 en verde).

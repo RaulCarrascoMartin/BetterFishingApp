@@ -22,6 +22,10 @@
 	<string>$(FISHIAL_CLIENT_ID)</string>
 	<key>FishialClientSecret</key>
 	<string>$(FISHIAL_CLIENT_SECRET)</string>
+	<key>SupabaseProjectURL</key>
+	<string>$(SUPABASE_PROJECT_URL)</string>
+	<key>SupabaseAnonKey</key>
+	<string>$(SUPABASE_ANON_KEY)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
