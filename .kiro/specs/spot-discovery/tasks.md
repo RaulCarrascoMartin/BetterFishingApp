@@ -1,7 +1,7 @@
 # Implementation Plan: spot-discovery
 
 ## 1. Foundation: provisioning de datos y modelos del dominio
-- [ ] 1.1 Definir el esquema de spots y favoritos con RLS y funciones RPC
+- [x] 1.1 Definir el esquema de spots y favoritos con RLS y funciones RPC
   - Crear `db/spot-discovery/001_spot_discovery_init.sql` con: extensión PostGIS; tabla `spots` (id uuid PK, name, category, summary, geom geometry(Point,4326), longitude, latitude, created_at/updated_at) e índice GiST sobre `geom`; tabla `spot_favorites` (spot_id FK cascade, user_id FK auth.users cascade, created_at, PK compuesta) e índice por user_id; RLS con `spots` de lectura pública y `spot_favorites` restringida a `auth.uid() = user_id`.
   - Declarar las funciones RPC con las firmas del diseño: `nearby_spots(lat, lng, radius_km)` devolviendo `distance_m` y ordenando por distancia (ST_DWithin/ST_Distance sobre geography), `my_favorite_spot_ids()`, `my_favorite_spots()`, `add_spot_favorite(spot_id)` (ON CONFLICT DO NOTHING) y `remove_spot_favorite(spot_id)`, todas con `security definer` y filtro interno por `auth.uid()`.
   - Observable: el fichero SQL existe, es re-ejecutable (`create ... if not exists`/`create or replace function`) y el esquema + RPC coinciden con los contratos del diseño (nombres, argumentos, columnas de respuesta).
@@ -109,3 +109,4 @@
 - El gate de sesión de favoritos es doble: UX en `SpotDetailViewModel` (via `currentUser()`) y autoritativo en las RPC/RLS (`auth.uid()`), de modo que «account-personal» pueda reutilizar el mismo `SpotRepository` sin cambios.
 - Los tests de repositorio usan `SupabaseBaseFake` de `supabase-foundation` (ya disponible en el test target); los tests de ViewModels usan `SpotRepositoryFake` y los doubles de localización existentes (`DeviceLocationProviderDouble`, `CompositionTestLocationProvider`).
 - Los ficheros Swift nuevos se registran en `project.pbxproj` siguiendo el patrón de `catch-log` (fileRef + buildFile + Sources) en los targets app/test/UI-test correspondientes.
+- 1.1: esquema/RPC en `db/spot-discovery/001_spot_discovery_init.sql` con contrato de args del diseño (`spot_id`, no `p_spot_id`); ronda 1 REJECT por `p_spot_id` → ronda 2 REJECT por shadowing columna/param en DELETE (precedencia de columna, §36.5) → `remove_spot_favorite` delete final con `spot_id = $1` (posicional) y LHS calificado. FYI: design.md:601-616 aún muestra `p_spot_id` (doc a reconciliar, fuera de boundary). `nearby_spots(41.4,2.2,50)` validado con infra real (1.2).
