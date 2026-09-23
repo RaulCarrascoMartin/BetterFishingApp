@@ -36,7 +36,7 @@
   - _Boundary: Services/Supabase/SupabaseAuthService_
 
 ## 3. Core: seam de storage
-- [ ] 3.1 (P) Declarar el protocolo de storage y sus opciones
+- [x] 3.1 (P) Declarar el protocolo de storage y sus opciones
   - Declarar `SupabaseStoring` (`Sendable`) con upload(bucket:path:data:options:) y download(bucket:path:), más `SupabaseUploadOptions` (contentType, upsert), sin tipos del SDK en el contrato.
   - Observable: el protocolo compila en el target de la app y un double mínimo del test target conforma el protocolo sin importar el SDK.
   - _Requirements: 1.2, 4.4, 7.4_
@@ -110,3 +110,4 @@
 - 2.2: endpoints exactos de los stubs (base `https://project-ref.supabase.co`) — signUp `/auth/v1/signup`, signIn `/auth/v1/token?grant_type=password`, signOut POST `/auth/v1/logout?scope=global` — y el shape real del stream del SDK v2.55 es `AsyncStream<(event: AuthChangeEvent, session: Session?)>` (con `@_spi(Experimental) import Supabase`).
 - RED 2.2: evidencia reproducida moviendo `app/Services/Supabase/SupabaseAuthService.swift` fuera de los sources del target: `/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project BetterFishing.xcodeproj -scheme BetterFishing -destination 'platform=iOS Simulator,name=iPhone 18 Pro Max' -only-testing:BetterFishingTests/SupabaseAuthServiceTests` → `error: Build input file cannot be found: '.../App/Services/Supabase/SupabaseAuthService.swift'. Did you forget to declare this file as an output of a script phase or custom build rule which produces it? ... ** TEST FAILED ** (3 failures)`; fichero restaurado y suite 176 en verde tras ello.
 - 2.2: `currentSession()` se declara `throws` por el protocolo aprobado, pero devuelve `nil` cuando no hay sesión (`.sessionUnavailable` queda sin usar en la superficie); `signUp` sin sesión (confirmación de email pendiente → `AuthResponse.user`) traduce a `.signUpFailed` porque la Req 3.1 exige sesión devuelta.
+- 3.1: `SupabaseStoring` + `SupabaseUploadOptions` declarados solo con Foundation (sin tipos del SDK) en `Services/Supabase/SupabaseStoring.swift`; `SupabaseStoringFakeConformanceTests` define `StorageTestDouble` con caja `Sendable` que registra uploads y devuelve ruta fija o error programable (5 tests; suite 181 en verde tras RED `Cannot find type 'SupabaseStoring' in scope`).
