@@ -1,4 +1,5 @@
 import Foundation
+import Supabase
 
 enum SupabaseBaseError: Error, Sendable, LocalizedError {
     case configurationMissing
@@ -35,5 +36,39 @@ enum SupabaseBaseError: Error, Sendable, LocalizedError {
         case .rpcFailed:
             return "Falló la llamada remota a la base de datos de Supabase."
         }
+    }
+}
+
+struct SupabaseStack: Sendable {
+    let auth: any SupabaseAuthProviding
+    let storage: any SupabaseStoring
+    let database: any SupabaseDatabaseAccess
+}
+
+struct SupabaseClientProvider: Sendable {
+    let configuration: SupabaseClientConfiguration
+
+    func makeStack(options: SupabaseClientOptions? = nil) throws -> SupabaseStack {
+        let client = try makeClient(options: options)
+        return SupabaseStack(
+            auth: SupabaseAuthService(client: client),
+            storage: SupabaseStorageService(client: client),
+            database: SupabaseDatabaseService(client: client)
+        )
+    }
+
+    func makeClient(options: SupabaseClientOptions? = nil) throws -> SupabaseClient {
+        let url = configuration.projectURL
+        guard let scheme = url.scheme?.lowercased(),
+              scheme == "http" || scheme == "https",
+              let host = url.host(percentEncoded: false),
+              !host.isEmpty else {
+            throw SupabaseBaseError.invalidProjectURL
+        }
+        return SupabaseClient(
+            supabaseURL: configuration.projectURL,
+            supabaseKey: configuration.anonKey,
+            options: options ?? SupabaseClientOptions()
+        )
     }
 }
