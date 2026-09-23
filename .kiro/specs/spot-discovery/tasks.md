@@ -28,7 +28,7 @@
   - _Requirements: 6.1, 6.4_
   - _Boundary: Services/Spots (SpotRepository)_
 
-- [ ] 2.2 (P) Implementar `SupabaseSpotRepository` sobre los seams de la base
+- [x] 2.2 (P) Implementar `SupabaseSpotRepository` sobre los seams de la base
   - _Depends: 2.1_
   - Implementar el actor `SupabaseSpotRepository: SpotRepository` en `App/Services/Spots/SupabaseSpotRepository.swift` consumiendo solo `SupabaseDatabaseAccess` (select para listado por región con filtros de caja y para `spot(id:)`; rpc para `nearby_spots`, `my_favorite_spot_ids`, `my_favorite_spots`, `add_spot_favorite`, `remove_spot_favorite`) y `SupabaseAuthProviding` (currentUser para el gate de `setFavorite`, que lanza `authenticationRequired` sin sesión); traducir fallos del seam a `SpotRepositoryError`.
   - Mapear los nombres snake_case (`distance_m`, `spot_id`) con rows `Decodable`/`Sendable` privados del fichero.
@@ -114,3 +114,4 @@
 - 1.2 (categorías sembradas): river (Besòs, Llobregat Sant Boi, Anoia, Tordera, Segre Lleida), lake (Sau, Tierra Alta, Vallforners, Boadella, Banyoles), sea (Port Barcelona, Ebre Fangar, Cap de Creus), shore (Barceloneta, Badalona, Delta Llobregat, Castelldefels, Cambrils).
 - 1.3: `Spot` (`Hashable` incluye `Equatable` del diseño) con `LocationCoordinate2D` compartida de Catch.swift (no movida); `SpotRegion` deriva esquinas del bbox con 111_320 m/grado lat y `111_320*cos(lat)` para lon (aislado de MapKit). 8 tests `SpotModelsTests` en verde; suite completa 227/227.
 - 2.1: `SpotRepository` (`Sendable`) + `SpotRepositoryError` (`Sendable`/`Equatable`, `queryFailed(String)`) en `App/Services/Spots/SpotRepository.swift`; `SpotRepositoryContractTests` con un doble Foundation-only ejerce los 6 métodos y los 3 casos de error. Suite 232/232 (227 base + 5 nuevos).
+- 2.2: `SupabaseSpotRepository` actor en `App/Services/Spots/SupabaseSpotRepository.swift` con rows privados `NearbySpotRow` (`distance_m`→distanceMeters), `FavoriteIDRow` (`spot_id`→UUID) y `FavoriteMutationResult` (rpc void). RPC: `nearby_spots` con claves `lat`/`lng`/`radius_km` (`.double`), `my_favorite_spot_ids`, `my_favorite_spots`, `add_spot_favorite`/`remove_spot_favorite` con `["spot_id": .string(uuidString)]`; `setFavorite` gatea con `currentUser()` (`.authenticationRequired` si nil) y `favoriteSpotIDs()` devuelve conjunto vacío sin sesión; todo fallo de seam → `.queryFailed("operación: razón")`. `SupabaseBaseFake` extendido (backward-compatible) con decodificación JSON para tipos no-`String` en `select`/`rpc` y bandera `isSessionActive` para simular sesión ausente.

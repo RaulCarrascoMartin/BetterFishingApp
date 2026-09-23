@@ -47,6 +47,7 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
         var cannedRows: [String]
         var cannedRPCValue: String
         var databaseError: Error?
+        var isSessionActive: Bool
         var recordedSignUps: [BaseFakeRecordedCredentials]
         var recordedSignIns: [BaseFakeRecordedCredentials]
         var recordedSignOuts: Int
@@ -78,6 +79,7 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
             cannedRows: cannedRows,
             cannedRPCValue: cannedRPCValue,
             databaseError: nil,
+            isSessionActive: true,
             recordedSignUps: [],
             recordedSignIns: [],
             recordedSignOuts: 0,
@@ -151,6 +153,11 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
         set { withLock { state.databaseError = newValue } }
     }
 
+    var isSessionActive: Bool {
+        get { withLock { state.isSessionActive } }
+        set { withLock { state.isSessionActive = newValue } }
+    }
+
     var recordedSignUps: [BaseFakeRecordedCredentials] {
         withLock { state.recordedSignUps }
     }
@@ -218,12 +225,12 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
     }
 
     func currentUser() async -> SupabaseUser? {
-        withLock { state.authSession.user }
+        withLock { state.isSessionActive ? state.authSession.user : nil }
     }
 
     func currentSession() async throws -> SupabaseSession? {
-        let result = withLock { () -> (error: Error?, session: SupabaseSession) in
-            (state.authError, state.authSession)
+        let result = withLock { () -> (error: Error?, session: SupabaseSession?) in
+            (state.authError, state.isSessionActive ? state.authSession : nil)
         }
         try throwIfSet(result.error)
         return result.session
@@ -277,7 +284,12 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
             return (state.databaseError, state.cannedRows)
         }
         try throwIfSet(result.error)
-        return result.rows.compactMap { $0 as? T }
+        if let rows = result.rows as? [T] {
+            return rows
+        }
+        return try result.rows.compactMap { row in
+            try JSONDecoder().decode(T.self, from: Data(row.utf8))
+        }
     }
 
     func rpc<T: Decodable & Sendable>(
@@ -289,10 +301,14 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
             return (state.databaseError, state.cannedRPCValue)
         }
         try throwIfSet(result.error)
-        guard let value = result.value as? T else {
-            throw SupabaseBaseFakeError(reason: "rpc type mismatch")
+        if let value = result.value as? T {
+            return value
         }
-        return value
+        do {
+            return try JSONDecoder().decode(T.self, from: Data(result.value.utf8))
+        } catch {
+            throw SupabaseBaseFakeError(reason: "rpc decode failed: \(error)")
+        }
     }
 
     private func throwIfSet(_ error: Error?) throws {
