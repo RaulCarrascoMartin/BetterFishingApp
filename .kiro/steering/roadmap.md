@@ -27,6 +27,6 @@ App nativa iOS (Swift/SwiftUI, iOS 17+) cliente-servidor sobre **Supabase** (Pos
 
 ## Specs (dependency order)
 
-- [ ] suabase-foundation -- cliente Supabase (auth/storage/db) tras protocolos compartidos, seam base. Dependencies: none
+- [ ] supabase-foundation -- cliente Supabase (auth/storage/db) tras protocolos compartidos, seam base. Dependencies: none
 - [ ] spot-discovery -- mapa de spots en MapKit con geometría PostGIS (semilla curada), spots cerca de mí, favoritos con cuenta. Dependencies: supabase-foundation
-- [ ] account-personal -- cuenta de usuario, perfil, favoritos y sync del registro de capturas con Supabase. Dependencies: supabase-foundation, catch-log
+- [ ] account-personal -- cuenta de usuario, perfil, favoritos y sync del registro de capturas con Supabase. Dependencies: supabase-foundation, catch-log, spot-discovery

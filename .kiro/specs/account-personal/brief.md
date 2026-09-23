@@ -11,11 +11,11 @@ Hoy el registro de capturas y (próximamente) los favoritos de spots viven solo 
 
 ## Desired Outcome
 - **Cuenta personal**: registro/inicio de sesión, perfil (nombre, avatar), cierre de sesión.
-- **Favoritos**: gestionar favoritos de spots asociados a la cuenta (persistidos en Supabase), visibles en el mapa.
+- **Favoritos**: gestionar favoritos de spots asociados a la cuenta consumiendo el seam `SpotRepository` de spot-discovery (dueño de la tabla `spot_favorites` y las RPC de favoritos), visibles en el mapa.
 - **Sync del registro**: subir las capturas locales al Supabase por cuenta y traerlas al reinstalar/cambiar de dispositivo (merge por `Catch.id` sin duplicar), preservando el seam `CatchRepository` existente (la sync es una ruta adicional, no reemplaza la persistencia local).
 
 ## Approach
-Autenticación vía `supabase-foundation` (Auth), perfil en `profiles` (Supabase), favoritos como filas `user_favorite_spots` referenciadas por `user_id` + `spot_id` (FKs a `auth.users` y `spots`), y sync del registro como servicio `CatchSyncService` que lee/escribe `catches` en Supabase. La cuenta personal consume `SpotRepository` (de spot-discovery) para favoritos sin acoplarla a la geometría. No se cambia la dirección de dependencias: features → servicios → core, seams tras protocolos.
+Autenticación vía `supabase-foundation` (Auth), perfil en `profiles` (Supabase), favoritos gestionados por el seam `SpotRepository` de spot-discovery (tabla `spot_favorites`, RPC `my_favorite_*`/`add_spot_favorite`/`remove_spot_favorite`, RLS por `auth.uid()`) que account-personal consume vía `SpotRepositorySpotPresenting`, y sync del registro como servicio `CatchSyncService` que lee/escribe `catches` en Supabase. La cuenta personal consume `SpotRepository` (de spot-discovery) para favoritos sin acoplarla a la geometría y sin crear tabla/RPC propias. No se cambia la dirección de dependencias: features → servicios → core, seams tras protocolos.
 
 ## Scope
 - **In**: auth (signUp/signIn/signOut/session), perfil + avatar (storage), favoritos de spots CRUD, y sync del registro de capturas (push local→Supabase y pull Supabase→local con merge idempotente por `Catch.id`).
@@ -24,7 +24,7 @@ Autenticación vía `supabase-foundation` (Auth), perfil en `profiles` (Supabase
 ## Boundary Candidates
 - `Features/Account/AccountView` + `AccountViewModel` (perfil/auth UI) — protocolo `AccountSessionManaging`.
 - `Services/CatchLog/CatchSyncService` (+ seam `CatchSynchronizing`) — sync idempotente del registro.
-- `Services/Account/FavoritesRepository` (+ seam `FavoritesManaging`) — favoritos por cuenta.
+- `Services/Account/SpotRepositorySpotPresenting` (+ seam `FavoritesPresenting`) — favoritos por cuenta consumiendo `SpotRepository` de spot-discovery; no crea tabla/RPC propias.
 - `Services/Account/ProfileRepository` (+ seam `ProfileManaging`).
 
 ## Out of Boundary
