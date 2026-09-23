@@ -94,6 +94,7 @@
 		0000000000000000000000B7D /* SupabaseDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A75 /* SupabaseDatabaseService.swift */; };
 		0000000000000000000000B7E /* SupabaseDatabaseServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A76 /* SupabaseDatabaseServiceTests.swift */; };
 		0000000000000000000000B7F /* SupabaseClientProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A77 /* SupabaseClientProviderTests.swift */; };
+		0000000000000000000000B80 /* SupabaseCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A78 /* SupabaseCompositionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -205,6 +206,7 @@
 		0000000000000000000000A74 /* SupabaseDatabaseFakeConformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseDatabaseFakeConformanceTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A76 /* SupabaseDatabaseServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseDatabaseServiceTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A77 /* SupabaseClientProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClientProviderTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A78 /* SupabaseCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseCompositionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -429,6 +431,7 @@
 				0000000000000000000000A74 /* SupabaseDatabaseFakeConformanceTests.swift */,
 				0000000000000000000000A76 /* SupabaseDatabaseServiceTests.swift */,
 				0000000000000000000000A77 /* SupabaseClientProviderTests.swift */,
+				0000000000000000000000A78 /* SupabaseCompositionTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -672,6 +675,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B7C /* SupabaseDatabaseFakeConformanceTests.swift in Sources */,
 				0000000000000000000000B7E /* SupabaseDatabaseServiceTests.swift in Sources */,
 				0000000000000000000000B7F /* SupabaseClientProviderTests.swift in Sources */,
+				0000000000000000000000B80 /* SupabaseCompositionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

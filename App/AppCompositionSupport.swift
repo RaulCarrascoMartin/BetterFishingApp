@@ -1,4 +1,6 @@
 import Foundation
+import os
+import Supabase
 
 struct FishialCredentials: Equatable {
     let clientID: String
@@ -23,6 +25,7 @@ struct AppRootServices {
     let thumbnailProvider: @MainActor (Catch) -> Data?
     let detailViewModelFactory: @MainActor (Catch) -> CatchDetailViewModel
     let migrator: ProvisionalDraftsMigrator
+    let supabase: SupabaseStack?
 }
 
 enum AppComposition {
@@ -30,7 +33,9 @@ enum AppComposition {
     static func makeRootServices(
         arguments: [String] = ProcessInfo.processInfo.arguments,
         repository: LocalFileCatchRepository? = nil,
-        draftsDirectory: URL? = nil
+        draftsDirectory: URL? = nil,
+        supabaseConfiguration: SupabaseClientConfiguration? = nil,
+        supabaseOptions: SupabaseClientOptions? = nil
     ) -> AppRootServices {
         #if DEBUG
         if let services = makeUITestRootServices(arguments: arguments, draftsDirectory: draftsDirectory) {
@@ -66,9 +71,31 @@ enum AppComposition {
                     photoProvider: { realRepository.photoData(for: $0) }
                 )
             },
-            migrator: ProvisionalDraftsMigrator(catchRepository: realRepository, draftsDirectory: draftsDirectory)
+            migrator: ProvisionalDraftsMigrator(catchRepository: realRepository, draftsDirectory: draftsDirectory),
+            supabase: makeSupabaseStack(configuration: supabaseConfiguration, options: supabaseOptions)
         )
     }
+
+    private static func makeSupabaseStack(
+        configuration: SupabaseClientConfiguration?,
+        options: SupabaseClientOptions?
+    ) -> SupabaseStack? {
+        let resolved = configuration ?? SupabaseClientConfiguration(bundle: .main)
+        guard let resolved else {
+            supabaseLogger.error("Configuración de Supabase ausente o inválida: el stack queda en nil")
+            return nil
+        }
+        do {
+            let stack = try SupabaseClientProvider(configuration: resolved).makeStack(options: options)
+            supabaseLogger.info("Stack de Supabase construido: auth, storage y database disponibles")
+            return stack
+        } catch {
+            supabaseLogger.error("No se pudo construir el stack de Supabase: \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+    }
+
+    private static let supabaseLogger = Logger(subsystem: "BetterFishing", category: "Supabase")
 
     @MainActor
     static func makeCameraManager(arguments: [String] = ProcessInfo.processInfo.arguments) -> CameraManager {
@@ -157,7 +184,8 @@ enum AppComposition {
             migrator: ProvisionalDraftsMigrator(
                 catchRepository: repository,
                 draftsDirectory: fixedDraftsDirectory ?? draftsDirectory
-            )
+            ),
+            supabase: nil
         )
     }
     #endif
