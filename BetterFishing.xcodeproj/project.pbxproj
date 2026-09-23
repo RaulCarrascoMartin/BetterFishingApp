@@ -123,6 +123,12 @@
 		0000000000000000000000B9B /* CatchSyncLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9B /* CatchSyncLedger.swift */; };
 		0000000000000000000000B9C /* RemoteCatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9C /* RemoteCatchTests.swift */; };
 		0000000000000000000000B9D /* CatchSyncLedgerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9D /* CatchSyncLedgerTests.swift */; };
+		0000000000000000000000B9E /* AccountSessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9E /* AccountSessionManaging.swift */; };
+		0000000000000000000000B9F /* AccountSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A9F /* AccountSessionManager.swift */; };
+		0000000000000000000000BA0 /* ProfileManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA0 /* ProfileManaging.swift */; };
+		0000000000000000000000BA1 /* SupabaseProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA1 /* SupabaseProfileRepository.swift */; };
+		0000000000000000000000BA2 /* AccountSessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA2 /* AccountSessionManagerTests.swift */; };
+		0000000000000000000000BA3 /* SupabaseProfileRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA3 /* SupabaseProfileRepositoryTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -263,6 +269,12 @@
 		0000000000000000000000A9B /* CatchSyncLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncLedger.swift; sourceTree = "<group>"; };
 		0000000000000000000000A9C /* RemoteCatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteCatchTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A9D /* CatchSyncLedgerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncLedgerTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A9E /* AccountSessionManaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSessionManaging.swift; sourceTree = "<group>"; };
+		0000000000000000000000A9F /* AccountSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSessionManager.swift; sourceTree = "<group>"; };
+		0000000000000000000000AA0 /* ProfileManaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManaging.swift; sourceTree = "<group>"; };
+		0000000000000000000000AA1 /* SupabaseProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseProfileRepository.swift; sourceTree = "<group>"; };
+		0000000000000000000000AA2 /* AccountSessionManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSessionManagerTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000AA3 /* SupabaseProfileRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseProfileRepositoryTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -379,8 +391,20 @@
 				0000000000000000000000C13 /* CatchLog */,
 				0000000000000000000000C16 /* Supabase */,
 				0000000000000000000000C19 /* Spots */,
+				0000000000000000000000C1E /* Account */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C1E /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A9E /* AccountSessionManaging.swift */,
+				0000000000000000000000A9F /* AccountSessionManager.swift */,
+				0000000000000000000000AA0 /* ProfileManaging.swift */,
+				0000000000000000000000AA1 /* SupabaseProfileRepository.swift */,
+			);
+			path = Account;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C16 /* Supabase */ = {
@@ -564,6 +588,8 @@
 				0000000000000000000000A97 /* SpotDiscoveryFlowIntegrationTests.swift */,
 				0000000000000000000000A9C /* RemoteCatchTests.swift */,
 				0000000000000000000000A9D /* CatchSyncLedgerTests.swift */,
+				0000000000000000000000AA2 /* AccountSessionManagerTests.swift */,
+				0000000000000000000000AA3 /* SupabaseProfileRepositoryTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -775,6 +801,10 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B99 /* FavoriteSpot.swift in Sources */,
 				0000000000000000000000B9A /* RemoteCatch.swift in Sources */,
 				0000000000000000000000B9B /* CatchSyncLedger.swift in Sources */,
+				0000000000000000000000B9E /* AccountSessionManaging.swift in Sources */,
+				0000000000000000000000B9F /* AccountSessionManager.swift in Sources */,
+				0000000000000000000000BA0 /* ProfileManaging.swift in Sources */,
+				0000000000000000000000BA1 /* SupabaseProfileRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -836,6 +866,8 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B97 /* SpotDiscoveryFlowIntegrationTests.swift in Sources */,
 				0000000000000000000000B9C /* RemoteCatchTests.swift in Sources */,
 				0000000000000000000000B9D /* CatchSyncLedgerTests.swift in Sources */,
+				0000000000000000000000BA2 /* AccountSessionManagerTests.swift in Sources */,
+				0000000000000000000000BA3 /* SupabaseProfileRepositoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
