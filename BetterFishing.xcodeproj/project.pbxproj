@@ -98,6 +98,10 @@
 		0000000000000000000000B81 /* SupabaseBaseFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A79 /* SupabaseBaseFake.swift */; };
 		0000000000000000000000B82 /* SupabaseBaseFakeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */; };
 		0000000000000000000000B83 /* SupabaseSessionFlowIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */; };
+		0000000000000000000000B87 /* SpotModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7F /* SpotModelsTests.swift */; };
+		0000000000000000000000B84 /* Spot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7C /* Spot.swift */; };
+		0000000000000000000000B85 /* SpotCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7D /* SpotCategory.swift */; };
+		0000000000000000000000B86 /* SpotRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7E /* SpotRegion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -213,6 +217,10 @@
 		0000000000000000000000A79 /* SupabaseBaseFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseBaseFake.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseBaseFakeTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSessionFlowIntegrationTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A7F /* SpotModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotModelsTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A7C /* Spot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spot.swift; sourceTree = "<group>"; };
+		0000000000000000000000A7D /* SpotCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotCategory.swift; sourceTree = "<group>"; };
+		0000000000000000000000A7E /* SpotRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRegion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -373,8 +381,19 @@
 				0000000000000000000000C10 /* Fishial */,
 				0000000000000000000000A38 /* Catch.swift */,
 				0000000000000000000000C17 /* Supabase */,
+				0000000000000000000000C18 /* Spots */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C18 /* Spots */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A7C /* Spot.swift */,
+				0000000000000000000000A7D /* SpotCategory.swift */,
+				0000000000000000000000A7E /* SpotRegion.swift */,
+			);
+			path = Spots;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C17 /* Supabase */ = {
@@ -441,6 +460,7 @@
 				0000000000000000000000A79 /* SupabaseBaseFake.swift */,
 				0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */,
 				0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */,
+				0000000000000000000000A7F /* SpotModelsTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -638,8 +658,11 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B77 /* SupabaseStoring.swift in Sources */,
 				0000000000000000000000B79 /* SupabaseStorageService.swift in Sources */,
 				0000000000000000000000B7B /* SupabaseDatabaseAccess.swift in Sources */,
-				0000000000000000000000B7D /* SupabaseDatabaseService.swift in Sources */,
-			);
+0000000000000000000000B7D /* SupabaseDatabaseService.swift in Sources */,
+			0000000000000000000000B84 /* Spot.swift in Sources */,
+			0000000000000000000000B85 /* SpotCategory.swift in Sources */,
+			0000000000000000000000B86 /* SpotRegion.swift in Sources */,
+		);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 	0000000000000000000000F0C /* Sources */ = {
@@ -688,6 +711,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B81 /* SupabaseBaseFake.swift in Sources */,
 				0000000000000000000000B82 /* SupabaseBaseFakeTests.swift in Sources */,
 				0000000000000000000000B83 /* SupabaseSessionFlowIntegrationTests.swift in Sources */,
+				0000000000000000000000B87 /* SpotModelsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
