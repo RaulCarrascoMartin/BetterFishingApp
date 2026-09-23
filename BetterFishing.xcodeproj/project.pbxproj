@@ -111,6 +111,9 @@
 		0000000000000000000000B91 /* SpotDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A88 /* SpotDetailViewModelTests.swift */; };
 		0000000000000000000000B8F /* SpotDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A86 /* SpotDetailViewModel.swift */; };
 		0000000000000000000000B90 /* SpotDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A87 /* SpotDetailView.swift */; };
+		0000000000000000000000B92 /* SpotMapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A89 /* SpotMapViewModel.swift */; };
+		0000000000000000000000B93 /* SpotMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A8A /* SpotMapView.swift */; };
+		0000000000000000000000B94 /* SpotMapViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A8B /* SpotMapViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -239,6 +242,9 @@
 		0000000000000000000000A88 /* SpotDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailViewModelTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A86 /* SpotDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailViewModel.swift; sourceTree = "<group>"; };
 		0000000000000000000000A87 /* SpotDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailView.swift; sourceTree = "<group>"; };
+		0000000000000000000000A89 /* SpotMapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapViewModel.swift; sourceTree = "<group>"; };
+		0000000000000000000000A8A /* SpotMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapView.swift; sourceTree = "<group>"; };
+		0000000000000000000000A8B /* SpotMapViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotMapViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -300,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				0000000000000000000000C1B /* SpotDetail */,
+				0000000000000000000000C1C /* Map */,
 			);
 			path = SpotDiscovery;
 			sourceTree = "<group>";
@@ -311,6 +318,15 @@
 				0000000000000000000000A87 /* SpotDetailView.swift */,
 			);
 			path = SpotDetail;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C1C /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000A89 /* SpotMapViewModel.swift */,
+				0000000000000000000000A8A /* SpotMapView.swift */,
+			);
+			path = Map;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C04 /* FishScanner */ = {
@@ -512,6 +528,7 @@
 				0000000000000000000000A84 /* SpotRepositoryFake.swift */,
 				0000000000000000000000A85 /* SpotRepositoryFakeTests.swift */,
 				0000000000000000000000A88 /* SpotDetailViewModelTests.swift */,
+				0000000000000000000000A8B /* SpotMapViewModelTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -717,6 +734,8 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B8A /* SupabaseSpotRepository.swift in Sources */,
 				0000000000000000000000B8F /* SpotDetailViewModel.swift in Sources */,
 				0000000000000000000000B90 /* SpotDetailView.swift in Sources */,
+				0000000000000000000000B92 /* SpotMapViewModel.swift in Sources */,
+				0000000000000000000000B93 /* SpotMapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -772,6 +791,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B8D /* SpotRepositoryFake.swift in Sources */,
 				0000000000000000000000B8E /* SpotRepositoryFakeTests.swift in Sources */,
 				0000000000000000000000B91 /* SpotDetailViewModelTests.swift in Sources */,
+				0000000000000000000000B94 /* SpotMapViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
