@@ -88,7 +88,7 @@
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
   - _Boundary: BetterFishingTests/SupabaseBaseFake_
 
-- [ ] 6.2 Verificación E2E de la capa base
+- [x] 6.2 Verificación E2E de la capa base
   - _Depends: 5.2, 6.1_
   - Añadir una prueba de integración que construye la composición con configuración vacía (la app construye el resto de servicios, `supabase == nil`) y un flujo completo de sesión con stubs HTTP: signIn → currentSession consultable → `stateChanges()` emite signedIn → signOut → signedOut.
   - Confirmar que la suite completa y el build pasan en Swift 6 estricto sin advertencias de concurrencia.
@@ -120,3 +120,5 @@
 - 5.2: `AppCompositionSupport` importa `os` (Logger) y `Supabase` (solo el tipo `SupabaseClientOptions`) — el composition root es el lugar legítimo del SDK según el diseño; `makeSupabaseStack` degrada a `supabase == nil` con log si la config falta o la construcción lanza, y el path de UITest double devuelve `supabase: nil` sin construir stack (fileRef A78/build B80).
 - RED 5.2: evidencia reproducida con `SupabaseCompositionTests` antes del campo `supabase` en `AppRootServices`: `Value of type 'AppRootServices' has no member 'supabase'` / `Extra argument 'supabaseConfiguration' in call` → ** TEST FAILED ** (3 failures); implementado `supabase: SupabaseStack?` + inyección de config/options y suite 203 en verde tras GREEN (3 tests nuevos).
 - 6.1: `SupabaseBaseFake` (`final class`, `@unchecked Sendable`, un NSLock que guarda un struct `State` — patrón de caja del precedente) conforma los tres protocolos con éxito/fallo programables por seam (`authError`/`uploadError`/`downloadError`/`databaseError` + valores configurables) y registra credenciales, uploads/downloads y select/rpc; `reset()` limpia solo los registros; RED con `Cannot find 'SupabaseBaseFake' in scope` → suite 203+14=217 en verde (fileRef A79/build B81 y A7A/B82 en C11/F0C).
+- 6.2: `SupabaseSessionFlowIntegrationTests` construye el stack vía `AppComposition.makeRootServices` (composition root real, fileRef A7B/build B83 en C11/F0C): signIn con stub del token → `currentSession()` == session → `stateChanges()` emite `.signedIn` → signOut con stub del logout → `stateChanges()` emite `.signedOut` (el SDK v2.55 lo emite localmente en el flujo password) y con 401 el `signIn` lanza `.signInFailed` sin emitir `.signedIn`.
+- RED 6.2: `xcodebuild test -only-testing:BetterFishingTests/SupabaseSessionFlowIntegrationTests` antes de crear el fichero → `Executed 0 tests` (la verificación E2E no existía en la suite) y `error: 'async' call in an autoclosure` en los `XCTAssertNil` async (hoisteados a variables) → ** TEST FAILED **; tras el fichero: 2 tests nuevos, suite 219 en verde.

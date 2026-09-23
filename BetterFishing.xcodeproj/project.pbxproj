@@ -97,6 +97,7 @@
 		0000000000000000000000B80 /* SupabaseCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A78 /* SupabaseCompositionTests.swift */; };
 		0000000000000000000000B81 /* SupabaseBaseFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A79 /* SupabaseBaseFake.swift */; };
 		0000000000000000000000B82 /* SupabaseBaseFakeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */; };
+		0000000000000000000000B83 /* SupabaseSessionFlowIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -211,6 +212,7 @@
 		0000000000000000000000A78 /* SupabaseCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseCompositionTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A79 /* SupabaseBaseFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseBaseFake.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseBaseFakeTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSessionFlowIntegrationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -438,6 +440,7 @@
 				0000000000000000000000A78 /* SupabaseCompositionTests.swift */,
 				0000000000000000000000A79 /* SupabaseBaseFake.swift */,
 				0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */,
+				0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -684,6 +687,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B80 /* SupabaseCompositionTests.swift in Sources */,
 				0000000000000000000000B81 /* SupabaseBaseFake.swift in Sources */,
 				0000000000000000000000B82 /* SupabaseBaseFakeTests.swift in Sources */,
+				0000000000000000000000B83 /* SupabaseSessionFlowIntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
