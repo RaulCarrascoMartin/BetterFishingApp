@@ -1,7 +1,7 @@
 # Implementation Plan: supabase-foundation
 
 ## 1. Foundation: integración del SDK, configuración y modelos comunes
-- [ ] 1.1 Integrar el SDK de Supabase como dependencia de paquete SPM
+- [x] 1.1 Integrar el SDK de Supabase como dependencia de paquete SPM
   - Añadir `supabase-swift` (v2.x, producto `Supabase`) como dependencia de paquete en `BetterFishing.xcodeproj` (project.pbxproj) y vincularla al target de la app; el test target también la referencia para construir opciones de cliente en los tests de integración.
   - Verificar en Swift 6 estricto (`xcodebuild build` y `test`) la compatibilidad `Sendable` del `SupabaseClient` con el patrón de actores del diseño (aislar el cliente dentro de actores); registrar el hallazgo en las notas de implementación.
   - Seguir el patrón existente del proyecto para registrar ficheros nuevos en el target (cada fichero que añadan las tareas siguientes se registra igual).
@@ -103,3 +103,4 @@
 - La restauración de sesión (Req 3.5) la entrega el SDK con su almacenamiento por defecto al construir el cliente; el mapa `initialSession` → `.sessionRestored` en `stateChanges()` es la evidencia observable (tarea 6.2).
 - Con xcconfig vacío (no hay infra de Supabase todavía) la capa base debe degradar a `supabase == nil` con log; ninguna feature incorporada consume aún los seams, por lo que el resto de la app no se ve afectado (verificado en 5.2 y 6.2).
 - Los tests de servicios usan `MockURLProtocol`/`HTTPStub` (patrón ya existente en la repo) inyectando la `URLSession` vía `SupabaseClientOptions.global.session`; no se construye ni se firma ningún request Supabase a mano.
+- La integración SPM de la dependencia `supabase-swift` (resuelta v2.55.2, producto `Supabase`, fromVersion 2.0.0) se registra con una nueva PBXFrameworksBuildPhase (F16) en el target de la app y en la fase F0B del test target; verificado en Swift 6 estricto: `SupabaseClient` declara `Sendable` en el SDK (`public final class SupabaseClient: Sendable`), por lo que el patrón de actores del diseño se mantiene por aislamiento del cliente compartido y consistencia, no por necesidad de conformidad.

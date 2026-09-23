@@ -71,6 +71,9 @@
 		0000000000000000000000B61 /* RegistryEditE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A61 /* RegistryEditE2ETests.swift */; };
 		0000000000000000000000B62 /* RegistryDeleteE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A62 /* RegistryDeleteE2ETests.swift */; };
 		0000000000000000000000B63 /* MigrationE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A63 /* MigrationE2ETests.swift */; };
+		0000000000000000000000B64 /* SupabaseSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A64 /* SupabaseSmokeTests.swift */; };
+		0000000000000000000000B65 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0000000000000000000000E52 /* Supabase */; };
+		0000000000000000000000B66 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0000000000000000000000E52 /* Supabase */; };
 		0000000000000000000000B59 /* CompositionIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A59 /* CompositionIntegrationTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -163,6 +166,7 @@
 		0000000000000000000000A61 /* RegistryEditE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistryEditE2ETests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A62 /* RegistryDeleteE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistryDeleteE2ETests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A63 /* MigrationE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationE2ETests.swift; sourceTree = "<group>"; };
+		0000000000000000000000A64 /* SupabaseSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSmokeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +175,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				0000000000000000000000B14 /* XCTest.framework in Frameworks */,
+				0000000000000000000000B66 /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0000000000000000000000F16 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0000000000000000000000B65 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,8 +253,16 @@
 			children = (
 				0000000000000000000000C06 /* FishID */,
 				0000000000000000000000C13 /* CatchLog */,
+				0000000000000000000000C16 /* Supabase */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C16 /* Supabase */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Supabase;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C06 /* FishID */ = {
@@ -297,8 +318,16 @@
 				0000000000000000000000A1C /* CatchDraft.swift */,
 				0000000000000000000000C10 /* Fishial */,
 				0000000000000000000000A38 /* Catch.swift */,
+				0000000000000000000000C17 /* Supabase */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C17 /* Supabase */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Supabase;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C10 /* Fishial */ = {
@@ -342,6 +371,7 @@
 				0000000000000000000000A51 /* CatchDetailViewModelTests.swift */,
 				0000000000000000000000A55 /* CatchLogViewModelTests.swift */,
 				0000000000000000000000A59 /* CompositionIntegrationTests.swift */,
+				0000000000000000000000A64 /* SupabaseSmokeTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -389,6 +419,7 @@
 			buildConfigurationList = 0000000000000000000000F06 /* Build configuration list for PBXNativeTarget "BetterFishing" */;
 			buildPhases = (
 				0000000000000000000000F07 /* Sources */,
+				0000000000000000000000F16 /* Frameworks */,
 				0000000000000000000000F08 /* Resources */,
 			);
 			buildRules = (
@@ -396,6 +427,9 @@
 			dependencies = (
 			);
 			name = BetterFishing;
+			packageProductDependencies = (
+				0000000000000000000000E52 /* Supabase */,
+			);
 			productName = BetterFishing;
 			productReference = 0000000000000000000000A03 /* BetterFishing.app */;
 			productType = "com.apple.product-type.application";
@@ -413,6 +447,9 @@
 				0000000000000000000000F0A /* PBXTargetDependency */,
 			);
 			name = BetterFishingTests;
+			packageProductDependencies = (
+				0000000000000000000000E52 /* Supabase */,
+			);
 			productName = BetterFishingTests;
 			productReference = 0000000000000000000000A14 /* BetterFishingTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -465,6 +502,9 @@
 				Base,
 			);
 			mainGroup = 0000000000000000000000C01;
+			packageReferences = (
+				0000000000000000000000E51 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			productRefGroup = 0000000000000000000000C0B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -555,6 +595,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B51 /* CatchDetailViewModelTests.swift in Sources */,
 				0000000000000000000000B55 /* CatchLogViewModelTests.swift in Sources */,
 				0000000000000000000000B59 /* CompositionIntegrationTests.swift in Sources */,
+				0000000000000000000000B64 /* SupabaseSmokeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -889,6 +930,25 @@ isa = PBXSourcesBuildPhase;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0000000000000000000000E51 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0000000000000000000000E52 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0000000000000000000000E51 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0000000000000000000000E01 /* Project object */;
 }
