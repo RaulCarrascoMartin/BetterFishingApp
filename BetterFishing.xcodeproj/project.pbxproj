@@ -129,6 +129,9 @@
 		0000000000000000000000BA1 /* SupabaseProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA1 /* SupabaseProfileRepository.swift */; };
 		0000000000000000000000BA2 /* AccountSessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA2 /* AccountSessionManagerTests.swift */; };
 		0000000000000000000000BA3 /* SupabaseProfileRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA3 /* SupabaseProfileRepositoryTests.swift */; };
+		0000000000000000000000BA4 /* FavoritesPresenting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA4 /* FavoritesPresenting.swift */; };
+		0000000000000000000000BA5 /* SpotRepositorySpotPresenting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA5 /* SpotRepositorySpotPresenting.swift */; };
+		0000000000000000000000BA6 /* SpotRepositorySpotPresentingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA6 /* SpotRepositorySpotPresentingTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -275,6 +278,9 @@
 		0000000000000000000000AA1 /* SupabaseProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseProfileRepository.swift; sourceTree = "<group>"; };
 		0000000000000000000000AA2 /* AccountSessionManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSessionManagerTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000AA3 /* SupabaseProfileRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseProfileRepositoryTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000AA4 /* FavoritesPresenting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesPresenting.swift; sourceTree = "<group>"; };
+		0000000000000000000000AA5 /* SpotRepositorySpotPresenting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRepositorySpotPresenting.swift; sourceTree = "<group>"; };
+		0000000000000000000000AA6 /* SpotRepositorySpotPresentingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRepositorySpotPresentingTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -403,6 +409,8 @@
 				0000000000000000000000A9F /* AccountSessionManager.swift */,
 				0000000000000000000000AA0 /* ProfileManaging.swift */,
 				0000000000000000000000AA1 /* SupabaseProfileRepository.swift */,
+				0000000000000000000000AA4 /* FavoritesPresenting.swift */,
+				0000000000000000000000AA5 /* SpotRepositorySpotPresenting.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -590,6 +598,7 @@
 				0000000000000000000000A9D /* CatchSyncLedgerTests.swift */,
 				0000000000000000000000AA2 /* AccountSessionManagerTests.swift */,
 				0000000000000000000000AA3 /* SupabaseProfileRepositoryTests.swift */,
+				0000000000000000000000AA6 /* SpotRepositorySpotPresentingTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -805,6 +814,8 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B9F /* AccountSessionManager.swift in Sources */,
 				0000000000000000000000BA0 /* ProfileManaging.swift in Sources */,
 				0000000000000000000000BA1 /* SupabaseProfileRepository.swift in Sources */,
+				0000000000000000000000BA4 /* FavoritesPresenting.swift in Sources */,
+				0000000000000000000000BA5 /* SpotRepositorySpotPresenting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -868,6 +879,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B9D /* CatchSyncLedgerTests.swift in Sources */,
 				0000000000000000000000BA2 /* AccountSessionManagerTests.swift in Sources */,
 				0000000000000000000000BA3 /* SupabaseProfileRepositoryTests.swift in Sources */,
+				0000000000000000000000BA6 /* SpotRepositorySpotPresentingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
