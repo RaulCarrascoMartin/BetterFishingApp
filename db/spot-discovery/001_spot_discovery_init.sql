@@ -165,3 +165,70 @@ grant execute on function public.my_favorite_spot_ids() to authenticated;
 grant execute on function public.my_favorite_spots() to authenticated;
 grant execute on function public.add_spot_favorite(uuid) to authenticated;
 grant execute on function public.remove_spot_favorite(uuid) to authenticated;
+
+-- ===========================================================================
+-- Semilla curada de spots (tarea 1.2)
+-- ===========================================================================
+-- 18 spots de pesca realistas alrededor de Cataluña y el litoral peninsular.
+-- Categorías del dominio (design.md, SpotCategory): river, lake, sea, shore.
+-- Idempotente: on conflict (name) do nothing; se exige unicidad de `name`
+-- (create unique index if not exists) para que el conflicto sea efectivo al
+-- re-ejecutar todo el fichero.
+create unique index if not exists spots_name_uidx on public.spots (name);
+
+insert into public.spots (name, category, summary, longitude, latitude, geom) values
+  ('Embalse de Sau', 'lake',
+   'Río Ter embalsado en Osona; aguas abiertas y profundas.',
+   2.2486, 42.0037, st_setsrid(st_makepoint(2.2486, 42.0037), 4326)),
+  ('Pantano de la Tierra Alta', 'lake',
+   'Recorrido amplio de la Tierra Alta, tranquilo y alejado.',
+   0.4210, 41.1060, st_setsrid(st_makepoint(0.4210, 41.1060), 4326)),
+  ('Platja de la Barceloneta', 'shore',
+   'Orilla urbana de Barcelona con fácil acceso desde la ciudad.',
+   2.1905, 41.3783, st_setsrid(st_makepoint(2.1905, 41.3783), 4326)),
+  ('Desembocadura del Besòs', 'river',
+   'Curso bajo del Besòs donde se junta con el mar.',
+   2.2316, 41.4118, st_setsrid(st_makepoint(2.2316, 41.4118), 4326)),
+  ('Port de Barcelona (Moll de Pescadors)', 'sea',
+   'Zona portuaria de pesca con corriente y mar abierto.',
+   2.1815, 41.3690, st_setsrid(st_makepoint(2.1815, 41.3690), 4326)),
+  ('Platja de Badalona', 'shore',
+   'Largo paseo marítimo al norte de Barcelona.',
+   2.2470, 41.4496, st_setsrid(st_makepoint(2.2470, 41.4496), 4326)),
+  ('Delta del Llobregat', 'shore',
+   'Desembocadura protegida junto al Prat, muy cambiante.',
+   2.1266, 41.2832, st_setsrid(st_makepoint(2.1266, 41.2832), 4326)),
+  ('Riu Llobregat a Sant Boi', 'river',
+   'Tramo tranquilo del Llobregat antes de la llanura deltaica.',
+   2.0343, 41.3441, st_setsrid(st_makepoint(2.0343, 41.3441), 4326)),
+  ('Platja de Castelldefels', 'shore',
+   'Orilla amplia al sur de Barcelona, ideal desde la arena.',
+   1.9797, 41.2480, st_setsrid(st_makepoint(1.9797, 41.2480), 4326)),
+  ('Riu Anoia a Martorell', 'river',
+   'Tramo fluvial del Anoia antes de verter al Llobregat.',
+   1.8480, 41.4950, st_setsrid(st_makepoint(1.8480, 41.4950), 4326)),
+  ('Riu Tordera a Sant Celoni', 'river',
+   'Río de montaña de la falda del Montseny, de poca profundidad.',
+   2.5490, 41.6960, st_setsrid(st_makepoint(2.5490, 41.6960), 4326)),
+  ('Pantà de Vallforners', 'lake',
+   'Embalse pequeño entre el Montseny y el Corredor.',
+   2.5480, 41.7260, st_setsrid(st_makepoint(2.5480, 41.7260), 4326)),
+  ('Pantà de Boadella', 'lake',
+   'Embalse del río Muga en la Alta Empordà.',
+   2.8167, 42.3333, st_setsrid(st_makepoint(2.8167, 42.3333), 4326)),
+  ('Estany de Banyoles', 'lake',
+   'Lago natural más grande de Cataluña, con aguas claras.',
+   2.7556, 42.1188, st_setsrid(st_makepoint(2.7556, 42.1188), 4326)),
+  ('Delta de l''Ebre (Port del Fangar)', 'sea',
+   'Bahía del delta del Ebro abierta al Mediterráneo.',
+   0.8333, 40.7333, st_setsrid(st_makepoint(0.8333, 40.7333), 4326)),
+  ('Cap de Creus', 'sea',
+   'Fondos rocosos y corrientes de la punta nordeste.',
+   3.2250, 42.3180, st_setsrid(st_makepoint(3.2250, 42.3180), 4326)),
+  ('Platja de Cambrils', 'shore',
+   'Orilla de la Costa Daurada con zona de pesca deportiva.',
+   1.0895, 41.0700, st_setsrid(st_makepoint(1.0895, 41.0700), 4326)),
+  ('Riu Segre a Lleida', 'river',
+   'Tramo urbano del Segre, estable y céntrico.',
+   0.6250, 41.6167, st_setsrid(st_makepoint(0.6250, 41.6167), 4326))
+on conflict (name) do nothing;
