@@ -134,6 +134,9 @@
 		0000000000000000000000BA6 /* SpotRepositorySpotPresentingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA6 /* SpotRepositorySpotPresentingTests.swift */; };
 		0000000000000000000000BA7 /* CatchSyncMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA7 /* CatchSyncMerger.swift */; };
 		0000000000000000000000BA8 /* CatchSyncMergerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA8 /* CatchSyncMergerTests.swift */; };
+		0000000000000000000000BA9 /* SyncCatchLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AA9 /* SyncCatchLocalStore.swift */; };
+		0000000000000000000000BAA /* FileSyncCatchStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AAA /* FileSyncCatchStore.swift */; };
+		0000000000000000000000BAB /* FileSyncCatchStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AAB /* FileSyncCatchStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -285,6 +288,9 @@
 		0000000000000000000000AA6 /* SpotRepositorySpotPresentingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotRepositorySpotPresentingTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000AA7 /* CatchSyncMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncMerger.swift; sourceTree = "<group>"; };
 		0000000000000000000000AA8 /* CatchSyncMergerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncMergerTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000AA9 /* SyncCatchLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCatchLocalStore.swift; sourceTree = "<group>"; };
+		0000000000000000000000AAA /* FileSyncCatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSyncCatchStore.swift; sourceTree = "<group>"; };
+		0000000000000000000000AAB /* FileSyncCatchStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSyncCatchStoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -453,6 +459,8 @@
 				0000000000000000000000A48 /* ProvisionalDraftsMigrator.swift */,
 				0000000000000000000000A9B /* CatchSyncLedger.swift */,
 				0000000000000000000000AA7 /* CatchSyncMerger.swift */,
+				0000000000000000000000AA9 /* SyncCatchLocalStore.swift */,
+				0000000000000000000000AAA /* FileSyncCatchStore.swift */,
 			);
 			path = CatchLog;
 			sourceTree = "<group>";
@@ -605,6 +613,7 @@
 				0000000000000000000000AA3 /* SupabaseProfileRepositoryTests.swift */,
 				0000000000000000000000AA6 /* SpotRepositorySpotPresentingTests.swift */,
 				0000000000000000000000AA8 /* CatchSyncMergerTests.swift */,
+				0000000000000000000000AAB /* FileSyncCatchStoreTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -823,6 +832,8 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000BA4 /* FavoritesPresenting.swift in Sources */,
 				0000000000000000000000BA5 /* SpotRepositorySpotPresenting.swift in Sources */,
 				0000000000000000000000BA7 /* CatchSyncMerger.swift in Sources */,
+				0000000000000000000000BA9 /* SyncCatchLocalStore.swift in Sources */,
+				0000000000000000000000BAA /* FileSyncCatchStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -888,6 +899,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000BA3 /* SupabaseProfileRepositoryTests.swift in Sources */,
 				0000000000000000000000BA6 /* SpotRepositorySpotPresentingTests.swift in Sources */,
 				0000000000000000000000BA8 /* CatchSyncMergerTests.swift in Sources */,
+				0000000000000000000000BAB /* FileSyncCatchStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

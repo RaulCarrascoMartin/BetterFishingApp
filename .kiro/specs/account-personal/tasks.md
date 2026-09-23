@@ -73,7 +73,7 @@ Fases: Foundation → Core → Integración → Validación.
   - _Depends: 1.4_
   - _Requirements: 5.3, 5.4, 5.7_
 
-- [ ] 3.2 (P) Escritura local de descargas (SyncCatchLocalStore + FileSyncCatchStore)
+- [x] 3.2 (P) Escritura local de descargas (SyncCatchLocalStore + FileSyncCatchStore)
   - Definir el protocolo `SyncCatchLocalStore` (importCatch, localCatch, localModificationDate, photoData).
   - Implementar el actor `FileSyncCatchStore` que escribe `<id>.json` (metadatos `Catch` con el `id` dado) y, si hay `photoData`, `<id>.jpg` en `Application Support/Catches/` respetando el layout compartido de catch-log sin tocar su código; escritura atómica (el JSON primero, luego la foto) y nunca pisando el `.json` de otra id; directorio inyectable desde el composition root (misma URL que `LocalFileCatchRepository`).
   - Añadir `FileSyncCatchStoreTests`: importCatch con id fijo es leída después por `CatchRepository.listCatches()` (integración cruzada con catch-log); foto opcional (sin thumbnail); escritura no atómica no deja ficheros huérfanos.
@@ -191,3 +191,8 @@ Fases: Foundation → Core → Integración → Validación.
 - 3.1: reglas 1-4 en `CatchSyncMerger.decide(for:input:)` (static pura, sin I/O/red): solo local→push; solo remoto→pull salvo tombstone→skip; ambos sin cambios→skip (huella local + updated_at remoto vs ledger); solo local→push; solo remoto→pull; ambos→LWW `remote.updatedAt > (lastLocalPushedAt ?? now)` → pull, si no push (empate exacto → push, fuente local manda Req 5.6). Entrada ausente en ledger == "cambiado" en ambos lados → LWW con `lastLocalPushedAt ?? now`; id nuevo jamás sincronizado con `remote.updatedAt <= now` → push (default documentado).
 - 3.1: `Catch` no es `Equatable` (catch-log, sin modificar) → `Equatable` manual en `CatchSyncAction`/`CatchSyncMergerInput` comparando `Catch` campo a campo (id/species/photoPath/date/location/notes/createdAt); `Fingerprint`/`RemoteCatch` ya son `Equatable`.
 - RED 3.1: stub `decide` → `.skip` → 10 tests, 8 failures (todos los push/pull esperados; skip/skip-tombstone pasan de forma tautológica). Tras implementación real: 10/10 verdes, incluido `testBrandNewIDNeverSyncedDefaultsToNowPushes` que fija el default `now`.
+- 3.2: `FileSyncCatchStore` escribe `<id>.json` (metadatos `Catch` con el id dado, sin `saveCatch`) y, si hay foto, `<id>.jpg` en el mismo directorio inyectable de `LocalFileCatchRepository`, respetando el layout compartido de catch-log sin tocar su código (Revalidation Trigger).
+- 3.2: escritura atómica con orden fijo: JSON primero (`.atomic`) y luego la foto (`.atomic`); si falla la foto, el JSON queda decodificable (metadatos consistentes) y nunca queda foto huérfana sin su JSON; jamás se pisa el `.json` de otra id.
+- 3.2: errores tipados `SyncCatchStoreError.writeFailed` mapeados de fallos subyacentes; `localModificationDate` = fecha de modificación de `<id>.json` (attributesOfItem), nil si no existe (semántica LWW). Logger categoría `CatchSync` sin volcar contenido.
+- 3.2: atomicidad probada con un directorio ocupando la ruta `<id>.jpg` (la escritura de la foto falla tras escribir el JSON) → se valida que el JSON sigue decodificándose sin foto huérfana; se descartó probar el orden de aparición de ficheros por resultar más frágil.
+- RED 3.2: stub del actor lanzando `writeFailed` → 6 tests, 6 failures (import lanzado + JSON ausente en el caso atómico). Green: 6/6 y suite completa 354/354.
