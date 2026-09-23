@@ -81,7 +81,7 @@
   - _Boundary: AppCompositionSupport, AppRootServices_
 
 ## 6. Validation: fake y verificación de la capa base
-- [ ] 6.1 Fake de la capa base para el test target
+- [x] 6.1 Fake de la capa base para el test target
   - _Depends: 2.1, 3.1, 4.1_
   - Implementar `SupabaseBaseFake` en el test target que conforma los tres protocolos con éxito/fallo programables y registra las llamadas (credenciales, bucket/rutas, filtros) para aserciones.
   - Observable: tests del fake en verde que verifican flujos de auth y storage con éxito y con fallo sin contactar la red (ya listos para que las features aguas abajo los consuman).
@@ -119,3 +119,4 @@
 - 5.1: `SupabaseClientProvider`/`SupabaseStack` en `SupabaseClientProvider.swift` (se mantiene `SupabaseBaseError` intacto); RED reproducido con `SupabaseClientProviderTests` compilando antes del provider: `Cannot find type 'SupabaseClientProvider' in scope` → ** TEST FAILED **; el SDK v2.55.2 no lanza en `SupabaseClient.init` (crasha con `preconditionFailure` si el host es nil), por lo que `makeClient` valida esquema http/https + host no vacío antes de construir y lanza `.invalidProjectURL` (tests con `http://` sin host y `ftp://project-ref.supabase.co`); suite 200 en verde tras GREEN (5 tests nuevos, fileRef A77/build B7F en grupo C11/Sources F0C).
 - 5.2: `AppCompositionSupport` importa `os` (Logger) y `Supabase` (solo el tipo `SupabaseClientOptions`) — el composition root es el lugar legítimo del SDK según el diseño; `makeSupabaseStack` degrada a `supabase == nil` con log si la config falta o la construcción lanza, y el path de UITest double devuelve `supabase: nil` sin construir stack (fileRef A78/build B80).
 - RED 5.2: evidencia reproducida con `SupabaseCompositionTests` antes del campo `supabase` en `AppRootServices`: `Value of type 'AppRootServices' has no member 'supabase'` / `Extra argument 'supabaseConfiguration' in call` → ** TEST FAILED ** (3 failures); implementado `supabase: SupabaseStack?` + inyección de config/options y suite 203 en verde tras GREEN (3 tests nuevos).
+- 6.1: `SupabaseBaseFake` (`final class`, `@unchecked Sendable`, un NSLock que guarda un struct `State` — patrón de caja del precedente) conforma los tres protocolos con éxito/fallo programables por seam (`authError`/`uploadError`/`downloadError`/`databaseError` + valores configurables) y registra credenciales, uploads/downloads y select/rpc; `reset()` limpia solo los registros; RED con `Cannot find 'SupabaseBaseFake' in scope` → suite 203+14=217 en verde (fileRef A79/build B81 y A7A/B82 en C11/F0C).
