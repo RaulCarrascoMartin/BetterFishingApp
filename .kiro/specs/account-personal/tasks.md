@@ -134,14 +134,14 @@ Fases: Foundation → Core → Integración → Validación.
 
 ## 5. Integración
 
-- [ ] 5.1 Componer las dependencias de la cuenta en el composition root (AppCompositionSupport)
+- [x] 5.1 Componer las dependencias de la cuenta en el composition root (AppCompositionSupport)
   - Cuando el `SupabaseStack` esté configurado (supabase != nil), construir `AccountSessionManager`, `SupabaseProfileRepository`, `SpotRepositorySpotPresenting` (inyectando el seam `SpotRepository` que spot-discovery ya expone en `AppRootServices`), `CatchSyncService` (con `FileSyncCatchStore` apuntando al mismo directorio que `LocalFileCatchRepository`) y el `AccountViewModel`.
   - Añadir `accountViewModel` a `AppRootServices`; dejar la sección de cuenta en estado degradado (nil) cuando no haya stack.
   - Observable: `AppRootServices` expone `accountViewModel` solo con Supabase configurado y el build compila.
   - _Requirements: 6.1_
 
-- [ ] 5.2 Añadir el tab "Cuenta" a la navegación principal (BetterFishingApp)
-  - Añadir el tercer tab "Cuenta" (icono `person.crop.circle`) con `AccountView` al `TabView` existente de `RootView` (BetterFishingApp.swift:59), conservando el estado por tab del patrón actual.
+- [x] 5.2 Añadir el tab "Cuenta" a la navegación principal (BetterFishingApp)
+  - Añadir el cuarto tab "Cuenta" (icono `person.crop.circle`) con `AccountView` al `TabView` existente de `RootView` (BetterFishingApp.swift:59), conservando el estado por tab del patrón actual.
   - Observable: el build compila y la app muestra tres tabs con acceso a la cuenta desde la navegación principal.
   - _Requirements: 6.1_
 
@@ -222,3 +222,9 @@ Fases: Foundation → Core → Integración → Validación.
 - 4.5 sign-out (Req 6.3/6.5): botón destructivo `account.signOut` → `viewModel.signOut()`; sin salida forzada: al emitir `.signedOut` el switch vuelve al formulario automáticamente (routing reactivo de VM, sin navegación explícita). Subvistas reutilizadas sin reimplementar internos; helper local `syncResultRow`/`syncErrorNotice` privados en el mismo fichero.
 - RED 4.5: probe compile-only temporal (test que instancia `AccountView(viewModel: nil)`) → fallo real de compilación "cannot find 'AccountView' in scope"; tras implementar y registrar en pbxproj (fileRef AB5/buildFile BB5/grupo Account/Sources phase) → probe 1/1 verde. Probe retirado; suite final 344/344 (E2E en 6.1-6.5).
 - REVIEW 1 4.5 (APPROVED): CONCERNS no bloqueantes escaladas, UNA resuelta — `clearPersonalData()` ahora también resetea `errorMessage = nil` (evita que un error de sync obsoleto acompañe al formulario de login tras logout o un nuevo signIn); suite 344/344 tras el cambio. Resta heredada no bloqueante: `errorMessage` es slot único compartido (fallo de perfil/favoritos podría pintarse en el callout `account.syncError`), a revisar en 6.5.
+- 5.1: directorio compartido resuelto en AppCompositionSupport sin tocar el seam: `FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?.appendingPathComponent("Catches", isDirectory: true) ?? .temporaryDirectory` (misma derivación que LocalFileCatchRepository cuyo directoryURL es private); FileSyncCatchStore + CatchSyncLedger sobre esa URL y CatchSyncService con `repository: realRepository` + `photoDataProvider: { realRepository.photoData(for: $0) }` (push/pull sobre el registro real de scanner/log).
+- 5.1: `SpotRepositorySpotPresenting` inyecta el MISMO `supabaseSpotRepository` ya construido en el branch (sin duplicar); `AccountViewModel` compuesto solo en `if let stack = supabase`; `accountViewModel = nil` en el else y en `makeUITestRootServices` (degradación consistente con supabase nil). Logger `accountLogger` nuevo siguiendo el patrón spotsLogger.
+- 5.2: cuarto tab "Cuenta" (`person.crop.circle`) después de la pestaña Mapa en `RootView.mainTabs`, con NavigationStack + `AccountView(viewModel: services.accountViewModel)`; AccountView ya degrada a "Cuenta no disponible" con nil (sin fallback adicional).
+- RED 5.1/5.2: referencia a `services.accountViewModel` en BetterFishingApp antes de añadir el campo → `value of type 'AppRootServices' has no member 'accountViewModel'`, BUILD FAILED. Green: build BUILD SUCCEEDED (solo warnings preexistentes) y suite BetterFishingTests 344/344 en 2 runs estables.
+- INTEGRACIÓN 5.1: al componer la cuenta en el composition root, AccountViewModel (suscribe a sesión; en signedIn carga perfil + favoritos, diseño 4.1) añade selects de `profiles` y RPC `my_favorite_spots` en fakes con `isSessionActive=true` → 3 asserts de Secuencia exacta de SpotDiscoveryCompositionTests/SpotDiscoveryFlowIntegrationTests fallaron; reconciliación scoped en esos tests (asserts filtrados por tabla `spots` y helper `spotRPCFunctions` excluyendo `my_favorite_spots`), sin cambiar su intención (Reqs 1.1/3.1) — a validar en 6.5.
+- REVIEW 1 5.1/5.2 (APPROVED): conformidad total (mismo supabaseSpotRepository, realRepository para sync, nil en degradado/UITests, 4º tab tras Mapa patron-match). Reconciliación cross-spec escrutada: intención 1.1/3.1 preservada (flujo favoritos íntegro: add_spot_favorite/remove_spot_favorite con spot_id, conteos, my_favorite_spot_ids). Ajustes menores post-review: ledger a `Application Support/CatchSync/sync-ledger.json` (design.md, fuera del layout compartido del log) y paridad del fallback (`base = urls.first ?? tempDir` → `base/Catches`). Suite 344/344 y 3 runs estables sin flake.

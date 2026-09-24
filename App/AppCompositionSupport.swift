@@ -29,6 +29,7 @@ struct AppRootServices {
     let spotRepository: (any SpotRepository)?
     let spotMapViewModel: SpotMapViewModel?
     let spotDetailViewModelFactory: (@MainActor (Spot) -> SpotDetailViewModel)?
+    let accountViewModel: AccountViewModel?
 }
 
 enum AppComposition {
@@ -64,6 +65,7 @@ enum AppComposition {
         let spotRepository: (any SpotRepository)?
         let spotMapViewModel: SpotMapViewModel?
         let spotDetailViewModelFactory: (@MainActor (Spot) -> SpotDetailViewModel)?
+        let accountViewModel: AccountViewModel?
         if let stack = supabase {
             let supabaseSpotRepository = SupabaseSpotRepository(database: stack.database, auth: stack.auth)
             spotRepository = supabaseSpotRepository
@@ -79,11 +81,43 @@ enum AppComposition {
                 )
             }
             spotsLogger.info("Spots conectados sobre el stack de Supabase: repositorio y mapa construidos")
+
+            let baseDirectory = FileManager.default.urls(
+                for: .applicationSupportDirectory,
+                in: .userDomainMask
+            ).first ?? FileManager.default.temporaryDirectory
+            let catchDirectory = baseDirectory.appendingPathComponent("Catches", isDirectory: true)
+            let syncStore = FileSyncCatchStore(directoryURL: catchDirectory)
+            let syncLedger = CatchSyncLedger(directoryURL: baseDirectory.appendingPathComponent("CatchSync", isDirectory: true))
+            let catchSyncService = CatchSyncService(
+                repository: realRepository,
+                photoDataProvider: { realRepository.photoData(for: $0) },
+                localStore: syncStore,
+                ledger: syncLedger,
+                database: stack.database,
+                storage: stack.storage
+            )
+            let accountSessionManager = AccountSessionManager(auth: stack.auth)
+            let profileRepository = SupabaseProfileRepository(
+                auth: stack.auth,
+                database: stack.database,
+                storage: stack.storage
+            )
+            let favoritesPresenting = SpotRepositorySpotPresenting(repository: supabaseSpotRepository)
+            accountViewModel = AccountViewModel(
+                auth: accountSessionManager,
+                profile: profileRepository,
+                favorites: favoritesPresenting,
+                sync: catchSyncService
+            )
+            accountLogger.info("Cuenta conectada sobre el stack de Supabase: sesión, perfil, favoritos y sincronización construidos")
         } else {
             spotsLogger.info("Sin capa de datos de Supabase: el repositorio de spots y la pestaña Mapa quedan en nil (degradación, Req 2)")
+            accountLogger.info("Sin capa de datos de Supabase: la sección de cuenta queda en nil (degradación, Req 6.1)")
             spotRepository = nil
             spotMapViewModel = nil
             spotDetailViewModelFactory = nil
+            accountViewModel = nil
         }
 
         return AppRootServices(
@@ -105,7 +139,8 @@ enum AppComposition {
             supabase: supabase,
             spotRepository: spotRepository,
             spotMapViewModel: spotMapViewModel,
-            spotDetailViewModelFactory: spotDetailViewModelFactory
+            spotDetailViewModelFactory: spotDetailViewModelFactory,
+            accountViewModel: accountViewModel
         )
     }
 
@@ -130,6 +165,7 @@ enum AppComposition {
 
     private static let supabaseLogger = Logger(subsystem: "BetterFishing", category: "Supabase")
     private static let spotsLogger = Logger(subsystem: "BetterFishing", category: "Spots")
+    private static let accountLogger = Logger(subsystem: "BetterFishing", category: "Account")
 
     @MainActor
     static func makeCameraManager(arguments: [String] = ProcessInfo.processInfo.arguments) -> CameraManager {
@@ -252,7 +288,8 @@ enum AppComposition {
             supabase: nil,
             spotRepository: spotRepository,
             spotMapViewModel: spotMapViewModel,
-            spotDetailViewModelFactory: spotDetailViewModelFactory
+            spotDetailViewModelFactory: spotDetailViewModelFactory,
+            accountViewModel: nil
         )
     }
     #endif

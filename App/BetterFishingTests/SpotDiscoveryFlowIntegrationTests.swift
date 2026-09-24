@@ -69,6 +69,10 @@ final class SpotDiscoveryFlowIntegrationTests: XCTestCase {
         )
     }
 
+    private static func spotRPCFunctions(_ recorded: [BaseFakeRecordedRPC]) -> [String] {
+        recorded.map(\.function).filter { $0 != "my_favorite_spots" }
+    }
+
     func testFullDiscoveryAndFavoritesFlowWithStackOverBaseFake() async throws {
         let fake = SupabaseBaseFake()
         fake.cannedRows = [Self.sauSpotJSON, Self.barcelonetaSpotJSON]
@@ -91,9 +95,9 @@ final class SpotDiscoveryFlowIntegrationTests: XCTestCase {
 
         XCTAssertEqual(mapViewModel.state, .loaded, "La carga de la región debe dejar el mapa en loaded (Req 1.1)")
         XCTAssertEqual(mapViewModel.spots.map(\.name), ["Embalse de Sau", "Barceloneta"], "El select de la región devuelve los spots sembrados")
-        XCTAssertEqual(fake.recordedSelects.count, 1, "El mapa debe consultar una única vez la región (Req 1.1)")
-        XCTAssertEqual(fake.recordedSelects.first?.table, "spots")
-        XCTAssertEqual(fake.recordedSelects.first?.columns, "id,name,category,summary,longitude,latitude")
+        XCTAssertEqual(fake.recordedSelects.filter { $0.table == "spots" }.count, 1, "El mapa debe consultar una única vez la región (Req 1.1)")
+        XCTAssertEqual(fake.recordedSelects.first(where: { $0.table == "spots" })?.table, "spots")
+        XCTAssertEqual(fake.recordedSelects.first(where: { $0.table == "spots" })?.columns, "id,name,category,summary,longitude,latitude")
 
         fake.cannedRPCValue = Self.nearbyRowsJSON
         await mapViewModel.showNearby()
@@ -102,7 +106,7 @@ final class SpotDiscoveryFlowIntegrationTests: XCTestCase {
         XCTAssertEqual(mapViewModel.spots.map(\.distanceMeters), [2500.0, 67000.0], "Cerca de mí ordena por distancia creciente (Req 3.1)")
         XCTAssertEqual(mapViewModel.spots.first?.name, "Barceloneta")
         XCTAssertNil(mapViewModel.nearbyNotice)
-        XCTAssertEqual(fake.recordedRPCs.map(\.function), ["nearby_spots"], "Cerca de mí ejecuta la RPC nearby_spots (Req 3.1)")
+        XCTAssertEqual(Self.spotRPCFunctions(fake.recordedRPCs), ["nearby_spots"], "Cerca de mí ejecuta la RPC nearby_spots (Req 3.1)")
         XCTAssertEqual(fake.recordedRPCs.first?.arguments?.values["lat"], .double(41.4))
         XCTAssertEqual(fake.recordedRPCs.first?.arguments?.values["lng"], .double(2.2))
         XCTAssertEqual(
@@ -119,7 +123,7 @@ final class SpotDiscoveryFlowIntegrationTests: XCTestCase {
         fake.cannedRPCValue = Self.favoritesWithoutBarcelonetaJSON
         await detailViewModel.load()
 
-        XCTAssertEqual(fake.recordedRPCs.map(\.function), ["nearby_spots", "my_favorite_spot_ids"])
+        XCTAssertEqual(Self.spotRPCFunctions(fake.recordedRPCs), ["nearby_spots", "my_favorite_spot_ids"])
         XCTAssertFalse(detailViewModel.isFavorite, "El spot no está entre los favoritos de la cuenta al cargar (Req 5.3)")
         XCTAssertFalse(detailViewModel.isLoading)
 

@@ -54,8 +54,8 @@ final class SpotDiscoveryCompositionTests: XCTestCase {
         XCTAssertEqual(mapViewModel.state, .loaded, "La carga de la región debe dejar el mapa en loaded")
         XCTAssertEqual(mapViewModel.spots, [Self.sampleSpot], "El repositorio backend devuelve los spots sembrados")
 
-        XCTAssertEqual(fake.recordedSelects.count, 1, "El mapa debe lanzar una única carga de la región (Req 1.1)")
-        XCTAssertEqual(fake.recordedSelects.first?.table, "spots")
+        XCTAssertEqual(fake.recordedSelects.filter { $0.table == "spots" }.count, 1, "El mapa debe lanzar una única carga de la región (Req 1.1)")
+        XCTAssertEqual(fake.recordedSelects.first(where: { $0.table == "spots" })?.table, "spots")
 
         let factory = try XCTUnwrap(services.spotDetailViewModelFactory, "Con stack la factory de detalle debe existir")
         let detailViewModel = factory(Self.sampleSpot)

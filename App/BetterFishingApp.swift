@@ -91,6 +91,11 @@ struct RootView: View {
                 }
                 .tabItem { Label("Mapa", systemImage: "map") }
             }
+
+            NavigationStack {
+                AccountView(viewModel: services.accountViewModel)
+            }
+            .tabItem { Label("Cuenta", systemImage: "person.crop.circle") }
         }
         #if DEBUG
         .task {
