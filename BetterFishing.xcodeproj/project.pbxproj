@@ -142,6 +142,9 @@
 		0000000000000000000000BAE /* CatchSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AAE /* CatchSyncServiceTests.swift */; };
 		0000000000000000000000BAF /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AAF /* AccountViewModel.swift */; };
 		0000000000000000000000BB0 /* AccountViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB0 /* AccountViewModelTests.swift */; };
+		0000000000000000000000BB1 /* SignInSignUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB1 /* SignInSignUpFormView.swift */; };
+		0000000000000000000000BB2 /* ProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB2 /* ProfileEditView.swift */; };
+		0000000000000000000000BB3 /* FavoritesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB3 /* FavoritesListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -301,6 +304,9 @@
 		0000000000000000000000AAE /* CatchSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncServiceTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000AAF /* AccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
 		0000000000000000000000AB0 /* AccountViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModelTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000AB1 /* SignInSignUpFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInSignUpFormView.swift; sourceTree = "<group>"; };
+		0000000000000000000000AB2 /* ProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditView.swift; sourceTree = "<group>"; };
+		0000000000000000000000AB3 /* FavoritesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,9 +395,36 @@
 		0000000000000000000000C1F /* Account */ = {
 			isa = PBXGroup;
 			children = (
+				0000000000000000000000C20 /* SessionForm */,
+				0000000000000000000000C21 /* ProfileEdit */,
+				0000000000000000000000C22 /* FavoritesList */,
 				0000000000000000000000AAF /* AccountViewModel.swift */,
 			);
 			path = Account;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C20 /* SessionForm */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000AB1 /* SignInSignUpFormView.swift */,
+			);
+			path = SessionForm;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C21 /* ProfileEdit */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000AB2 /* ProfileEditView.swift */,
+			);
+			path = ProfileEdit;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C22 /* FavoritesList */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000AB3 /* FavoritesListView.swift */,
+			);
+			path = FavoritesList;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C04 /* FishScanner */ = {
@@ -860,6 +893,9 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000BAC /* CatchSynchronizing.swift in Sources */,
 				0000000000000000000000BAD /* CatchSyncService.swift in Sources */,
 				0000000000000000000000BAF /* AccountViewModel.swift in Sources */,
+				0000000000000000000000BB1 /* SignInSignUpFormView.swift in Sources */,
+				0000000000000000000000BB2 /* ProfileEditView.swift in Sources */,
+				0000000000000000000000BB3 /* FavoritesListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

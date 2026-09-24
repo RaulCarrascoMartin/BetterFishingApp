@@ -10,6 +10,7 @@ final class AccountViewModel {
     private(set) var isSyncing = false
     private(set) var lastSyncResult: CatchSyncResult?
     private(set) var errorMessage: String?
+    private(set) var avatarData: Data?
 
     var sessionUser: SupabaseUser? {
         if case .signedIn(let user) = sessionState {
@@ -90,6 +91,7 @@ final class AccountViewModel {
         do {
             _ = try await profileService.updateAvatar(data: data, contentType: contentType)
             profile = try await profileService.profile()
+            avatarData = data
         } catch {
             errorMessage = Self.errorText(error)
         }
@@ -145,6 +147,16 @@ final class AccountViewModel {
     private func loadPersonalData() async {
         do {
             profile = try await profileService.profile()
+            if let path = profile?.avatarPath {
+                do {
+                    avatarData = try await profileService.avatarData(avatarPath: path)
+                } catch {
+                    avatarData = nil
+                    errorMessage = Self.errorText(error)
+                }
+            } else {
+                avatarData = nil
+            }
         } catch {
             errorMessage = Self.errorText(error)
         }
@@ -159,6 +171,7 @@ final class AccountViewModel {
         profile = nil
         favorites = []
         lastSyncResult = nil
+        avatarData = nil
     }
 
     private static func errorText(_ error: Error) -> String {

@@ -101,7 +101,7 @@ Fases: Foundation → Core → Integración → Validación.
   - Observable: el VM compila, orquesta los cuatro servicios sin dependencias UI, y el test de limpieza en signOut pasa.
   - _Requirements: 1.5, 1.6, 2.5, 3.5, 4.6, 6.4_
 
-- [ ] 4.2 (P) Formulario de registro e inicio de sesión (SignInSignUpFormView)
+- [x] 4.2 (P) Formulario de registro e inicio de sesión (SignInSignUpFormView)
   - Construir el formulario email + contraseña con pestañas registro/login que consume `AccountViewModel`.
   - Mostrar estado de carga mientras opera e impedir envíos duplicados; presentar los errores tipados distintamente (credenciales inválidas, email en uso, red, configuración).
   - Observable: el formulario compila; en estado signedOut muestra la invitación a registrarse/iniciar sesión y refleja carga y errores.
@@ -109,7 +109,7 @@ Fases: Foundation → Core → Integración → Validación.
   - _Depends: 4.1_
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 6.2_
 
-- [ ] 4.3 (P) Edición de perfil (ProfileEditView)
+- [x] 4.3 (P) Edición de perfil (ProfileEditView)
   - Construir la vista de nombre editable (guardar vía `saveDisplayName`) y de selección de imagen de avatar (subida vía `uploadAvatar`).
   - Mostrar nombre por defecto y ningún avatar si el perfil no los tiene; conservar el valor anterior visible si el guardado/la subida fallan y presentar el error.
   - Observable: la vista compila y refleja nombre y avatar actualizados tras guardar/subir con éxito.
@@ -117,7 +117,7 @@ Fases: Foundation → Core → Integración → Validación.
   - _Depends: 4.1_
   - _Requirements: 3.2, 3.3, 3.5, 3.6_
 
-- [ ] 4.4 (P) Lista de favoritos (FavoritesListView)
+- [x] 4.4 (P) Lista de favoritos (FavoritesListView)
   - Construir la lista de favoritos con presentación sin geometría (nombre y categoría) consumiendo `AccountViewModel`.
   - Permitir marcar/desmarcar desde la lista; sin sesión activa no ofrecer favoritos y comunicar que se requiere iniciar sesión; si el guardado/eliminación falla, preservar el estado previo visible y mostrar el error.
   - Observable: la vista compila y la lista refleja los favoritos de la cuenta (y su estado al desmarcar).
@@ -211,3 +211,9 @@ Fases: Foundation → Core → Integración → Validación.
 - RED 4.1: stub sin comportamiento y fakes con lock (NSLock + `withLock`, Swift 6 prohíbe `lock` directo en contextos async) → 8 tests, 14 failures capturados (clear, carga, errores, toggle y sync). Green: 8/8 y suite completa BetterFishingTests 344/344 + UITests 25/25.
 - REVIEW 1 4.1 (APPROVED): conformidad total (4 seams por protocolo; `nonisolated(unsafe)` + deinit cancel; do/catch aislado por origen; clear en signedOut; guard `private(set)` isSubmitting/isSyncing; errores de seam tipados, jamás strings de servidor). RED reproducido a mano (14 failures exactos). Checkbox 4.1 intacto hasta aprobación. Mejoras opcionales no bloqueantes: test del guard de envíos duplicados, limpiar `errorMessage` al inicio de cada acción, y borrar nota de doble carga idempotente en arranque.
 - REVIEW 4.1 ≤10 líneas: task 4.1 exige "estado de carga" observable para el formulario de la tarea 4.2; inicialmente `isSubmitting` era private → se expone como `private(set)` (guard de reentrada intacto).
+- 4.2/4.3/4.4: layout de `Features/Account` en subcarpetas por pantalla (`SessionForm/`, `ProfileEdit/`, `FavoritesList/`) calcado de SpotDiscovery (Map/, SpotDetail/); boundary solo vista; con la ampliación de 4.3 queda UNA excepción: `AccountViewModel.avatarData` (surface de VM necesaria para Req 3.4, ver REVIEW 1 4.3). Patrón de VM `@State` + init idéntico a SpotDetailView.
+- 4.3 avatar: PhotosPicker (PhotosUI) → `loadTransferable(Data)` → `UIImage` → `jpegData(0.8)` con contentType `image/jpeg`; preview local `@State`; si `errorMessage` cambia tras `uploadAvatar` se limpia el preview (Req 3.6 conserva el valor anterior). Nombre: draft local sembrado de `profile?.displayName` (onAppear/onChange) y re-sincronizado con el profile tras `saveDisplayName` (éxito→nuevo, fallo→anterior).
+- REVIEW 1 4.3 (CHANGES_REQUIRED → resuelto): el preview local no cubría Req 3.4 ("avatar recuperado en cualquier dispositivo") ni la cabecera `signedIn` del diseño ("nombre + avatar"); sin acceso al seam desde la vista, se amplía la superficie del VM (propiedad suya de la feature): `accountViewModel.avatarData: Data?` (nuevo estado) → `loadPersonalData()` lo rellena vía `profileService.avatarData(avatarPath:)` en do/catch aislado (error→nil + loadFailed), `uploadAvatar` lo fija con los bytes aceptados (sin re-descarga) y `clearPersonalData()` lo resetea; `ProfileEditView` renderiza los bytes persistidos como fallback entre el preview local y el placeholder de inicial. Suite completa 344/344 tras el widen.
+- 4.4 categoría: `FavoriteSpot.category` es `String?` → mapeo rawValue→etiqueta localizada igual que SpotDetailView (Río / Lago o embalse / Mar / Costa u orilla); vacío con `ContentUnavailableView` (icono heart); signedOut → callout amarillo "requiere iniciar sesión" sin ofrecer lista (el VM ya limpia favorites); fallo de toggle preservado por el VM (sin mutación local).
+- RED 4.2/4.3/4.4: probe compile-only temporal referenciando los 3 tipos → 3 fallos "cannot find type in scope"; tras registrar las vistas + fix `try? await loadTransferable` → probe verde (1 test). Probe retirado tras GREEN (tasks de solo vista, sin test files; E2E en 6.1-6.3).
+- GREEN 4.2/4.3/4.4: suite de cuenta 28/28 (AccountViewModelTests 8, AccountSessionManagerTests 5, SupabaseProfileRepositoryTests 8, SpotRepositorySpotPresentingTests 7); compila el target de la app con las 3 vistas registradas en pbxproj (fileRef/builfile/grupos por subcarpeta).
