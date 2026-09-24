@@ -147,22 +147,22 @@ Fases: Foundation → Core → Integración → Validación.
 
 ## 6. Validación
 
-- [ ] 6.1 Flujo E2E de sesión
+- [x] 6.1 Flujo E2E de sesión
   - Con dobles de servicios: sin sesión → formulario; login con un doble → perfil visible; logout → vuelve al formulario y dejan de mostrarse los datos personales.
   - Observable: el test E2E del flujo de sesión pasa.
   - _Requirements: 1.6, 6.2, 6.3, 6.5_
 
-- [ ] 6.2 Flujo E2E de perfil
+- [x] 6.2 Flujo E2E de perfil
   - Con dobles de servicios: editar nombre → se muestra actualizado; aportar avatar → se muestra; simular fallo de guardado → se conserva el valor anterior y se muestra el error.
   - Observable: el test E2E del flujo de perfil pasa.
   - _Requirements: 3.2, 3.3, 3.6_
 
-- [ ] 6.3 Flujo E2E de favoritos
+- [x] 6.3 Flujo E2E de favoritos
   - Con dobles de servicios: marcar/desmarcar favorito → la lista refleja el cambio; `favoriteSpotIDs` del seam `SpotRepository` queda actualizado.
   - Observable: el test E2E del flujo de favoritos pasa.
   - _Requirements: 4.2, 4.3, 4.4_
 
-- [ ] 6.4 Flujo E2E de sincronización
+- [x] 6.4 Flujo E2E de sincronización
   - Con fakes de datos remotos: pulsar "Sincronizar" → se muestra el resultado de éxito (pushed/pulled); simular fallo de red → registro local intacto y la UI ofrece reintentar.
   - Observable: el test E2E del flujo de sync pasa.
   - _Requirements: 5.5, 5.8, 6.4_
@@ -228,3 +228,4 @@ Fases: Foundation → Core → Integración → Validación.
 - RED 5.1/5.2: referencia a `services.accountViewModel` en BetterFishingApp antes de añadir el campo → `value of type 'AppRootServices' has no member 'accountViewModel'`, BUILD FAILED. Green: build BUILD SUCCEEDED (solo warnings preexistentes) y suite BetterFishingTests 344/344 en 2 runs estables.
 - INTEGRACIÓN 5.1: al componer la cuenta en el composition root, AccountViewModel (suscribe a sesión; en signedIn carga perfil + favoritos, diseño 4.1) añade selects de `profiles` y RPC `my_favorite_spots` en fakes con `isSessionActive=true` → 3 asserts de Secuencia exacta de SpotDiscoveryCompositionTests/SpotDiscoveryFlowIntegrationTests fallaron; reconciliación scoped en esos tests (asserts filtrados por tabla `spots` y helper `spotRPCFunctions` excluyendo `my_favorite_spots`), sin cambiar su intención (Reqs 1.1/3.1) — a validar en 6.5.
 - REVIEW 1 5.1/5.2 (APPROVED): conformidad total (mismo supabaseSpotRepository, realRepository para sync, nil en degradado/UITests, 4º tab tras Mapa patron-match). Reconciliación cross-spec escrutada: intención 1.1/3.1 preservada (flujo favoritos íntegro: add_spot_favorite/remove_spot_favorite con spot_id, conteos, my_favorite_spot_ids). Ajustes menores post-review: ledger a `Application Support/CatchSync/sync-ledger.json` (design.md, fuera del layout compartido del log) y paridad del fallback (`base = urls.first ?? tempDir` → `base/Catches`). Suite 344/344 y 3 runs estables sin flake.
+- 6.1-6.4 E2E: `AccountFlowE2ETests` (5 tests) sobre seams reales + SupabaseBaseFake (TDD, sonda RED → 1 fallo → GREEN): sesión (signedOut→signIn→perfil/favoritos→signOut limpia todo), perfil (read-modify-write de upsert_profile conserva avatar; fallo conserva valor previo + error; avatar upload→avatarData==bytes; fallo de descarga→nil+error), favoritos (setFavorite refleja en seed SpotRepository y en VM tras add/remove; fallo preserva estado), sync (push local pull remote; p_catch ISO8601; idempotencia 2º sync all-skip; fallo de red → errorMessage + registro local intacto + ledger sin commit) y composición root. `RecordingCatchDB` actor evita compartir cannedRows entre tablas. Ajustes: `fake.cannedRPCValue = "{}"` para decodificar `ProfileMutationResult`; espera de `errorMessage` en fallos de descarga para evitar carrera. Suite completa 349/349.

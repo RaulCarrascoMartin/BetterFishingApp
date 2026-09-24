@@ -146,6 +146,7 @@
 		0000000000000000000000BB2 /* ProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB2 /* ProfileEditView.swift */; };
 		0000000000000000000000BB3 /* FavoritesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB3 /* FavoritesListView.swift */; };
 		0000000000000000000000BB5 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB5 /* AccountView.swift */; };
+		0000000000000000000000BB6 /* AccountFlowE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB6 /* AccountFlowE2ETests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -309,6 +310,7 @@
 		0000000000000000000000AB2 /* ProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditView.swift; sourceTree = "<group>"; };
 		0000000000000000000000AB3 /* FavoritesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesListView.swift; sourceTree = "<group>"; };
 		0000000000000000000000AB5 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		0000000000000000000000AB6 /* AccountFlowE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFlowE2ETests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -673,6 +675,7 @@
 				0000000000000000000000AAB /* FileSyncCatchStoreTests.swift */,
 				0000000000000000000000AAE /* CatchSyncServiceTests.swift */,
 				0000000000000000000000AB0 /* AccountViewModelTests.swift */,
+				0000000000000000000000AB6 /* AccountFlowE2ETests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -968,6 +971,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000BAB /* FileSyncCatchStoreTests.swift in Sources */,
 				0000000000000000000000BAE /* CatchSyncServiceTests.swift in Sources */,
 				0000000000000000000000BB0 /* AccountViewModelTests.swift in Sources */,
+				0000000000000000000000BB6 /* AccountFlowE2ETests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
