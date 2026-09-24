@@ -140,6 +140,8 @@
 		0000000000000000000000BAC /* CatchSynchronizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AAC /* CatchSynchronizing.swift */; };
 		0000000000000000000000BAD /* CatchSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AAD /* CatchSyncService.swift */; };
 		0000000000000000000000BAE /* CatchSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AAE /* CatchSyncServiceTests.swift */; };
+		0000000000000000000000BAF /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AAF /* AccountViewModel.swift */; };
+		0000000000000000000000BB0 /* AccountViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB0 /* AccountViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -297,6 +299,8 @@
 		0000000000000000000000AAC /* CatchSynchronizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSynchronizing.swift; sourceTree = "<group>"; };
 		0000000000000000000000AAD /* CatchSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncService.swift; sourceTree = "<group>"; };
 		0000000000000000000000AAE /* CatchSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchSyncServiceTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000AAF /* AccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
+		0000000000000000000000AB0 /* AccountViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -350,6 +354,7 @@
 				0000000000000000000000C04 /* FishScanner */,
 				0000000000000000000000C15 /* CatchLog */,
 				0000000000000000000000C1A /* SpotDiscovery */,
+				0000000000000000000000C1F /* Account */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -379,6 +384,14 @@
 				0000000000000000000000A8A /* SpotMapView.swift */,
 			);
 			path = Map;
+			sourceTree = "<group>";
+		};
+		0000000000000000000000C1F /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				0000000000000000000000AAF /* AccountViewModel.swift */,
+			);
+			path = Account;
 			sourceTree = "<group>";
 		};
 		0000000000000000000000C04 /* FishScanner */ = {
@@ -623,6 +636,7 @@
 				0000000000000000000000AA8 /* CatchSyncMergerTests.swift */,
 				0000000000000000000000AAB /* FileSyncCatchStoreTests.swift */,
 				0000000000000000000000AAE /* CatchSyncServiceTests.swift */,
+				0000000000000000000000AB0 /* AccountViewModelTests.swift */,
 			);
 			path = BetterFishingTests;
 			sourceTree = "<group>";
@@ -845,6 +859,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000BAA /* FileSyncCatchStore.swift in Sources */,
 				0000000000000000000000BAC /* CatchSynchronizing.swift in Sources */,
 				0000000000000000000000BAD /* CatchSyncService.swift in Sources */,
+				0000000000000000000000BAF /* AccountViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -912,6 +927,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000BA8 /* CatchSyncMergerTests.swift in Sources */,
 				0000000000000000000000BAB /* FileSyncCatchStoreTests.swift in Sources */,
 				0000000000000000000000BAE /* CatchSyncServiceTests.swift in Sources */,
+				0000000000000000000000BB0 /* AccountViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
