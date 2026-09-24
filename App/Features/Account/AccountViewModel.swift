@@ -172,6 +172,7 @@ final class AccountViewModel {
         favorites = []
         lastSyncResult = nil
         avatarData = nil
+        errorMessage = nil
     }
 
     private static func errorText(_ error: Error) -> String {

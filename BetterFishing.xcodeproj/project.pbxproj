@@ -145,6 +145,7 @@
 		0000000000000000000000BB1 /* SignInSignUpFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB1 /* SignInSignUpFormView.swift */; };
 		0000000000000000000000BB2 /* ProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB2 /* ProfileEditView.swift */; };
 		0000000000000000000000BB3 /* FavoritesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB3 /* FavoritesListView.swift */; };
+		0000000000000000000000BB5 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB5 /* AccountView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -307,6 +308,7 @@
 		0000000000000000000000AB1 /* SignInSignUpFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInSignUpFormView.swift; sourceTree = "<group>"; };
 		0000000000000000000000AB2 /* ProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditView.swift; sourceTree = "<group>"; };
 		0000000000000000000000AB3 /* FavoritesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesListView.swift; sourceTree = "<group>"; };
+		0000000000000000000000AB5 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -399,6 +401,7 @@
 				0000000000000000000000C21 /* ProfileEdit */,
 				0000000000000000000000C22 /* FavoritesList */,
 				0000000000000000000000AAF /* AccountViewModel.swift */,
+				0000000000000000000000AB5 /* AccountView.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -896,6 +899,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000BB1 /* SignInSignUpFormView.swift in Sources */,
 				0000000000000000000000BB2 /* ProfileEditView.swift in Sources */,
 				0000000000000000000000BB3 /* FavoritesListView.swift in Sources */,
+				0000000000000000000000BB5 /* AccountView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
