@@ -1,12 +1,12 @@
 import Foundation
 import Supabase
 
-enum SupabaseBaseError: Error, Sendable, LocalizedError {
+enum SupabaseBaseError: Error, Sendable, Equatable, LocalizedError {
     case configurationMissing
     case invalidProjectURL
-    case signUpFailed
-    case signInFailed
-    case signOutFailed
+    case signUpFailed(SupabaseAuthFailure)
+    case signInFailed(SupabaseAuthFailure)
+    case signOutFailed(SupabaseAuthFailure)
     case sessionUnavailable
     case uploadFailed
     case downloadFailed
@@ -19,12 +19,12 @@ enum SupabaseBaseError: Error, Sendable, LocalizedError {
             return "Configuración de Supabase ausente: no se encontraron SUPABASE_PROJECT_URL y SUPABASE_ANON_KEY."
         case .invalidProjectURL:
             return "La URL del proyecto de Supabase no es válida."
-        case .signUpFailed:
-            return "No se pudo registrar el usuario."
-        case .signInFailed:
-            return "No se pudo iniciar sesión. Comprueba tus credenciales."
-        case .signOutFailed:
-            return "No se pudo cerrar la sesión."
+        case .signUpFailed(let failure):
+            return "No se pudo registrar el usuario: \(Self.reasonText(for: failure.reason))"
+        case .signInFailed(let failure):
+            return "No se pudo iniciar sesión: \(Self.reasonText(for: failure.reason))"
+        case .signOutFailed(let failure):
+            return "No se pudo cerrar la sesión: \(Self.reasonText(for: failure.reason))"
         case .sessionUnavailable:
             return "No hay una sesión de Supabase disponible."
         case .uploadFailed:
@@ -35,6 +35,31 @@ enum SupabaseBaseError: Error, Sendable, LocalizedError {
             return "Falló la consulta a la base de datos de Supabase."
         case .rpcFailed:
             return "Falló la llamada remota a la base de datos de Supabase."
+        }
+    }
+
+    var reasonDescription: String? {
+        switch self {
+        case .signUpFailed(let failure), .signInFailed(let failure), .signOutFailed(let failure):
+            return Self.reasonText(for: failure.reason)
+        case .configurationMissing, .invalidProjectURL, .sessionUnavailable,
+             .uploadFailed, .downloadFailed, .queryFailed, .rpcFailed:
+            return nil
+        }
+    }
+
+    private static func reasonText(for reason: SupabaseAuthFailureReason) -> String {
+        switch reason {
+        case .invalidCredentials:
+            return "las credenciales no son válidas."
+        case .network:
+            return "no hay conexión con el servidor."
+        case .configuration:
+            return "la configuración de Supabase no es válida."
+        case .server:
+            return "el servicio de autenticación no está disponible."
+        case .unknown:
+            return "inténtalo de nuevo."
         }
     }
 }

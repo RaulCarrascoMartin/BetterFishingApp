@@ -127,7 +127,6 @@ final class SpotDiscoveryFlowIntegrationTests: XCTestCase {
         XCTAssertFalse(detailViewModel.isFavorite, "El spot no está entre los favoritos de la cuenta al cargar (Req 5.3)")
         XCTAssertFalse(detailViewModel.isLoading)
 
-        fake.cannedRPCValue = "{}"
         await detailViewModel.toggleFavorite()
 
         XCTAssertTrue(detailViewModel.isFavorite, "Con sesión el toggle marca el favorito (Req 5.1)")
@@ -172,7 +171,6 @@ final class SpotDiscoveryFlowIntegrationTests: XCTestCase {
             "La recarga de sesión re-consulta los favoritos en load() y en el evento signedIn (Req 5.5)"
         )
 
-        fake.cannedRPCValue = "{}"
         await detailViewModel.toggleFavorite()
 
         XCTAssertFalse(detailViewModel.isFavorite, "Con sesión el toggle desmarca el favorito (Req 5.2)")

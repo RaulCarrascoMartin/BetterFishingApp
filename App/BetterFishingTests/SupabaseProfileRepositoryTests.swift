@@ -2,6 +2,46 @@ import XCTest
 
 @testable import BetterFishing
 
+private actor ProfileDatabase: SupabaseDatabaseAccess {
+    private let rows: [String]
+    private let databaseError: SupabaseBaseError?
+    private var recordedRPCValues: [BaseFakeRecordedRPC] = []
+
+    init(rows: [String], databaseError: SupabaseBaseError? = nil) {
+        self.rows = rows
+        self.databaseError = databaseError
+    }
+
+    var recordedRPCs: [BaseFakeRecordedRPC] { recordedRPCValues }
+
+    func select<T: Decodable & Sendable>(
+        columns: String,
+        from table: String,
+        filters: [SupabaseFilter],
+        limit: Int?
+    ) async throws -> [T] {
+        try rows.compactMap { try JSONDecoder().decode(T.self, from: Data($0.utf8)) }
+    }
+
+    func rpc<T: Decodable & Sendable>(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws -> T {
+        recordedRPCValues.append(BaseFakeRecordedRPC(function: function, arguments: arguments))
+        throw SupabaseBaseError.rpcFailed
+    }
+
+    func rpcVoid(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws {
+        recordedRPCValues.append(BaseFakeRecordedRPC(function: function, arguments: arguments))
+        if let databaseError {
+            throw databaseError
+        }
+    }
+}
+
 final class SupabaseProfileRepositoryTests: XCTestCase {
 
     private func makeRepository(fake: SupabaseBaseFake) -> SupabaseProfileRepository {
@@ -34,7 +74,6 @@ final class SupabaseProfileRepositoryTests: XCTestCase {
     func testUpdateDisplayNamePreservesAvatarViaUpsertProfile() async throws {
         let fake = SupabaseBaseFake()
         fake.cannedRows = ["{\"user_id\":\"\(SupabaseBaseFake.defaultUser.id.uuidString)\",\"display_name\":\"Antigua\",\"avatar_path\":\"x/avatar.jpg\"}"]
-        fake.cannedRPCValue = "{}"
         let repository = makeRepository(fake: fake)
 
         try await repository.updateDisplayName("Nuevo")
@@ -50,7 +89,6 @@ final class SupabaseProfileRepositoryTests: XCTestCase {
         let fake = SupabaseBaseFake()
         let userID = SupabaseBaseFake.defaultUser.id
         fake.uploadResultPath = "\(userID.uuidString)/avatar.jpg"
-        fake.cannedRPCValue = "{}"
         fake.cannedRows = ["{\"user_id\":\"\(userID.uuidString)\",\"display_name\":\"Ana\",\"avatar_path\":null}"]
         let repository = makeRepository(fake: fake)
 
@@ -133,9 +171,11 @@ final class SupabaseProfileRepositoryTests: XCTestCase {
 
     func testUpdateDisplayNameRPCFailureThrowsUpdateFailed() async throws {
         let fake = SupabaseBaseFake()
-        fake.cannedRows = ["{\"user_id\":\"\(SupabaseBaseFake.defaultUser.id.uuidString)\",\"display_name\":\"Ana\",\"avatar_path\":null}"]
-        fake.cannedRPCValue = "no-es-json"
-        let repository = makeRepository(fake: fake)
+        let database = ProfileDatabase(
+            rows: ["{\"user_id\":\"\(SupabaseBaseFake.defaultUser.id.uuidString)\",\"display_name\":\"Ana\",\"avatar_path\":null}"],
+            databaseError: .rpcFailed
+        )
+        let repository = SupabaseProfileRepository(auth: fake, database: database, storage: fake)
 
         do {
             try await repository.updateDisplayName("Nuevo")
@@ -148,5 +188,8 @@ final class SupabaseProfileRepositoryTests: XCTestCase {
         } catch {
             XCTFail("Error inesperado: \(error)")
         }
+
+        let recorded = await database.recordedRPCs
+        XCTAssertEqual(recorded.last?.function, "upsert_profile")
     }
 }

@@ -123,6 +123,153 @@ final class SupabaseDatabaseServiceTests: XCTestCase {
         XCTAssertTrue(json["missing"] is NSNull)
     }
 
+    func testRPCVoidAcceptsNoContentResponse() async throws {
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/clear_cache"
+        HTTPStubRegistry.shared.register(
+            HTTPStub(
+                statusCode: 204,
+                data: Data(),
+                headers: ["Content-Type": "application/json"]
+            ),
+            for: rpcURL
+        )
+
+        let db: any SupabaseDatabaseAccess = try makeDatabaseService()
+
+        try await db.rpcVoid("clear_cache", arguments: nil)
+
+        XCTAssertEqual(HTTPStubRegistry.shared.requestCount(for: rpcURL), 1)
+    }
+
+    func testRPCVoidAcceptsCreatedStatus() async throws {
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/create_cache"
+        HTTPStubRegistry.shared.register(
+            .json(["created": true], statusCode: 201),
+            for: rpcURL
+        )
+
+        let db: any SupabaseDatabaseAccess = try makeDatabaseService()
+
+        try await db.rpcVoid("create_cache", arguments: nil)
+
+        XCTAssertEqual(HTTPStubRegistry.shared.requestCount(for: rpcURL), 1)
+    }
+
+    func testRPCVoidIgnoresUnexpectedJSONBody() async throws {
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/clear_cache"
+        HTTPStubRegistry.shared.register(
+            .json(["unexpected": ["nested": true]]),
+            for: rpcURL
+        )
+
+        let db: any SupabaseDatabaseAccess = try makeDatabaseService()
+
+        try await db.rpcVoid("clear_cache", arguments: nil)
+
+        XCTAssertEqual(HTTPStubRegistry.shared.requestCount(for: rpcURL), 1)
+    }
+
+    func testRPCVoidEncodesTypedArgumentsAndSendsOneRequest() async throws {
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/upsert_value"
+        HTTPStubRegistry.shared.register(
+            HTTPStub(statusCode: 200, data: Data(), headers: ["Content-Type": "application/json"]),
+            for: rpcURL
+        )
+        let arguments = SupabaseRPCArguments([
+            "name": .string("angler"),
+            "count": .int(3),
+            "ratio": .double(4.5),
+            "active": .bool(true),
+            "missing": .null,
+        ])
+        let db: any SupabaseDatabaseAccess = try makeDatabaseService()
+
+        try await db.rpcVoid("upsert_value", arguments: arguments)
+
+        XCTAssertEqual(HTTPStubRegistry.shared.requestCount(for: rpcURL), 1)
+        let body = try XCTUnwrap(HTTPStubRegistry.shared.requestBodies(for: rpcURL).first)
+        let json = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: body) as? [String: Any]
+        )
+        XCTAssertEqual(json["name"] as? String, "angler")
+        XCTAssertEqual(json["count"] as? Int, 3)
+        XCTAssertEqual(json["ratio"] as? Double, 4.5)
+        XCTAssertEqual(json["active"] as? Bool, true)
+        XCTAssertTrue(json["missing"] is NSNull)
+    }
+
+    func testRPCVoidWithTransportErrorThrowsRPCFailed() async throws {
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/clear_cache"
+        HTTPStubRegistry.shared.register(
+            HTTPStub(error: URLError(.networkConnectionLost)),
+            for: rpcURL
+        )
+        let db: any SupabaseDatabaseAccess = try makeDatabaseService()
+
+        do {
+            try await db.rpcVoid("clear_cache", arguments: nil)
+            XCTFail("Expected rpcVoid to throw")
+        } catch let error as SupabaseBaseError {
+            XCTAssertEqual(error, .rpcFailed)
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    func testRPCVoidWithClientErrorThrowsRPCFailed() async throws {
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/clear_cache"
+        HTTPStubRegistry.shared.register(
+            .json(["message": "invalid request"], statusCode: 400),
+            for: rpcURL
+        )
+        let db: any SupabaseDatabaseAccess = try makeDatabaseService()
+
+        do {
+            try await db.rpcVoid("clear_cache", arguments: nil)
+            XCTFail("Expected rpcVoid to throw")
+        } catch let error as SupabaseBaseError {
+            XCTAssertEqual(error, .rpcFailed)
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    func testRPCVoidWithServerErrorThrowsRPCFailed() async throws {
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/clear_cache"
+        HTTPStubRegistry.shared.register(
+            .json(["message": "temporarily unavailable"], statusCode: 503),
+            for: rpcURL
+        )
+        let db: any SupabaseDatabaseAccess = try makeDatabaseService()
+
+        do {
+            try await db.rpcVoid("clear_cache", arguments: nil)
+            XCTFail("Expected rpcVoid to throw")
+        } catch let error as SupabaseBaseError {
+            XCTAssertEqual(error, .rpcFailed)
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    func testRPCWithEmptyBodyThrowsRPCFailed() async throws {
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/estimate_distance"
+        HTTPStubRegistry.shared.register(
+            HTTPStub(statusCode: 200, data: Data(), headers: ["Content-Type": "application/json"]),
+            for: rpcURL
+        )
+        let db: any SupabaseDatabaseAccess = try makeDatabaseService()
+
+        do {
+            let _: DistanceEstimate = try await db.rpc("estimate_distance", arguments: nil)
+            XCTFail("Expected rpc to throw")
+        } catch let error as SupabaseBaseError {
+            XCTAssertEqual(error, .rpcFailed)
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
     func testSelectWithServerErrorThrowsQueryFailed() async throws {
         let expectedURL = Self.selectURL(
             for: "spots",

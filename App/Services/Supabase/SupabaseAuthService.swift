@@ -12,13 +12,18 @@ actor SupabaseAuthService: SupabaseAuthProviding {
         do {
             let response = try await client.auth.signUp(email: email, password: password)
             guard let session = response.session else {
-                throw SupabaseBaseError.signUpFailed
+                throw SupabaseBaseError.signUpFailed(
+                    SupabaseAuthFailure(
+                        reason: .unknown,
+                        description: "Supabase no devolvió una sesión tras el registro."
+                    )
+                )
             }
             return Self.makeSession(from: session)
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
-            throw SupabaseBaseError.signUpFailed
+            throw SupabaseBaseError.signUpFailed(Self.makeAuthFailure(from: error))
         }
     }
 
@@ -29,7 +34,7 @@ actor SupabaseAuthService: SupabaseAuthProviding {
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
-            throw SupabaseBaseError.signInFailed
+            throw SupabaseBaseError.signInFailed(Self.makeAuthFailure(from: error))
         }
     }
 
@@ -39,7 +44,7 @@ actor SupabaseAuthService: SupabaseAuthProviding {
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
-            throw SupabaseBaseError.signOutFailed
+            throw SupabaseBaseError.signOutFailed(Self.makeAuthFailure(from: error))
         }
     }
 
@@ -97,5 +102,39 @@ actor SupabaseAuthService: SupabaseAuthProviding {
 
     private nonisolated static func makeUser(from user: Supabase.User) -> SupabaseUser {
         SupabaseUser(id: user.id, email: user.email, createdAt: user.createdAt)
+    }
+
+    private nonisolated static func makeAuthFailure(from error: any Error) -> SupabaseAuthFailure {
+        if error is URLError {
+            return SupabaseAuthFailure(reason: .network, description: error.localizedDescription)
+        }
+        guard let authError = error as? Supabase.AuthError else {
+            return SupabaseAuthFailure(reason: .unknown, description: error.localizedDescription)
+        }
+        switch authError {
+        case .api(let message, let errorCode, _, let response):
+            return SupabaseAuthFailure(
+                reason: reason(for: errorCode, statusCode: response.statusCode),
+                description: message
+            )
+        default:
+            return SupabaseAuthFailure(reason: .unknown, description: authError.message)
+        }
+    }
+
+    private nonisolated static func reason(
+        for errorCode: Supabase.ErrorCode,
+        statusCode: Int
+    ) -> SupabaseAuthFailureReason {
+        if errorCode == .invalidCredentials || errorCode == .userNotFound {
+            return .invalidCredentials
+        }
+        if statusCode == 401 {
+            return .configuration
+        }
+        if (500...599).contains(statusCode) || errorCode == .unexpectedFailure {
+            return .server
+        }
+        return .unknown
     }
 }

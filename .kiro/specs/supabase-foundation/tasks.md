@@ -35,6 +35,15 @@
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 6.2_
   - _Boundary: Services/Supabase/SupabaseAuthService_
 
+- [x] 2.3 Clasificar el motivo del error de auth (Req 3.6)
+  - Añadir en la capa base `SupabaseAuthFailureReason` (`invalidCredentials`, `network`, `configuration`, `server`, `unknown`) y `SupabaseAuthFailure` (`reason` + `description` con el mensaje del SDK). Los casos `signUpFailed`/`signInFailed`/`signOutFailed` de `SupabaseBaseError` pasan a llevar la payload `SupabaseAuthFailure`; el enum debe seguir siendo `Equatable` (conformance explícita) para no romper los asserts existentes.
+  - `SupabaseAuthService` clasifica el error del SDK (supabase-swift 2.55.2 expone `AuthError.api(message:errorCode:underlyingData:underlyingResponse:)`): `URLError` → `.network`; `errorCode` `.invalidCredentials`/`.userNotFound` → `.invalidCredentials`; 401 sin esos códigos → `.configuration`; 5xx o `.unexpectedFailure` → `.server`; resto → `.unknown`.
+  - `errorDescription` sigue siendo texto localizable en español según el motivo y NO filtra el mensaje crudo del SDK; la descripción del SDK queda disponible en `failure.description` para diagnóstico.
+  - Actualizar el mapeo de `AccountSessionManager` (account-personal) para seguir emitiendo `AccountError.signUpFailed/signInFailed/signOutFailed(String)` con el `localizedDescription` (sin cambio de contrato hacia la feature) y su test con el nuevo constructor.
+  - Observable: `SupabaseAuthServiceTests` cubre 401 credenciales inválidas → `.invalidCredentials`, `URLError` → `.network`, 401 sin código de credenciales → `.configuration`, 500 → `.server` y la descripción del SDK preservada en `failure.description`; `AccountSessionManagerTests` y `SupabaseSessionFlowIntegrationTests` actualizados; suite completa en verde sin warnings nuevos.
+  - _Requirements: 3.6_
+  - _Boundary: Services/Supabase (enum de error + SupabaseAuthService); AccountSessionManager solo mapea_
+
 ## 3. Core: seam de storage
 - [x] 3.1 (P) Declarar el protocolo de storage y sus opciones
   - Declarar `SupabaseStoring` (`Sendable`) con upload(bucket:path:data:options:) y download(bucket:path:), más `SupabaseUploadOptions` (contentType, upsert), sin tipos del SDK en el contrato.
@@ -122,3 +131,67 @@
 - 6.1: `SupabaseBaseFake` (`final class`, `@unchecked Sendable`, un NSLock que guarda un struct `State` — patrón de caja del precedente) conforma los tres protocolos con éxito/fallo programables por seam (`authError`/`uploadError`/`downloadError`/`databaseError` + valores configurables) y registra credenciales, uploads/downloads y select/rpc; `reset()` limpia solo los registros; RED con `Cannot find 'SupabaseBaseFake' in scope` → suite 203+14=217 en verde (fileRef A79/build B81 y A7A/B82 en C11/F0C).
 - 6.2: `SupabaseSessionFlowIntegrationTests` construye el stack vía `AppComposition.makeRootServices` (composition root real, fileRef A7B/build B83 en C11/F0C): signIn con stub del token → `currentSession()` == session → `stateChanges()` emite `.signedIn` → signOut con stub del logout → `stateChanges()` emite `.signedOut` (el SDK v2.55 lo emite localmente en el flujo password) y con 401 el `signIn` lanza `.signInFailed` sin emitir `.signedIn`.
 - RED 6.2: `xcodebuild test -only-testing:BetterFishingTests/SupabaseSessionFlowIntegrationTests` antes de crear el fichero → `Executed 0 tests` (la verificación E2E no existía en la suite) y `error: 'async' call in an autoclosure` en los `XCTAssertNil` async (hoisteados a variables) → ** TEST FAILED **; tras el fichero: 2 tests nuevos, suite 219 en verde.
+- 2.3 (remediación de Req 3.6, hueco detectado en la validación de feature): `SupabaseAuthFailureReason` (`invalidCredentials`/`network`/`configuration`/`server`/`unknown`) + `SupabaseAuthFailure` (`reason` + `description`) en `App/Services/Supabase/SupabaseAuthFailure.swift` (nuevo, fileRef 0xAB4/build 0xBB4, grupo C16, Sources de la app; el test target los ve vía host app + `@testable import`, igual que `SupabaseAuthService`). Los tres casos de auth de `SupabaseBaseError` pasan a llevar payload y el enum gana `Equatable` explícito (los casos sin payload lo pierden al añadir associated values). Clasificación en `SupabaseAuthService.makeAuthFailure` (`:107`): `URLError` → `.network` (el SDK v2.55.2 deja los errores de transporte sin envolver, `APIClient.swift:60`), `AuthError.api(message:errorCode:underlyingData:underlyingResponse:)` → `invalidCredentials`/`userNotFound` = `.invalidCredentials`, 401 resto = `.configuration`, 5xx o `.unexpectedFailure` = `.server`, resto (incl. `sessionMissing`, `weakPassword`, `pkce`) = `.unknown`. `errorDescription` compone `"No se pudo <operación>: <motivo>"` con 5 textos en español; el mensaje crudo del SDK queda solo en `failure.description` y hay test explícito de no-fuga.
+- 2.3 (contrato hacia account-personal): `AccountSessionManager` NO necesitó switch nuevo (su `case .sessionUnavailable` + `default:` sigue classifying igual) pero sí se corrigió el prefijo duplicado que 2.3 hacía visible: `errorText` prefiere el nuevo `SupabaseBaseError.reasonDescription` (motivo suelto) sobre el `localizedDescription` completo, de modo que la UI muestra `"No se pudo iniciar sesión: las credenciales no son válidas."` y no el prefijo repetido; test nuevo `testSignInFailureMessageStatesTheReasonWithoutDuplicatedPrefix`. `design.md` (Error Strategy → Auth) se alineó con el comportamiento implementado.
+- RED 2.3: 5 fallos de compilación en el target de tests (`cannot find 'SupabaseAuthFailure' in scope`, `pattern with associated values does not match enum case 'signInFailed'`, `type 'Equatable' has no member 'invalidCredentials'`) → ** TEST FAILED **; logs `task-2.3-red.log` / `task-2.3-green.log`. GREEN: focal 34/34 (SupabaseAuthServiceTests 13/13, AccountSessionManagerTests 5/5 → 6/6 tras el test del prefijo, SupabaseSessionFlowIntegrationTests 2/2, AccountFlowE2ETests 6/6, SupabaseProfileRepositoryTests 8/8) y suite unitaria completa 368/368 → **369/369** con el test del prefijo, exit 0, 0 warnings nuevos (los del build son preexistentes de XCTest/CoreLocation), `git diff --check` limpio. REVIEW: `CHANGES_REQUIRED` solo por artefacto (design desalineado + nota ausente) y sin defectos de código; ambos resueltos en esta nota y en `design.md`.
+
+## 7. Extension: seam RPC sin cuerpo
+- [x] 7.1 Publicar el contrato RPC y restaurar la conformance de forma atómica
+  - Extender el seam de base de datos para distinguir invocaciones con respuesta JSON e invocaciones cuyo resultado es únicamente un status 2xx, manteniendo el seam agnóstico al esquema.
+  - Implementar la invocación sin decodificación mediante el overload del SDK que devuelve una respuesta `Void`, reutilizando la codificación de argumentos y el mapeo de errores a `.rpcFailed`.
+  - Actualizar en el mismo cambio el fake compartido, el doble de conformidad y los dobles de consumidores existentes para que el protocolo siga compilando; el fake registra la invocación y reutiliza su error programable.
+  - Observable: el build de app y tests compila con todos los conformers y la llamada sin cuerpo completa sin exigir un body JSON.
+  - _Requirements: 5.1, 5.2, 5.3, 7.4_
+  - _Boundary: SupabaseDatabaseAccess, SupabaseDatabaseService, SupabaseBaseFake, DatabaseTestDouble, RecordingCatchDB, RecordingDB_
+  - _Depends: 4.2_
+
+- [x] 7.2 Cubrir el seam base con pruebas de contrato y fake
+  - Añadir pruebas stubs para HTTP 204 con body vacío, HTTP 200 con JSON no decodificable, argumentos tipados, error de transporte, errores 4xx/5xx y el caso de respuesta vacía de `rpc<T>`.
+  - Verificar que `rpcVoid` no filtra tipos del SDK y que cualquier status 2xx completa sin resultado; verificar que `rpc<T>` conserva la decodificación JSON.
+  - Extender las pruebas del fake para comprobar registro, propagación de error y limpieza de invariantes sin contactar con la red.
+  - Observable: las suites focales de base de datos y fake pasan sin red y los errores observables son `.rpcFailed`.
+  - _Requirements: 5.1, 5.3, 7.1, 7.4_
+  - _Boundary: SupabaseDatabaseServiceTests, SupabaseBaseFakeTests, DatabaseTestDouble_
+  - _Depends: 7.1_
+
+## 8. Integración y revalidación downstream
+- [x] 8.1 (P) Migrar las mutaciones de account al seam sin cuerpo
+  - Cambiar las operaciones de perfil y captura para invocar el contrato sin cuerpo y eliminar los DTOs sentinel que solo existían para forzar una decodificación vacía.
+  - Conservar la construcción de argumentos, el mapeo de errores de dominio y el comportamiento de no autenticación.
+  - Observable: las operaciones de account completan usando `SupabaseBaseFake` sin configurar un resultado JSON y sus errores siguen siendo observables.
+  - _Requirements: 5.1, 5.3, 7.4_
+  - _Boundary: SupabaseProfileRepository, CatchSyncService_
+  - _Depends: 7.1, 7.2_
+
+- [x] 8.2 (P) Migrar las mutaciones de favoritos de spot al seam sin cuerpo
+  - Cambiar las mutaciones de favoritos para invocar el contrato sin cuerpo y retirar el resultado sentinel específico de la feature.
+  - Conservar la selección de función, los argumentos del spot, la autenticación requerida y el mapeo de errores.
+  - Observable: alta y baja de favoritos completan usando el fake sin resultado JSON y los fallos siguen mapeados al error de repositorio.
+  - _Requirements: 5.1, 5.3, 7.4_
+  - _Boundary: SupabaseSpotRepository_
+  - _Depends: 7.1, 7.2_
+
+- [x] 8.3 Actualizar los doubles y tests de account
+  - Migrar los dobles de captura y sync para registrar y propagar `rpcVoid`; retirar las aserciones que dependían de un JSON sentinel.
+  - Actualizar las pruebas de perfil para programar el error de RPC explícitamente y convertir el RED de respuesta 204 en una prueba verde del contrato publicado.
+  - Ejecutar las suites focales de perfil, sync y E2E de account, incluida la evidencia pendiente de 6.5.
+  - Observable: las pruebas focales de account pasan sin red y no queda un RED intencional por el body vacío.
+  - _Requirements: 5.1, 7.1, 7.4_
+  - _Boundary: Account test doubles and tests_
+  - _Depends: 7.2, 8.1_
+
+- [x] 8.4 Actualizar los tests de spot y la integración de favoritos
+  - Migrar las pruebas de repositorio e integración para verificar las invocaciones sin cuerpo y usar el error programable del seam en los casos de fallo.
+  - Mantener las verificaciones de argumentos, autenticación, lista de favoritos y composición del flujo.
+  - Observable: las suites focales de spot y favoritos pasan sin red.
+  - _Requirements: 5.1, 7.1, 7.4_
+  - _Boundary: Spot repository tests and discovery integration tests_
+  - _Depends: 7.2, 8.2_
+
+- [x] 8.5 Ejecutar la validación integrada y la regresión completa
+  - Ejecutar secuencialmente las suites focales de account y spot, la suite unitaria completa, la suite UI completa y el build de release con el Developer path y el destino simulator established.
+  - Eliminar cualquier RED intencional, comprobar que no quedan conformers incompatibles y validar `git diff --check`.
+  - Observable: todas las suites relevantes y el build terminan con éxito, con evidencia fresca y sin el fallo `rpcFailed` causado por un body vacío.
+  - _Requirements: 5.1, 7.1, 7.4_
+  - _Boundary: Feature test suites and build validation_
+  - _Depends: 8.3, 8.4_

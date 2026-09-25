@@ -28,7 +28,7 @@ struct FavoritesListView: View {
     }
 
     private var favoritesList: some View {
-        List {
+        VStack(alignment: .leading, spacing: 12) {
             ForEach(viewModel.favorites) { favorite in
                 row(for: favorite)
             }

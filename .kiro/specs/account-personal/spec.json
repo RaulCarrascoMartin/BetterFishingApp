@@ -1,14 +1,14 @@
 {
   "feature_name": "account-personal",
   "created_at": "2026-09-22T07:38:12Z",
-  "updated_at": "2026-09-23T00:00:00Z",
+  "updated_at": "2026-09-25T00:00:00Z",
   "language": "es",
   "dependencies": [
     "supabase-foundation",
     "catch-log",
     "spot-discovery"
   ],
-  "phase": "tasks-generated",
+  "phase": "implementation-complete",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -23,5 +23,13 @@
       "approved": true
     }
   },
-  "ready_for_implementation": true
+  "ready_for_implementation": true,
+  "known_gaps": [
+    {
+      "requirement": "4.4",
+      "description": "Favoritos no se destacan en el mapa (SpotMapView/SpotMapViewModel de spot-discovery sin referencia a favoritos). Diferido post-MVP; requiere trabajo en spot-discovery (owner del mapa), fuera del boundary de account-personal.",
+      "status": "deferred",
+      "decided_at": "2026-09-25"
+    }
+  ]
 }

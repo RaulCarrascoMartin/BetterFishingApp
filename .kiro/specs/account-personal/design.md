@@ -60,7 +60,7 @@ Hoy el registro de capturas vive solo en local (`CatchRepository`/`LocalFileCatc
 ## Architecture
 
 ### Existing Architecture Analysis
-- La app usa MVVM por feature (`@Observable`), services tras protocolos, composition root único (`AppComposition.makeRootServices`), modelos `Codable` en `/Models` y `TabView` en `RootView` (Identificar | Capturas).
+- La app usa MVVM por feature (`@Observable`), services tras protocolos, composition root único (`AppComposition.makeRootServices`), modelos `Codable` en `/Models` y `TabView` en `RootView` (Identificar | Capturas | Mapa | Cuenta).
 - `supabase-foundation` (spec base, pendiente de implementar) definirá `SupabaseStack` (auth/storage/database) construido en el composition root y un `SupabaseBaseFake` para tests; sin configuración de Supabase el stack será nil y esta feature degradará (sección Cuenta "no disponible").
 - catch-log valida el layout local de capturas; su seam `CatchRepository` se conserva intacto.
 
@@ -435,7 +435,7 @@ struct SpotRepositorySpotPresenting: FavoritesPresenting {
     private let repository: any SpotRepository   // de spot-discovery
     func favoriteSpotIDs() async throws -> Set<UUID> { try await repository.favoriteSpotIDs() }
     func favorites() async throws -> [FavoriteSpot] {
-        try await repository.favoriteSpots().map { FavoriteSpot(spotID: $0.id, name: $0.name, category: $0.category) }
+        try await repository.favoriteSpots().map { FavoriteSpot(spotID: $0.id, name: $0.name, category: $0.category.rawValue) }
     }
     func isFavorite(spotID: UUID) async throws -> Bool {
         try await favoriteSpotIDs().contains(spotID)
@@ -596,7 +596,7 @@ protocol SyncCatchLocalStore: Sendable {
 - Sin contexto de Supabase (`accountViewModel == nil` en composition root): sección "Cuenta" con estado *no disponible* y explicación (degradación elegante de `supabase-foundation`).
 
 ### UI Integration: RootView / TabView
-- Añadir tercer tab "Cuenta" (`person.crop.circle`) con `AccountView`. El patrón `TabView` ya existe en `BetterFishingApp.swift:59` y conserva el estado por tab.
+- Añadir cuarto tab "Cuenta" (`person.crop.circle`) con `AccountView`. El patrón `TabView` ya existe en `BetterFishingApp.swift:59` y conserva el estado por tab.
 
 ## Data Models
 
@@ -639,8 +639,10 @@ create index if not exists catches_user_id_idx on public.catches (user_id);
 alter table public.profiles enable row level security;
 alter table public.catches enable row level security;
 
+drop policy if exists profiles_own on public.profiles;
 create policy profiles_own on public.profiles
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists catches_own on public.catches;
 create policy catches_own on public.catches
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 

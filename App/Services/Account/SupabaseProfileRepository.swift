@@ -81,7 +81,7 @@ actor SupabaseProfileRepository: ProfileManaging {
         let displayNameArgument: SupabaseJSONValue = displayName.map { .string($0) } ?? .null
         let avatarArgument: SupabaseJSONValue = avatarPath.map { .string($0) } ?? .null
         do {
-            let _: ProfileMutationResult = try await database.rpc(
+            try await database.rpcVoid(
                 "upsert_profile",
                 arguments: SupabaseRPCArguments([
                     "p_user_id": .string(userID.uuidString),
@@ -98,5 +98,3 @@ actor SupabaseProfileRepository: ProfileManaging {
         error.localizedDescription
     }
 }
-
-private struct ProfileMutationResult: Decodable, Sendable {}

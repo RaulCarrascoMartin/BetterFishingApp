@@ -94,6 +94,13 @@ struct DatabaseTestDouble: SupabaseDatabaseAccess, Sendable {
         }
         return value
     }
+
+    func rpcVoid(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws {
+        recorder.recordRPC(RecordedRPC(function: function, arguments: arguments))
+    }
 }
 
 final class SupabaseDatabaseFakeConformanceTests: XCTestCase {
@@ -136,6 +143,22 @@ final class SupabaseDatabaseFakeConformanceTests: XCTestCase {
         let recorded = double.recordedRPCs
         XCTAssertEqual(recorded.count, 1)
         XCTAssertEqual(recorded.first?.function, "nearby_spots")
+        XCTAssertEqual(recorded.first?.arguments, arguments)
+    }
+
+    func testDatabaseTestDoubleRecordsRPCVoidFunctionAndArguments() async throws {
+        let arguments = SupabaseRPCArguments([
+            "id": .string("value-1"),
+            "active": .bool(true),
+        ])
+        let double = DatabaseTestDouble()
+        let db: any SupabaseDatabaseAccess = double
+
+        try await db.rpcVoid("mutate_value", arguments: arguments)
+
+        let recorded = double.recordedRPCs
+        XCTAssertEqual(recorded.count, 1)
+        XCTAssertEqual(recorded.first?.function, "mutate_value")
         XCTAssertEqual(recorded.first?.arguments, arguments)
     }
 

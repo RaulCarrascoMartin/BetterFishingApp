@@ -227,6 +227,40 @@ final class SupabaseBaseFakeTests: XCTestCase {
         XCTAssertEqual(fake.recordedRPCs.first?.arguments, arguments)
     }
 
+    func testRPCVoidRecordsFunctionAndArguments() async throws {
+        let fake = SupabaseBaseFake()
+        let arguments = SupabaseRPCArguments([
+            "id": .string("value-1"),
+            "active": .bool(true),
+        ])
+        let db: any SupabaseDatabaseAccess = fake
+
+        try await db.rpcVoid("mutate_value", arguments: arguments)
+
+        XCTAssertEqual(fake.recordedRPCs.count, 1)
+        XCTAssertEqual(fake.recordedRPCs.first?.function, "mutate_value")
+        XCTAssertEqual(fake.recordedRPCs.first?.arguments, arguments)
+    }
+
+    func testRPCVoidFailurePropagatesProgrammedErrorAndRecordsCall() async {
+        let fake = SupabaseBaseFake()
+        fake.databaseError = SupabaseBaseFakeError(reason: "rpc failed")
+        let db: any SupabaseDatabaseAccess = fake
+
+        do {
+            try await db.rpcVoid("mutate_value", arguments: nil)
+            XCTFail("Expected rpcVoid to throw")
+        } catch let error as SupabaseBaseFakeError {
+            XCTAssertEqual(error, SupabaseBaseFakeError(reason: "rpc failed"))
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+
+        XCTAssertEqual(fake.recordedRPCs.count, 1)
+        XCTAssertEqual(fake.recordedRPCs.first?.function, "mutate_value")
+        XCTAssertNil(fake.recordedRPCs.first?.arguments)
+    }
+
     func testDatabaseFailurePropagatesProgrammedError() async {
         let fake = SupabaseBaseFake()
         fake.databaseError = SupabaseBaseFakeError(reason: "query failed")
@@ -268,13 +302,14 @@ final class SupabaseBaseFakeTests: XCTestCase {
         _ = try await store.download(bucket: "catches", path: "c.jpg")
         let _: [String] = try await db.select(columns: "id", from: "spots", filters: [], limit: nil)
         let _: String = try await db.rpc("nearby_spots", arguments: nil)
+        try await db.rpcVoid("clear_cache", arguments: nil)
         XCTAssertEqual(fake.recordedSignUps.count, 0)
         XCTAssertEqual(fake.recordedSignIns.count, 1)
         XCTAssertEqual(fake.recordedSignOutCount, 1)
         XCTAssertEqual(fake.recordedUploads.count, 1)
         XCTAssertEqual(fake.recordedDownloads.count, 1)
         XCTAssertEqual(fake.recordedSelects.count, 1)
-        XCTAssertEqual(fake.recordedRPCs.count, 1)
+        XCTAssertEqual(fake.recordedRPCs.count, 2)
 
         fake.reset()
 

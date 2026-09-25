@@ -1,9 +1,5 @@
 -- account_personal.sql
 -- Provisioning del dominio de cuenta personal (spec account-personal, tarea 1.1).
--- Idempotente y re-ejecutable: create extension if not exists / create table
--- if not exists / create policy ... (se asume ejecución única en instancia
--- nueva; la política, a diferencia de spot-discovery, no se re-ejecuta con
--- drop policy forzado para conservar el DDL del design.md).
 -- Depende del esquema `auth` de Supabase (auth.users/auth.uid) y de pgcrypto.
 
 create extension if not exists pgcrypto;
@@ -53,8 +49,10 @@ create index if not exists catches_user_id_idx on public.catches (user_id);
 alter table public.profiles enable row level security;
 alter table public.catches enable row level security;
 
+drop policy if exists profiles_own on public.profiles;
 create policy profiles_own on public.profiles
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists catches_own on public.catches;
 create policy catches_own on public.catches
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 

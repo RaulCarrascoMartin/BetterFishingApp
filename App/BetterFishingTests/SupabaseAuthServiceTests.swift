@@ -41,20 +41,114 @@ final class SupabaseAuthServiceTests: XCTestCase {
         XCTAssertEqual(HTTPStubRegistry.shared.requestCount(for: tokenURL), 1)
     }
 
-    func testSignInWithInvalidCredentialsThrowsSignInFailed() async throws {
-        let errorBody: [String: Any] = ["message": "Invalid login credentials"]
+    func testSignInWithInvalidCredentialsCodeClassifiesAsInvalidCredentialsAndKeepsSDKDescription() async throws {
+        let errorBody: [String: Any] = [
+            "message": "Invalid login credentials",
+            "error_code": "invalid_credentials",
+        ]
         HTTPStubRegistry.shared.register(.json(errorBody, statusCode: 401), for: tokenURL)
+
+        let failure = try await signInFailure()
+
+        XCTAssertEqual(failure.reason, .invalidCredentials)
+        XCTAssertEqual(failure.description, "Invalid login credentials")
+    }
+
+    func testSignInWithUserNotFoundCodeClassifiesAsInvalidCredentials() async throws {
+        let errorBody: [String: Any] = [
+            "message": "User not found",
+            "error_code": "user_not_found",
+        ]
+        HTTPStubRegistry.shared.register(.json(errorBody, statusCode: 401), for: tokenURL)
+
+        let failure = try await signInFailure()
+
+        XCTAssertEqual(failure.reason, .invalidCredentials)
+        XCTAssertEqual(failure.description, "User not found")
+    }
+
+    func testSignInWithUnauthorizedWithoutCredentialsCodeClassifiesAsConfiguration() async throws {
+        let errorBody: [String: Any] = ["message": "Invalid API key provided"]
+        HTTPStubRegistry.shared.register(.json(errorBody, statusCode: 401), for: tokenURL)
+
+        let failure = try await signInFailure()
+
+        XCTAssertEqual(failure.reason, .configuration)
+        XCTAssertEqual(failure.description, "Invalid API key provided")
+    }
+
+    func testSignInWithTransportErrorClassifiesAsNetwork() async throws {
+        HTTPStubRegistry.shared.register(
+            HTTPStub(error: URLError(.notConnectedToInternet)),
+            for: tokenURL
+        )
+
+        let failure = try await signInFailure()
+
+        XCTAssertEqual(failure.reason, .network)
+        XCTAssertFalse(failure.description.isEmpty)
+    }
+
+    func testSignInWithServerErrorClassifiesAsServer() async throws {
+        let errorBody: [String: Any] = ["message": "Database failure"]
+        HTTPStubRegistry.shared.register(.json(errorBody, statusCode: 500), for: tokenURL)
+
+        let failure = try await signInFailure()
+
+        XCTAssertEqual(failure.reason, .server)
+        XCTAssertEqual(failure.description, "Database failure")
+    }
+
+    func testSignUpWithServerErrorCarriesFailureInSignUpFailed() async throws {
+        let errorBody: [String: Any] = ["message": "Database failure"]
+        HTTPStubRegistry.shared.register(.json(errorBody, statusCode: 500), for: signUpURL)
 
         let auth = try makeAuthService()
 
         do {
-            _ = try await auth.signIn(email: "angler@example.com", password: "wrong-password")
-            XCTFail("Expected signIn to throw")
+            _ = try await auth.signUp(email: "angler@example.com", password: "correct-horse")
+            XCTFail("Expected signUp to throw")
         } catch let error as SupabaseBaseError {
-            XCTAssertEqual(error, .signInFailed)
+            XCTAssertEqual(error, .signUpFailed(SupabaseAuthFailure(reason: .server, description: "Database failure")))
         } catch {
             XCTFail("Unexpected error type: \(error)")
         }
+    }
+
+    func testAuthFailureErrorDescriptionIsSpanishPerReasonAndDoesNotLeakSDKMessage() {
+        let sdkMessage = "Invalid API key provided: apikey-abc123"
+        let reasons: [SupabaseAuthFailureReason] = [
+            .invalidCredentials, .network, .configuration, .server, .unknown,
+        ]
+
+        var signInDescriptions: Set<String> = []
+        var signUpDescriptions: Set<String> = []
+        var signOutDescriptions: Set<String> = []
+
+        for reason in reasons {
+            let failure = SupabaseAuthFailure(reason: reason, description: sdkMessage)
+            let signIn = SupabaseBaseError.signInFailed(failure)
+            let signUp = SupabaseBaseError.signUpFailed(failure)
+            let signOut = SupabaseBaseError.signOutFailed(failure)
+
+            for text in [signIn.errorDescription, signUp.errorDescription, signOut.errorDescription] {
+                XCTAssertNotNil(text)
+                XCTAssertFalse(text?.isEmpty ?? true)
+                XCTAssertFalse(text?.contains(sdkMessage) ?? true, "El mensaje crudo del SDK no debe filtrarse: \(text ?? "")")
+            }
+
+            XCTAssertTrue(signIn.errorDescription?.hasPrefix("No se pudo iniciar sesión: ") ?? false, "\(signIn.errorDescription ?? "")")
+            XCTAssertTrue(signUp.errorDescription?.hasPrefix("No se pudo registrar el usuario: ") ?? false, "\(signUp.errorDescription ?? "")")
+            XCTAssertTrue(signOut.errorDescription?.hasPrefix("No se pudo cerrar la sesión: ") ?? false, "\(signOut.errorDescription ?? "")")
+
+            signInDescriptions.insert(signIn.errorDescription ?? "")
+            signUpDescriptions.insert(signUp.errorDescription ?? "")
+            signOutDescriptions.insert(signOut.errorDescription ?? "")
+        }
+
+        XCTAssertEqual(signInDescriptions.count, reasons.count)
+        XCTAssertEqual(signUpDescriptions.count, reasons.count)
+        XCTAssertEqual(signOutDescriptions.count, reasons.count)
     }
 
     func testSignOutTerminatesSession() async throws {
@@ -149,6 +243,27 @@ final class SupabaseAuthServiceTests: XCTestCase {
             options: options
         )
         return SupabaseAuthService(client: client)
+    }
+
+    private func signInFailure(
+        email: String = "angler@example.com",
+        password: String = "wrong-password"
+    ) async throws -> SupabaseAuthFailure {
+        let auth = try makeAuthService()
+        do {
+            _ = try await auth.signIn(email: email, password: password)
+            XCTFail("Expected signIn to throw")
+            return SupabaseAuthFailure(reason: .unknown, description: "")
+        } catch let error as SupabaseBaseError {
+            guard case .signInFailed(let failure) = error else {
+                XCTFail("Expected .signInFailed, got \(error)")
+                return SupabaseAuthFailure(reason: .unknown, description: "")
+            }
+            return failure
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+            return SupabaseAuthFailure(reason: .unknown, description: "")
+        }
     }
 
     private func collectEvents(

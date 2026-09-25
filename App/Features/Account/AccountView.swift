@@ -30,7 +30,6 @@ struct AccountView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 ProfileEditView(viewModel: viewModel)
-                    .accessibilityIdentifier("account.profile")
 
                 FavoritesListView(viewModel: viewModel)
 

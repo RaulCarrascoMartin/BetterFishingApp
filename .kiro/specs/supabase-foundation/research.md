@@ -2,12 +2,13 @@
 
 ## Summary
 - **Feature**: supabase-foundation
-- **Discovery Scope**: Extensión de infraestructura (nueva capa de servicios en una app existente) con una dependencia externa nueva (Supabase Swift SDK). Se aplicó discovery ligero con verificación web del SDK, análisis de patrones existentes (config vía xcconfig/Info.plist, seams tras protocolos, composition root, fake en test target, stubs HTTP) y análisis de integración.
+- **Discovery Scope**: Extensión de infraestructura (nueva capa de servicios en una app existente) con una dependencia externa nueva (Supabase Swift SDK), ampliada posteriormente para cubrir RPC Postgres sin cuerpo. Se aplicó discovery ligero con verificación web del SDK, análisis de patrones existentes (config vía xcconfig/Info.plist, seams tras protocolos, composition root, fake en test target, stubs HTTP) y análisis de integración.
 - **Key Findings**:
   - supabase-swift v2 (SPM `https://github.com/supabase/supabase-swift.git`, producto `Supabase`) expone `SupabaseClient`, y los namespaces `auth`, `storage` y `postgrest`/`rpc`; el SDK persiste la sesión en almacenamiento local (Keychain) por defecto.
   - El repositorio ya tiene un patrón probado de configuración por xcconfig → Info.plist → `Bundle.main.object(forInfoDictionaryKey:)` (FishialCredentials), reutilizable tal cual para URL/anon key de Supabase.
   - El SDK expone tipos de usuario/sesión (`Supabase.Session`, `Supabase.User`) que no deben filtrar fuera del boundary base; se mapean a modelos comunes propios (`Codable`/`Sendable`).
   - Swift 6 en modo estricto puede rechazar `SupabaseClient` por no ser `Sendable`; conviene aislar el cliente en implementaciones `actor` para cumplir los protocolos `Sendable` sin depender de anotaciones del SDK.
+  - Las funciones Postgres `RETURNS void` responden con éxito y cuerpo vacío; PostgREST Swift ofrece un overload de `execute()` que devuelve `PostgrestResponse<Void>`, mientras que el overload genérico intenta decodificar `T` y falla si no hay JSON.
 
 ## Research Log
 
@@ -53,11 +54,21 @@
 - **Findings**: El repositorio ya dispone del patrón de stub HTTP (`MockURLProtocol`+`URLProtocol`) para testear clientes sin contactar la red.
 - **Implications**: Los tests de los servicios usarán `URLProtocol` personalizado inyectado vía `SupabaseClientOptions.global.session` para stubbear los endpoints de auth/storage/PostgREST. Para los tests de features aguas abajo se añade un `SupabaseBaseFake`.
 
+### 6. Extensión del seam para RPC sin cuerpo
+- **Context**: Las specs consumidoras definieron funciones Postgres mutaciones cuyo retorno es `void`. PostgREST representa esa respuesta con un cuerpo vacío, no con un objeto JSON artificially válido.
+- **Sources Consulted**: Código local de supabase-swift 2.55.2 (`Sources/PostgREST/PostgrestBuilder.swift` y `Tests/PostgRESTTests/PostgrestRpcBuilderTests.swift`) y fuente oficial de `PostgrestBuilder` en GitHub.
+- **Findings**:
+  - `PostgrestBuilder.execute(options:) async throws -> PostgrestResponse<Void>` ignora deliberadamente el body y representa el éxito con `Void`.
+  - El overload genérico `execute<T: Decodable>()` siempre decodifica el body; usarlo para una RPC void convierte un HTTP 2xx válido en un error de decodificación.
+  - El seam actual `rpc<T>` cubre correctamente funciones que devuelven JSON, pero no expresa la diferencia entre “respuesta JSON” y “mutación sin resultado”.
+- **Implications**: La capa base mantiene `rpc<T>` y añade una operación void explícita al protocolo, al actor real, al fake compartido y a los dobles de tests. La capa no interpreta nombres ni esquemas de RPC; la elección entre ambas operaciones corresponde al consumidor.
+
 ## Architecture Pattern Evaluation
 
 | Option | Description | Strengths | Risks / Limitations | Notes |
 |--------|-------------|-----------|---------------------|-------|
 | SDK oficial supabase-swift v2 | Cliente completo de Supabase (adoptar) | Soportado oficialmente, cubre auth/storage/db, restaura sesión | Dependencia externa nueva; compatibilidad Sendable | Tech.md ya decidió adoptar el SDK |
+| Overload oficial `execute() -> PostgrestResponse<Void>` para RPC sin cuerpo | Adoptar la primitiva del SDK tras un seam void explícito | Representa correctamente HTTP 2xx sin decodificar body; no requiere DTO sentinel | Amplía protocolo, fake y conformance tests | La base mantiene `rpc<T>` para JSON y añade `rpcVoid` para mutaciones |
 | Cliente REST propio sobre URLSession | Construir auth/storage/db a mano | Sin dependencia externa | Duplica el SDK, riesgo de bugs de seguridad/refresh, mantenimiento propio | Descartado |
 | Aislar el SDK tras protocolos por feature | Cada feature crea su propio wrapper | — | Duplica auth/storage y viola el "único seam de red" del roadmap | Descartado en el brief/roadmap |
 | Servicios como structs con `@unchecked Sendable` | Envolver el cliente con anotaciones | Implementación menos verbosa | Riesgo de data races si el SDK cambia; Swift 6 estricto lo penaliza | Se prefiere `actor` |
@@ -102,16 +113,31 @@
 - **Trade-offs**: Los consumidores construyen sus queries tipadas sobre este seam; si un consumidor necesitara combinadores PostgREST avanzados, ampliar el seam será un cambio de contrato (revalidación diseñada).
 - **Follow-up**: Documentado como Revalidation Trigger.
 
+### Decision: API explícita para RPC con y sin resultado
+- **Context**: El contrato genérico `rpc<T>` solo puede representar funciones que devuelven un body JSON decodificable; las mutaciones `RETURNS void` no tienen tal body.
+- **Alternatives Considered**:
+  1. Cambiar el DDL consumidor para devolver un objeto JSON — rechazada: altera contratos de dominio y RLS para acomodar una limitación del cliente.
+  2. Enviar un DTO vacío o `{}` desde cada consumidor — rechazada: no funciona con un body realmente vacío y duplica una convención falsa.
+  3. Sobrescribir `rpc<T>` para tratar `Data()` como `EmptyResponse` — rechazada: mezcla semántica de errores de red/HTTP con un caso de éxito específico y debilita el tipado del retorno.
+  4. Exponer `rpcVoid` y usar el overload oficial `execute() -> PostgrestResponse<Void>` — seleccionada.
+- **Selected Approach**: Mantener `rpc<T>` para RPC con JSON y añadir `rpcVoid(_:arguments:)` al seam para operaciones cuyo único resultado observable es el éxito HTTP.
+- **Rationale**: Hace explícita la diferencia de contrato, reutiliza la abstracción oficial sin filtrar el SDK y mantiene la responsabilidad de elegir la operación en cada consumidor.
+- **Trade-offs**: Amplía todos los conformers del protocolo y obliga a revalidar `account-personal` y `spot-discovery`; a cambio elimina DTO sentinel y evita tratar un body vacío como error.
+- **Follow-up**: Añadir stubs para 204/body vacío, codificación de argumentos y error HTTP; migrar las cuatro mutaciones consumidoras y ejecutar sus suites antes de rehabilitar la regresión de `account-personal`.
+
 ## Risks & Mitigations
 - **SupabaseClient no es `Sendable` en Swift 6 estricto** — Mitigación: implementaciones `actor` aislan el cliente; verificar en la task de integración del SDK.
 - **Deriva de la API del SDK v2 durante implementación** (upload/download, rpc params, opciones de storage) — Mitigación: pin de versión en SPM, task de integración con verificación contra docs oficiales antes de implementar los servicios.
 - **El stub de los endpoints de auth/storage/PostgREST puede requerir detalles de firma (storage upload)** — Mitigación: stubbear respuestas JSON de éxito/error a nivel HTTP (patrón `MockURLProtocol`), no implementar firma; los servicios no dependen del contenido interno siempre que el contrato JSON se respete.
 - **xcconfig vacío rompiendo el arranque** — Mitigación: config opcional y stack opcional con log; tests de composición garantizan arranque sin config ni URL inválida.
 - **La capa base sin consumidores reales hasta que aterricen spot-discovery/account-personal** — Mitigación: el seam queda validado con la suite de tests de la propia base (config, servicios con stub, fake, composición) para no fijar contratos sin evidencia.
+- **RPC void puede confundirse con una respuesta JSON mal formada** — Mitigación: una API `rpcVoid` separada usa el overload oficial que descarta el body; un status 2xx cualquiera es éxito y cualquier status no 2xx conserva el mapeo a `rpcFailed`.
+- **Ampliar un protocolo base rompe conformers y fixtures aguas abajo** — Mitigación: actualizar simultáneamente `SupabaseBaseFake` y todos los dobles de tests, ejecutar sus conformance tests y revalidar `account-personal` y `spot-discovery` antes de cerrar la dependencia.
 
 ## References
 - [Supabase Swift: Introduction](https://supabase.com/docs/reference/swift/introduction) — namespaces del SDK v2.
 - [Supabase Swift: Installing](https://supabase.com/docs/reference/swift/installing) — integración SPM (`supabase-swift` desde 2.0.0).
 - [Supabase Swift: Initializing](https://supabase.com/docs/reference/swift/initializing) — `SupabaseClient` y `SupabaseClientOptions`.
 - [supabase-swift (GitHub)](https://github.com/supabase/supabase-swift) — repositorio oficial v2.
+- [PostgrestBuilder.swift (supabase-swift)](https://github.com/supabase/supabase-swift/blob/main/Sources/PostgREST/PostgrestBuilder.swift) — overload de ejecución con y sin decodificación para RPC.
 - Código local: `FishialCredentials` (patrón de configuración), `MockURLProtocol`/`HTTPStub` (patrón de test sin red), `AppRootServices`/`AppComposition` (composition root).

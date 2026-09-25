@@ -7,7 +7,7 @@
 
 ## Overview
 
-Esta feature entrega la capa de datos compartida que el producto necesita para conectar las features `spot-discovery` y `account-personal` con Supabase (Auth, Postgres+PostGIS y Storage) sin duplicar cliente ni credenciales. Hoy las features existentes (`fish-species-identification`, `catch-log`) persisten en local con seams propios, no existe cliente de red compartido ni auth, y las credenciales viven sueltas en xcconfig sin infraestructura configurada. La capa base aporta un único cliente de Supabase construido en el composition root y expuesto tras tres protocolos segregados (`SupabaseAuthProviding`, `SupabaseStoring`, `SupabaseDatabaseAccess`), con auth funcional (registro, inicio de sesión, cierre de sesión, consulta/restauración de sesión), storage base (subir/descargar objetos) y un seam de base de datos agnóstico al esquema, además de modelos comunes `Codable`/`Sendable` y configuración centralizada por xcconfig.
+Esta feature entrega la capa de datos compartida que el producto necesita para conectar las features `spot-discovery` y `account-personal` con Supabase (Auth, Postgres+PostGIS y Storage) sin duplicar cliente ni credenciales. Hoy las features existentes (`fish-species-identification`, `catch-log`) persisten en local con seams propios, no existe cliente de red compartido ni auth, y las credenciales viven sueltas en xcconfig sin infraestructura configurada. La capa base aporta un único cliente de Supabase construido en el composition root y expuesto tras tres protocolos segregados (`SupabaseAuthProviding`, `SupabaseStoring`, `SupabaseDatabaseAccess`), con auth funcional (registro, inicio de sesión, cierre de sesión, consulta/restauración de sesión), storage base (subir/descargar objetos) y un seam de base de datos agnóstico al esquema que distingue RPC con respuesta JSON (`rpc<T>`) y mutaciones sin resultado (`rpcVoid`), además de modelos comunes `Codable`/`Sendable` y configuración centralizada por xcconfig.
 
 **Users**: El equipo de desarrollo y las specs consumidoras `spot-discovery` y `account-personal`; indirectamente, los pescadores que usarán la cuenta y el mapa.
 
@@ -15,7 +15,7 @@ Esta feature entrega la capa de datos compartida que el producto necesita para c
 
 ### Goals
 - Una única instancia del cliente de Supabase construida en el composition root y expuesta tras los protocolos del brief.
-- Auth funcional y testeable (signUp/signIn/signOut/session/estado), storage base y seam de base de datos.
+- Auth funcional y testeable (signUp/signIn/signOut/session/estado), storage base y seam de base de datos con contratos explícitos para RPC JSON y RPC void.
 - Configuración centralizada (URL del proyecto y anon key) desde xcconfig gitignored, con degradación elegante sin infra configurada.
 - Modelos comunes `Codable`/`Sendable` de sesión y usuario que no filtran tipos del SDK fuera del boundary base.
 - Fake de los protocolos en el test target para que los tests de las features aguas abajo no contacten la red.
@@ -31,14 +31,14 @@ Esta feature entrega la capa de datos compartida que el producto necesita para c
 
 ### This Spec Owns
 - El `SupabaseClient` compartido (URL + anon key desde configuración) y su construcción (`SupabaseClientProvider`).
-- Los protocolos `SupabaseAuthProviding`, `SupabaseStoring` y `SupabaseDatabaseAccess` y sus implementaciones concretas (`SupabaseAuthService`, `SupabaseStorageService`, `SupabaseDatabaseService`).
+- Los protocolos `SupabaseAuthProviding`, `SupabaseStoring` y `SupabaseDatabaseAccess` y sus implementaciones concretas (`SupabaseAuthService`, `SupabaseStorageService`, `SupabaseDatabaseService`), incluido el contrato base que distingue invocaciones RPC con JSON de invocaciones sin cuerpo.
 - La lectura de configuración `SupabaseClientConfiguration` (xcconfig → Info.plist → Bundle) y el manejo de ausencia/validez.
 - Los modelos comunes `SupabaseSession` y `SupabaseUser` (`Codable`/`Sendable`) y el mapeo desde los tipos del SDK dentro del boundary.
 - El estado de sesión notificado a la app (`SupabaseAuthEvent`) y la restauración de sesión al arrancar.
 - El `SupabaseBaseFake` del test target y los tests de la propia capa.
 
 ### Out of Boundary
-- DDL/Schema y consultas tipadas concretas de spots/capturas (specs consumidoras).
+- DDL/Schema, semántica de retorno y consultas tipadas concretas de spots/capturas (specs consumidoras); la base solo decide cómo transportar un resultado JSON o ausencia de body.
 - UI de login/registro/perfil, mapa, favoritos, sync (specs aguas abajo).
 - Cambios en los seams existentes de `catch-log`/`fish-species-identification`.
 - Migración de datos existentes hacia Supabase.
@@ -54,6 +54,7 @@ Esta feature entrega la capa de datos compartida que el producto necesita para c
 - Cambio en los tipos comunes `SupabaseSession`/`SupabaseUser` (campos, tipado).
 - Cambio en la dirección de dependencias (si una feature pasa a conocer la implementación del SDK).
 - Ampliación del seam de base de datos para combinar filtros u operadores PostgREST avanzados exigidos por un consumidor.
+- Cambio de la política de respuestas RPC (JSON, sin cuerpo, status o error) o de la versión del SDK que altera `PostgrestBuilder.execute()`.
 - Cambio en las claves de configuración (nombres de xcconfig/Info.plist) o en la degradación esperada sin infra.
 
 ## Architecture
@@ -113,7 +114,7 @@ Los protocolos son la única vía por la que las features consumen la capa base.
 
 | Layer | Choice / Version | Role in Feature | Notes |
 |-------|------------------|-----------------|-------|
-| Backend / Services | supabase-swift v2.x (SPM) | Cliente de auth, storage y PostgREST | Producto `Supabase`; la única librería nueva (tech.md) |
+| Backend / Services | supabase-swift 2.55.2 (SPM) | Cliente de auth, storage y PostgREST | Producto `Supabase`; versión fijada en `Package.resolved` |
 | Auth | Supabase Auth | Registro, login, logout, sesión | Namespace `supabase.auth` |
 | Storage | Supabase Storage | Subir/descargar objetos en buckets | Namespace `supabase.storage` |
 | Database | PostgREST over Postgres + PostGIS | Seam de lectura/escritura agnóstico al esquema | Namespace `supabase.postgrest`/`rpc` |
@@ -122,46 +123,33 @@ Los protocolos son la única vía por la que las features consumen la capa base.
 
 ## File Structure Plan
 
-### New Files
-```
-App/
-├── Models/Supabase/
-│   ├── SupabaseUser.swift            # Modelo común del usuario: id, email, createdAt (Codable/Sendable)
-│   └── SupabaseSession.swift         # Modelo común de sesión: accessToken, refreshToken, expiresAt, user
-├── Services/Supabase/
-│   ├── SupabaseConfiguration.swift   # SupabaseClientConfiguration: lectura de URL + anon key desde Bundle (failable)
-│   ├── SupabaseClientProvider.swift  # SupabaseClientProvider + SupabaseStack + SupabaseBaseError
-│   ├── SupabaseAuthProviding.swift   # Protocolo de auth + SupabaseAuthEvent
-│   ├── SupabaseAuthService.swift     # Actor: implementa el protocolo sobre supabase.auth
-│   ├── SupabaseStoring.swift         # Protocolo de storage + SupabaseUploadOptions
-│   ├── SupabaseStorageService.swift  # Actor: implementa el protocolo sobre supabase.storage
-│   ├── SupabaseDatabaseAccess.swift  # Protocolo de BD + SupabaseFilter/SupabaseOperator/SupabaseJSONValue/SupabaseRPCArguments
-│   └── SupabaseDatabaseService.swift # Actor: implementa el protocolo sobre supabase.postgrest/rpc
-```
-Test target:
-```
-App/BetterFishingTests/
-├── SupabaseBaseFake.swift            # Fake de los tres protocolos (éxito/fallo programables) para features aguas abajo
-├── SupabaseConfigurationTests.swift  # Lectura de config válida/inválida/ausente
-├── SupabaseModelsTests.swift         # Round-trip Codable de sesión y usuario
-├── SupabaseAuthServiceTests.swift    # Auth con stubs HTTP del SDK
-├── SupabaseStorageServiceTests.swift # Storage con stubs HTTP del SDK
-├── SupabaseDatabaseServiceTests.swift# select/rpc con stubs HTTP del SDK
-├── SupabaseClientProviderTests.swift # Stack válido/inválido y errores de configuración
-└── SupabaseCompositionTests.swift    # Composition root: stack nil sin config; stack construido con config
-```
+### Delta de implementación de `rpcVoid`
+No se crean ficheros de producción nuevos ni se modifica el proyecto Xcode. Esta ampliación actualiza los contratos y conformers existentes:
 
-### Modified Files
-```
-App/
-├── AppCompositionSupport.swift       # Construir SupabaseStack en makeRootServices; añadir `supabase: SupabaseStack?` a AppRootServices; log del motivo si no hay stack
-├── Resources/Info.plist              # Añadir claves SupabaseProjectURL y SupabaseAnonKey ($() desde xcconfig)
-├── Resources/Debug.xcconfig.example  # Añadir SUPABASE_PROJECT_URL y SUPABASE_ANON_KEY (vacías, plantilla)
-└── Resources/Release.xcconfig.example# Añadir SUPABASE_PROJECT_URL y SUPABASE_ANON_KEY (vacías, plantilla)
+| Fichero o componente | Delta | Owner | Dependencia |
+|----------------------|-------|-------|-------------|
+| `App/Services/Supabase/SupabaseDatabaseAccess.swift` | Añadir `rpcVoid(_:arguments:) async throws` al protocolo, conservando `rpc<T>` | `supabase-foundation` | Requisito 5.1 |
+| `App/Services/Supabase/SupabaseDatabaseService.swift` | Construir la misma llamada RPC, inferir `PostgrestResponse<Void>` y mapear fallos a `.rpcFailed` | `supabase-foundation` | Contrato `rpcVoid` |
+| `App/BetterFishingTests/SupabaseBaseFake.swift` | Añadir conformance, registrar invocaciones en `recordedRPCs` y reutilizar `databaseError` para programar error sin resultado JSON | `supabase-foundation` | Contrato `rpcVoid` |
+| `App/BetterFishingTests/SupabaseBaseFakeTests.swift` | Verificar registro y propagación de error de `rpcVoid` | `supabase-foundation` | Fake actualizado |
+| `App/BetterFishingTests/SupabaseDatabaseFakeConformanceTests.swift` | Actualizar `DatabaseTestDouble` y comprobar el nuevo contrato mínimo | `supabase-foundation` | Contrato `rpcVoid` |
+| `App/BetterFishingTests/SupabaseDatabaseServiceTests.swift` | Cubrir 204, body JSON ignorado, argumentos, error HTTP y regresión de `rpc<T>` con body vacío | `supabase-foundation` | Actor actualizado |
+| `App/BetterFishingTests/AccountFlowE2ETests.swift` | Actualizar `RecordingCatchDB` para conformar y migrar la aserción RED de cuenta | `account-personal` | Contrato publicado |
+| `App/BetterFishingTests/CatchSyncServiceTests.swift` | Actualizar `RecordingDB` para conformar y migrar la aserción de sync | `account-personal` | Contrato publicado |
+| `App/BetterFishingTests/SupabaseProfileRepositoryTests.swift` | Migrar el caso de error de `upsert_profile` a `databaseError` y eliminar el JSON sentinel | `account-personal` | Contrato publicado |
+| `App/BetterFishingTests/SupabaseSpotRepositoryTests.swift` | Migrar favoritos a `rpcVoid` y actualizar los casos de error | `spot-discovery` | Contrato publicado |
+| `App/BetterFishingTests/SpotDiscoveryFlowIntegrationTests.swift` | Revalidar la integración de favoritos con `rpcVoid` | `spot-discovery` | Contrato publicado |
+| `App/Services/Account/SupabaseProfileRepository.swift` | Migrar `upsert_profile` y retirar el DTO sentinel | `account-personal` | Contrato publicado |
+| `App/Services/CatchLog/CatchSyncService.swift` | Migrar `upsert_catch` y retirar el DTO sentinel | `account-personal` | Contrato publicado |
+| `App/Services/Spots/SupabaseSpotRepository.swift` | Migrar favoritos y retirar `FavoriteMutationResult` | `spot-discovery` | Contrato publicado |
 
-BetterFishing.xcodeproj/project.pbxproj  # Añadir dependencia SPM supabase-swift (producto Supabase) y los ficheros nuevos al target
-```
-> `Debug.xcconfig`/`Release.xcconfig` reales no se versionan (patrón existente); las plantillas `.example` sí se versionan y deben quedar con los valores vacíos.
+`Package.resolved` ya fija Supabase Swift `2.55.2` (revision `40344fb3a7007d772218c6ddf6bca9febd8cb226`); esta versión aporta el overload `execute() -> PostgrestResponse<Void>` requerido por el diseño.
+
+### Límite de responsabilidad
+- `supabase-foundation` publica y prueba el seam genérico y mantiene compatibles sus fakes.
+- `account-personal` y `spot-discovery` son propietarias de sus repositorios/servicios y de la migración de llamadas a `rpcVoid`.
+- La capa base no contiene DDL, nombres de RPC ni DTOs de una feature.
+- La revalidación downstream forma parte del rollout, pero sus cambios de producción se planifican bajo las tareas de cada spec propietaria.
 
 ## System Flows
 
@@ -195,6 +183,27 @@ flowchart TD
     G --> H[stack inyectado en AppRootServices]
 ```
 
+### Invocación RPC con resultado o sin cuerpo
+```mermaid
+sequenceDiagram
+    participant C as Consumidor
+    participant D as SupabaseDatabaseService
+    participant S as SDK PostgREST
+    C->>D: rpc con argumentos
+    alt Respuesta JSON
+        D->>S: execute y decode T
+        S-->>D: PostgrestResponse T
+        D-->>C: valor T
+    else Mutación void
+        D->>S: execute sin decode
+        S-->>D: PostgrestResponse Void
+        D-->>C: completado
+    else Error HTTP
+        S-->>D: PostgrestError
+        D-->>C: SupabaseBaseError rpcFailed
+    end
+```
+
 ## Requirements Traceability
 
 | Requirement | Summary | Components | Interfaces | Flows |
@@ -218,16 +227,16 @@ flowchart TD
 | 4.2 | Descargar objeto por ruta/bucket | SupabaseStorageService | Service | Storage |
 | 4.3 | Errores tipados de storage | SupabaseBaseError | Service | Storage |
 | 4.4 | Buckets/rutas arbitrarias | SupabaseStoring (bucket como parámetro) | Service | Storage |
-| 5.1 | Seam de BD para leer/escribir | SupabaseDatabaseService | Service | Database |
+| 5.1 | Seam de BD para leer/escribir, incluidas mutaciones RPC sin cuerpo | SupabaseDatabaseService (`rpc<T>` y `rpcVoid`) | Service | Database / RPC |
 | 5.2 | Base no define el esquema | SupabaseDatabaseAccess (agnóstico) | Service | — |
 | 5.3 | Seam agnóstico al contenido | SupabaseDatabaseAccess | Service | — |
 | 6.1 | Modelos comunes Codable/Sendable | SupabaseSession, SupabaseUser | State | — |
 | 6.2 | No filtrar tipos del SDK | Mapeo interno en AuthService | Service | — |
 | 6.3 | Solo seams base hacia consumidoras | SupabaseStack | Service | — |
-| 7.1 | Fake con éxito/fallo programables | SupabaseBaseFake | Service | — |
+| 7.1 | Fake con éxito/fallo programables, incluido `rpcVoid` | SupabaseBaseFake | Service | Database / RPC |
 | 7.2 | Auth sin red con fake | SupabaseBaseFake empleado por tests | Service | — |
 | 7.3 | Storage sin red con fake | SupabaseBaseFake empleado por tests | Service | — |
-| 7.4 | Protocolos sustituibles sin tocar la app | Seams por protocolo | Service | — |
+| 7.4 | Protocolos sustituibles sin tocar la app | Seams por protocolo y conformers actualizados | Service | — |
 
 ## Components and Interfaces
 
@@ -237,7 +246,7 @@ flowchart TD
 | SupabaseClientProvider | Service | Construcción del único SupabaseClient y el SupabaseStack | 1.1, 1.3, 2.1 | SupabaseClientConfiguration (P0), SDK (P0) | Service |
 | SupabaseAuthService | Service | Actor que implementa SupabaseAuthProviding sobre supabase.auth | 3.1–3.7, 6.2 | SDK auth (P0) | Service, Event |
 | SupabaseStorageService | Service | Actor que implementa SupabaseStoring sobre supabase.storage | 4.1–4.4 | SDK storage (P0) | Service |
-| SupabaseDatabaseService | Service | Actor que implementa SupabaseDatabaseAccess sobre postgrest/rpc | 5.1–5.3 | SDK postgrest (P0) | Service |
+| SupabaseDatabaseService | Service | Actor que implementa SupabaseDatabaseAccess sobre postgrest/rpc, con respuestas JSON y mutaciones sin cuerpo | 5.1–5.3 | SDK postgrest (P0) | Service |
 | SupabaseSession | Models | Modelo común de sesión | 6.1 | SupabaseUser | State |
 | SupabaseUser | Models | Modelo común de usuario | 6.1 | — | State |
 | SupabaseStack | Service | Agrupación de los tres seams; valor opcional en el composition root | 1.1–1.4, 6.3 | AuthService/StorageService/DatabaseService | State |
@@ -354,7 +363,7 @@ struct SupabaseUploadOptions: Equatable, Sendable {
 #### SupabaseDatabaseAccess (protocolo) y SupabaseDatabaseService (actor)
 | Field | Detail |
 |-------|--------|
-| Intent | Seam genérico de base de datos (lectura con filtros y rpc) agnóstico al esquema |
+| Intent | Seam genérico de base de datos (lectura con filtros, RPC con JSON y mutaciones RPC sin cuerpo) agnóstico al esquema |
 | Requirements | 5.1–5.3, 7.1–7.4 |
 
 **Contracts**: Service [x]
@@ -372,6 +381,10 @@ protocol SupabaseDatabaseAccess: Sendable {
         _ function: String,
         arguments: SupabaseRPCArguments?
     ) async throws -> T
+    func rpcVoid(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws
 }
 
 struct SupabaseFilter: Equatable, Sendable {
@@ -391,9 +404,17 @@ enum SupabaseJSONValue: Equatable, Sendable {
 }
 ```
 - `select` se implementa sobre `supabase.postgrest.from(table).select(columns)` aplicando cada filtro (`.eq/.neq/.gt/.gte/.lt/.lte`) y `limit`, decodificando a `[T]`.
-- `rpc` se implementa sobre `supabase.rpc(function, params:)` con los argumentos codificados desde `SupabaseRPCArguments`.
-- El esquema y las consultas tipadas de las features se construyen encima; la base no conoce tablas (Req 5.2, 5.3).
-- Postcondiciones: sin tipos del SDK en el tipo de retorno; `SupabaseJSONValue` se codifica a JSON antes de llamar a `rpc`.
+- `rpc<T>` se implementa sobre `supabase.rpc(function, params:)` con los argumentos codificados desde `SupabaseRPCArguments` y exige un body JSON decodificable a `T`.
+- `rpcVoid` reutiliza la misma construcción de argumentos y ejecuta el overload oficial que devuelve `PostgrestResponse<Void>` sin decodificar el body. Cualquier status 2xx, incluido 204 o `Data()` vacío, completa sin error.
+- Ambos métodos traducen errores de transporte o status no 2xx a `SupabaseBaseError.rpcFailed`; un body vacío solo es válido por `rpcVoid`, nunca por `rpc<T>`.
+- El esquema, el nombre y la semántica de cada RPC se construyen encima; la base no conoce tablas ni qué función retorna void (Req 5.2, 5.3).
+- Postcondiciones: sin tipos del SDK en el contrato público; `SupabaseJSONValue` se codifica a JSON antes de invocar cualquier RPC.
+
+La anotación explícita evita seleccionar el overload genérico:
+```swift
+let builder = try client.rpc(function, params: params)
+let _: PostgrestResponse<Void> = try await builder.execute()
+```
 
 ## Data Models
 
@@ -422,14 +443,15 @@ struct SupabaseSession: Codable, Equatable, Sendable {
 
 ### Data Contracts & Integration
 - Los tokens de sesión viajan dentro de `SupabaseSession`; quien los consuma (downstream) los trata como opacos.
-- `SupabaseJSONValue`/`SupabaseRPCArguments` son el contrato de argumentos para `rpc`; no se exponen `AnyJSON` ni el query builder del SDK.
+- `SupabaseJSONValue`/`SupabaseRPCArguments` son el contrato de argumentos para `rpc` y `rpcVoid`; no se exponen `AnyJSON` ni el query builder del SDK.
+- `rpc<T>` representa una respuesta JSON decodificable; `rpcVoid` representa una invocación cuyo único resultado es un status 2xx. No existe un DTO sentinel para simular void.
 
 ## Error Handling
 
 ### Error Strategy
 - **Fail fast**: configuración inválida → no se construye el cliente y se registra el motivo (log claro).
 - **Graceful degradation**: sin configuración, la app arranca con el resto de servicios y `supabase == nil`.
-- **User context**: errores tipados por dominio (config, signUp, signIn, signOut, upload, download, query) con descripción localizable; las features aguas abajo deciden cómo mostrarlos.
+- **User context**: errores tipados por dominio (config, signUp, signIn, signOut, upload, download, query, rpc) con descripción localizable; las features aguas abajo deciden cómo mostrarlos.
 
 ### Error Categories and Responses
 **Configuration**:
@@ -437,15 +459,19 @@ struct SupabaseSession: Codable, Equatable, Sendable {
 - URL inválida → `SupabaseBaseError.invalidProjectURL` (log; stack nil) (Req 2.2).
 
 **Auth (Req 3.6)**:
-- Credenciales inválidas → `.signInFailed` con descripción del SDK.
-- Error de red → `.signInFailed`/`.signUpFailed` con descripción.
+- Los tres fallos de auth llevan la payload `SupabaseAuthFailure` (`reason` + `description` del SDK); el motivo se clasifica en `SupabaseAuthFailureReason` (`invalidCredentials`, `network`, `configuration`, `server`, `unknown`).
+- Credenciales inválidas (`invalid_credentials` / `user_not_found`) → `.signInFailed`/`.signUpFailed` con `.invalidCredentials`.
+- Error de red (`URLError`) → `.network`; 401 sin código de credenciales → `.configuration` (anon key/URL); 5xx o `unexpected_failure` → `.server`; resto → `.unknown`.
+- `errorDescription` traduce el motivo a texto localizable **sin** filtrar el mensaje crudo del SDK: ese mensaje queda solo en `failure.description` para diagnóstico, y `reasonDescription` expone el motivo suelto para que las features compongan su propio texto sin duplicar el prefijo de operación.
 - Sesión no disponible al consultar → `.sessionUnavailable`.
 
 **Storage (Req 4.3)**:
 - Objeto inexistente o permiso denegado → `.downloadFailed`/`.uploadFailed` con descripción del SDK.
 
 **Database (Req 5.x)**:
-- Error de consulta → `.queryFailed`; error de rpc → `.rpcFailed`.
+- Error de `select` → `.queryFailed`.
+- Error de transporte, status no 2xx o body no decodificable en `rpc<T>` → `.rpcFailed`.
+- Body vacío no es error en `rpcVoid`; se considera éxito cualquier status 2xx.
 
 ### Monitoring
 - Log con `os.Logger` (subsistema BetterFishing, categoría `Supabase`) de: construcción del stack (éxito/motivo de ausencia), errores de auth/storage/db, y cambios de sesión relevantes (signedIn/signedOut) sin volcar tokens.
@@ -456,17 +482,25 @@ struct SupabaseSession: Codable, Equatable, Sendable {
 - `SupabaseConfigurationTests`: config válida (URL + anon key) desde un bundle de test; config nil con clave ausente, clave vacía y URL malformada (Req 2.x).
 - `SupabaseModelsTests`: round-trip Codable de `SupabaseSession` y `SupabaseUser` completos (Req 6.1).
 - `SupabaseClientProviderTests`: `makeStack` con config válida produce stack no nil con los tres seams; URL inválida lanza `invalidProjectURL` (Req 1.1, 2.1).
-- `SupabaseBaseFake`: verificar que el fake permite programar éxito/fallo en los tres protocolos (Req 7.x).
+- `SupabaseBaseFake`: `rpcVoid` añade la invocación a `recordedRPCs` con la misma estructura de `rpc<T>` y propaga `databaseError`; `reset()` limpia ambos registros. No requiere un valor JSON ni un error configurable distinto (Req 7.1, 7.4).
 - `SupabaseDatabaseServiceTests` (parte unitaria): codificación de `SupabaseRPCArguments` a JSON y de `SupabaseFilter` a operadores PostgREST.
 
 ### Integration Tests (stubs HTTP del SDK, sin red real)
 - `SupabaseAuthServiceTests` con `MockURLProtocol`/`HTTPStub`: signUp y signIn parsean la sesión del endpoint y devuelven `SupabaseSession`; signOut llama al endpoint; credenciales inválidas (401) → `signInFailed`; restauración mapea el evento inicial a `.sessionRestored` (Req 3.x, 6.2).
 - `SupabaseStorageServiceTests` con stubs: upload devuelve la ruta; download devuelve `Data`; 404 de descarga → `downloadFailed` (Req 4.x).
-- `SupabaseDatabaseServiceTests` con stubs: select decodifica `[T]` y aplica filtro/límite; rpc devuelve `T`; errores 4xx/5xx → `queryFailed`/`rpcFailed` (Req 5.x).
+- `SupabaseDatabaseServiceTests` con stubs: `select` decodifica `[T]` y aplica filtro/límite; `rpc<T>` devuelve `T` (Req 5.x).
+- `rpcVoid` con HTTP 204, `Data()` vacío y argumentos tipados completa una vez; valida el body enviado. HTTP 200 con JSON también completa e ignora el body, porque el seam representa una invocación cuyo resultado es únicamente el status (Req 5.1).
+- `rpcVoid` traduce por separado error de transporte, HTTP 4xx y HTTP 5xx a `.rpcFailed`; el contrato no inspecciona ni filtra el body de error del SDK (Req 5.1, 5.3).
+- Un test de regresión confirma que `rpc<T>` con HTTP 200 y body vacío falla como `.rpcFailed`; el seam no infiere el tipo de retorno a partir del status ni del body.
 - `SupabaseCompositionTests`: con config vacía `makeRootServices` construye los servicios existentes y `supabase == nil` (Req 2.2, 1.1); con config inyectada construye el stack y los tres seams son no nil (Req 1.1).
 
 ### E2E/UI Tests
 - No aplica: la capa base no tiene UI. Los flujos de UI de auth/storage son de `account-personal`/`spot-discovery` y consumirán los protocolos con `SupabaseBaseFake` (Req 7.x).
+
+### Downstream Revalidation
+- `account-personal`: migrar `upsert_profile` y `upsert_catch` a `rpcVoid`, retirar DTO vacíos, actualizar `SupabaseProfileRepositoryTests`, `AccountFlowE2ETests` y `CatchSyncServiceTests`, y ejecutar perfil, sync, E2E y regresión completa.
+- `spot-discovery`: migrar `add_spot_favorite` y `remove_spot_favorite` a `rpcVoid`, retirar `FavoriteMutationResult`, actualizar `SupabaseSpotRepositoryTests` y `SpotDiscoveryFlowIntegrationTests`, y ejecutar suites de favoritos, mapa y composición.
+- Un fallo de conformancia en cualquier fake o doble de test se corrige primero en esta spec; los cambios de producción aguas abajo siguen perteneciendo a sus specs.
 
 ## Optional Sections
 
@@ -482,4 +516,6 @@ struct SupabaseSession: Codable, Equatable, Sendable {
 - Los actores serializan el acceso al cliente compartido; las llamadas son async y el SDK multiplexa por URLSession, sin bloqueos relevantes.
 
 ### Migration Strategy
-- No hay migración de datos en esta spec. Al requerirse (sync del registro en `account-personal`), las specs consumidoras la definen sin cambiar los seams de esta capa.
+- No hay migración de datos en esta spec. La ampliación requiere migrar conformers y paso a paso consumidores desde `rpc<T>` con DTO sentinel a `rpcVoid` para funciones `RETURNS void`.
+- El rollout se ordena por contrato: primero protocolo, actor y fakes base; después consumidores `account-personal`/`spot-discovery`; finalmente suites completas de ambas specs.
+- El rollback conserva `rpc<T>` para RPC JSON y retira `rpcVoid` solo después de que ningún consumidor dependa del nuevo método. No requiere cambios de esquema ni migración de datos.

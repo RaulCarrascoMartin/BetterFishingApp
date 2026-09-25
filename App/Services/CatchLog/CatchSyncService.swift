@@ -171,7 +171,7 @@ actor CatchSyncService: CatchSynchronizing {
             throw CatchSyncError.pushFailed(Self.errorText(error))
         }
         do {
-            let _: RPCResult = try await database.rpc(
+            try await database.rpcVoid(
                 "upsert_catch",
                 arguments: SupabaseRPCArguments([
                     "p_user_id": .string(userID.uuidString),
@@ -239,5 +239,3 @@ private struct CatchPushPayload: Encodable {
         self.photoPath = "\(userID.uuidString)/\(catchEntry.id.uuidString).jpg"
     }
 }
-
-private struct RPCResult: Decodable, Sendable {}

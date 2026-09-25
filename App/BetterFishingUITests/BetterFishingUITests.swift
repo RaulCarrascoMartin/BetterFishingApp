@@ -173,6 +173,48 @@ final class BetterFishingUITests: XCTestCase {
         XCTAssertFalse(retry.exists, "Tras el reintento con éxito, el error de guardado debe desaparecer")
     }
 
+    func testAccountTabShowsSessionFormWhenSignedOut() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["--ui-test-double", "accountSignedOut"]
+        app.launch()
+
+        let accountTab = app.tabBars.firstMatch.buttons["Cuenta"]
+        XCTAssertTrue(accountTab.waitForExistence(timeout: 10), "La navegación principal debe ofrecer la pestaña Cuenta")
+        accountTab.tap()
+
+        XCTAssertTrue(app.textFields["account.email"].waitForExistence(timeout: 10), "Cuenta sin sesión debe mostrar el formulario de acceso")
+        XCTAssertTrue(app.secureTextFields["account.password"].exists)
+        XCTAssertTrue(app.buttons["account.submit"].exists)
+    }
+
+    func testAccountTabShowsProfileFavoritesAndSyncWhenSignedIn() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["--ui-test-double", "accountSignedIn"]
+        app.launch()
+
+        let accountTab = app.tabBars.firstMatch.buttons["Cuenta"]
+        XCTAssertTrue(accountTab.waitForExistence(timeout: 10), "La navegación principal debe ofrecer la pestaña Cuenta")
+        accountTab.tap()
+
+        let displayName = app.textFields["account.displayName"]
+        XCTAssertTrue(displayName.waitForExistence(timeout: 10), "Cuenta con sesión debe mostrar el perfil")
+        XCTAssertEqual(displayName.value as? String, "Pescador de prueba")
+        XCTAssertTrue(app.staticTexts["Embalse de Sau"].waitForExistence(timeout: 10), "La lista debe mostrar los favoritos del usuario")
+        XCTAssertTrue(app.buttons["account.syncButton"].exists)
+        XCTAssertTrue(app.buttons["account.signOut"].exists)
+
+        app.buttons["account.syncButton"].tap()
+        let syncResult = app.descendants(matching: .any)["account.syncResult"]
+        XCTAssertTrue(syncResult.waitForExistence(timeout: 10), "La sincronización debe mostrar su resultado")
+        XCTAssertTrue(syncResult.label.contains("Subidos 1"))
+        XCTAssertTrue(syncResult.label.contains("Descargados 2"))
+        XCTAssertTrue(syncResult.label.contains("Omitidos 3"))
+
+        app.buttons["account.signOut"].tap()
+        XCTAssertTrue(app.textFields["account.email"].waitForExistence(timeout: 10), "Cerrar sesión debe volver al formulario")
+        XCTAssertFalse(app.buttons["account.signOut"].exists)
+    }
+
     func testTabsAccessibleAndStatePreservedBetweenTabs() throws {
         let app = XCUIApplication()
         app.launchArguments += ["--ui-test-double", "identifiedReliable"]

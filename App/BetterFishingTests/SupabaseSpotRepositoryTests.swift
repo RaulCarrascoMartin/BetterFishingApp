@@ -186,7 +186,6 @@ final class SupabaseSpotRepositoryTests: XCTestCase {
 
     func testSetFavoriteWithSessionCallsAddFavoriteRPC() async throws {
         let fake = SupabaseBaseFake()
-        fake.cannedRPCValue = "{}"
         let repository = makeRepository(fake: fake)
         let spotID = try XCTUnwrap(UUID(uuidString: Self.spotID))
 
@@ -200,7 +199,6 @@ final class SupabaseSpotRepositoryTests: XCTestCase {
 
     func testRemoveFavoriteWithSessionCallsRemoveFavoriteRPC() async throws {
         let fake = SupabaseBaseFake()
-        fake.cannedRPCValue = "{}"
         let repository = makeRepository(fake: fake)
         let spotID = try XCTUnwrap(UUID(uuidString: Self.spotID))
 
@@ -209,6 +207,31 @@ final class SupabaseSpotRepositoryTests: XCTestCase {
         let recorded = try XCTUnwrap(fake.recordedRPCs.first)
         XCTAssertEqual(fake.recordedRPCs.count, 1)
         XCTAssertEqual(recorded.function, "remove_spot_favorite")
+        XCTAssertEqual(recorded.arguments?.values, ["spot_id": .string(spotID.uuidString)])
+    }
+
+    func testDatabaseFailureOnFavoriteMutationTranslatesToQueryFailed() async throws {
+        let fake = SupabaseBaseFake()
+        fake.databaseError = SupabaseBaseError.rpcFailed
+        let repository = makeRepository(fake: fake)
+        let spotID = try XCTUnwrap(UUID(uuidString: Self.spotID))
+        let rpcDescription = try XCTUnwrap(SupabaseBaseError.rpcFailed.errorDescription)
+
+        do {
+            try await repository.setFavorite(spotID: spotID, isFavorite: true)
+            XCTFail("Se esperaba un error del repositorio")
+        } catch let error as SpotRepositoryError {
+            XCTAssertEqual(
+                error,
+                .queryFailed("add_spot_favorite: \(rpcDescription)")
+            )
+        } catch {
+            XCTFail("Error inesperado: \(error)")
+        }
+
+        let recorded = try XCTUnwrap(fake.recordedRPCs.first)
+        XCTAssertEqual(fake.recordedRPCs.count, 1)
+        XCTAssertEqual(recorded.function, "add_spot_favorite")
         XCTAssertEqual(recorded.arguments?.values, ["spot_id": .string(spotID.uuidString)])
     }
 

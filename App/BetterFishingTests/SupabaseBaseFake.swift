@@ -311,6 +311,17 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
         }
     }
 
+    func rpcVoid(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws {
+        let error = withLock { () -> Error? in
+            state.recordedRPCs.append(BaseFakeRecordedRPC(function: function, arguments: arguments))
+            return state.databaseError
+        }
+        try throwIfSet(error)
+    }
+
     private func throwIfSet(_ error: Error?) throws {
         if let error {
             throw error

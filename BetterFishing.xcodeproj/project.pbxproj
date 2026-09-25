@@ -98,6 +98,7 @@
 		0000000000000000000000B81 /* SupabaseBaseFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A79 /* SupabaseBaseFake.swift */; };
 		0000000000000000000000B82 /* SupabaseBaseFakeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */; };
 		0000000000000000000000B83 /* SupabaseSessionFlowIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */; };
+		0000000000000000000000BB4 /* SupabaseAuthFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000AB4 /* SupabaseAuthFailure.swift */; };
 		0000000000000000000000B87 /* SpotModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7F /* SpotModelsTests.swift */; };
 		0000000000000000000000B84 /* Spot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7C /* Spot.swift */; };
 		0000000000000000000000B85 /* SpotCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A7D /* SpotCategory.swift */; };
@@ -262,6 +263,7 @@
 		0000000000000000000000A79 /* SupabaseBaseFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseBaseFake.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7A /* SupabaseBaseFakeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseBaseFakeTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7B /* SupabaseSessionFlowIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSessionFlowIntegrationTests.swift; sourceTree = "<group>"; };
+		0000000000000000000000AB4 /* SupabaseAuthFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthFailure.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7F /* SpotModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotModelsTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7C /* Spot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spot.swift; sourceTree = "<group>"; };
 		0000000000000000000000A7D /* SpotCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotCategory.swift; sourceTree = "<group>"; };
@@ -489,6 +491,7 @@
 				0000000000000000000000A66 /* SupabaseClientProvider.swift */,
 				0000000000000000000000A6B /* SupabaseAuthProviding.swift */,
 				0000000000000000000000A6D /* SupabaseAuthService.swift */,
+				0000000000000000000000AB4 /* SupabaseAuthFailure.swift */,
 				0000000000000000000000A6F /* SupabaseStoring.swift */,
 				0000000000000000000000A71 /* SupabaseStorageService.swift */,
 				0000000000000000000000A73 /* SupabaseDatabaseAccess.swift */,
@@ -870,6 +873,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B71 /* SupabaseSession.swift in Sources */,
 				0000000000000000000000B73 /* SupabaseAuthProviding.swift in Sources */,
 				0000000000000000000000B75 /* SupabaseAuthService.swift in Sources */,
+				0000000000000000000000BB4 /* SupabaseAuthFailure.swift in Sources */,
 				0000000000000000000000B77 /* SupabaseStoring.swift in Sources */,
 				0000000000000000000000B79 /* SupabaseStorageService.swift in Sources */,
 				0000000000000000000000B7B /* SupabaseDatabaseAccess.swift in Sources */,

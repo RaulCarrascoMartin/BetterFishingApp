@@ -1,4 +1,5 @@
 import Foundation
+import Supabase
 import XCTest
 
 @testable import BetterFishing
@@ -11,14 +12,12 @@ import XCTest
 actor RecordingCatchDB: SupabaseDatabaseAccess {
     private var rowsScript: [[String]]
     private var lastBatch: [String] = []
-    private let cannedRPCValue: String
     private var databaseError: SupabaseBaseError?
     private var recordedSelectValues: [BaseFakeRecordedSelect] = []
     private var recordedRPCValues: [BaseFakeRecordedRPC] = []
 
-    init(rowsScript: [[String]], cannedRPCValue: String = "{}") {
+    init(rowsScript: [[String]]) {
         self.rowsScript = rowsScript
-        self.cannedRPCValue = cannedRPCValue
     }
 
     var recordedSelects: [BaseFakeRecordedSelect] { recordedSelectValues }
@@ -58,7 +57,17 @@ actor RecordingCatchDB: SupabaseDatabaseAccess {
         if let databaseError {
             throw databaseError
         }
-        return try JSONDecoder().decode(T.self, from: Data(cannedRPCValue.utf8))
+        throw SupabaseBaseFakeError(reason: "JSON RPC is not configured")
+    }
+
+    func rpcVoid(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws {
+        recordedRPCValues.append(BaseFakeRecordedRPC(function: function, arguments: arguments))
+        if let databaseError {
+            throw databaseError
+        }
     }
 }
 
@@ -351,7 +360,6 @@ final class AccountFlowE2ETests: XCTestCase {
     func testProfileEditE2E() async throws {
         let fake = SupabaseBaseFake()
         fake.isSessionActive = false
-        fake.cannedRPCValue = "{}"
         fake.cannedRows = [Self.profileRowJSON(displayName: "Ana", avatarPath: "legacy/avatar.jpg")]
         fake.downloadResultData = Data([0x10, 0x20, 0x30])
         let userID = SupabaseBaseFake.defaultUser.id
@@ -670,12 +678,53 @@ final class AccountFlowE2ETests: XCTestCase {
         XCTAssertFalse(viewModel.isSyncing)
     }
 
+    func testRPCVoidWithNoContentBodyCompletes() async throws {
+        HTTPStubRegistry.shared.reset()
+        let rpcURL = "https://project-ref.supabase.co/rest/v1/rpc/upsert_profile"
+        HTTPStubRegistry.shared.register(
+            HTTPStub(statusCode: 204, data: Data(), headers: [:]),
+            for: rpcURL
+        )
+
+        let userID = UUID()
+        let arguments = SupabaseRPCArguments([
+            "p_user_id": .string(userID.uuidString),
+            "p_display_name": .string("Ana"),
+            "p_avatar_path": .null,
+        ])
+        let database = try Self.makeDatabaseService()
+
+        try await database.rpcVoid("upsert_profile", arguments: arguments)
+
+        XCTAssertEqual(HTTPStubRegistry.shared.requestCount(for: rpcURL), 1)
+        let body = try XCTUnwrap(HTTPStubRegistry.shared.requestBodies(for: rpcURL).first)
+        let json = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: body) as? [String: Any]
+        )
+        XCTAssertEqual(json["p_user_id"] as? String, userID.uuidString)
+        XCTAssertEqual(json["p_display_name"] as? String, "Ana")
+        XCTAssertTrue(json["p_avatar_path"] is NSNull)
+    }
+
+    private static func makeDatabaseService() throws -> SupabaseDatabaseService {
+        let supabaseURL = try XCTUnwrap(URL(string: "https://project-ref.supabase.co"))
+        let options = SupabaseClientOptions(
+            auth: .init(storage: InMemoryAuthLocalStorage(), autoRefreshToken: false),
+            global: .init(session: .mockSession())
+        )
+        let client = SupabaseClient(
+            supabaseURL: supabaseURL,
+            supabaseKey: "test-anon-key",
+            options: options
+        )
+        return SupabaseDatabaseService(client: client)
+    }
+
     // MARK: - 6.1 Composition root
 
     func testCompositionWiresAccountViewModelOverStack() async throws {
         let fake = SupabaseBaseFake()
         fake.cannedRows = [Self.profileRowJSON(displayName: "Ana", avatarPath: nil)]
-        fake.cannedRPCValue = "[]"
         let stack = SupabaseStack(auth: fake, storage: fake, database: fake)
 
         let services = AppComposition.makeRootServices(arguments: [], supabaseStack: stack)

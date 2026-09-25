@@ -49,6 +49,21 @@ actor SupabaseDatabaseService: SupabaseDatabaseAccess {
         }
     }
 
+    func rpcVoid(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws {
+        do {
+            let params = arguments.map { $0.values.mapValues(Self.toAnyJSON) } ?? [:]
+            let builder = try client.rpc(function, params: params)
+            let _: PostgrestResponse<Void> = try await builder.execute()
+        } catch let error as SupabaseBaseError {
+            throw error
+        } catch {
+            throw SupabaseBaseError.rpcFailed
+        }
+    }
+
     private static func apply(
         _ filter: SupabaseFilter,
         to builder: PostgrestFilterBuilder

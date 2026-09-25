@@ -184,7 +184,7 @@ enum AppComposition {
         arguments: [String],
         draftsDirectory: URL?
     ) -> AppRootServices? {
-        guard let scenario = UITestScenario.requested(in: arguments), scenario.isScannerDriving || scenario.isMapSeeded else {
+        guard let scenario = UITestScenario.requested(in: arguments), scenario.isScannerDriving || scenario.isMapSeeded || scenario.isAccount else {
             return nil
         }
 
@@ -269,6 +269,42 @@ enum AppComposition {
             spotDetailViewModelFactory = nil
         }
 
+        let accountViewModel: AccountViewModel?
+        if scenario == .accountSignedIn {
+            let user = UITestSignedInAuthProvider.user
+            accountViewModel = AccountViewModel(
+                auth: AccountSessionManager(auth: UITestSignedInAuthProvider()),
+                profile: UITestAccountProfile(
+                    profileValue: AccountProfile(
+                        userID: user.id,
+                        displayName: "Pescador de prueba",
+                        avatarPath: nil
+                    )
+                ),
+                favorites: UITestAccountFavorites(
+                    favoritesValue: [
+                        FavoriteSpot(
+                            spotID: UITestSpotRepository.seededSpots.spots[0].id,
+                            name: "Embalse de Sau",
+                            category: "lake"
+                        )
+                    ]
+                ),
+                sync: UITestAccountSync(
+                    result: CatchSyncResult(pushed: 1, pulled: 2, skipped: 3)
+                )
+            )
+        } else if scenario.isAccount {
+            accountViewModel = AccountViewModel(
+                auth: AccountSessionManager(auth: UITestNoAuthProvider()),
+                profile: UITestAccountProfile(),
+                favorites: UITestAccountFavorites(),
+                sync: UITestAccountSync()
+            )
+        } else {
+            accountViewModel = nil
+        }
+
         return AppRootServices(
             scannerViewModel: FishScannerViewModel(identifier: identifier, catchSaver: catchSaver),
             catchSaver: catchSaver,
@@ -289,7 +325,7 @@ enum AppComposition {
             spotRepository: spotRepository,
             spotMapViewModel: spotMapViewModel,
             spotDetailViewModelFactory: spotDetailViewModelFactory,
-            accountViewModel: nil
+            accountViewModel: accountViewModel
         )
     }
     #endif
@@ -324,6 +360,8 @@ enum UITestScenario: String {
     case logLoaded
     case logEmpty
     case spotMapSeeded
+    case accountSignedOut
+    case accountSignedIn
 
     var isDetail: Bool {
         switch self {
@@ -345,9 +383,14 @@ enum UITestScenario: String {
              .registrySaveSucceeds, .registrySaveFailsRetry, .registryLogSeeded, .registryLogDeleteFails,
              .migrationLaunch1, .migrationLaunch2:
             return true
-        case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty, .spotMapSeeded:
+        case .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty, .spotMapSeeded,
+             .accountSignedOut, .accountSignedIn:
             return false
         }
+    }
+
+    var isAccount: Bool {
+        self == .accountSignedOut || self == .accountSignedIn
     }
 
     var isMapSeeded: Bool {
@@ -452,7 +495,7 @@ struct UITestDoubleFishIdentifier: FishIdentifying {
         case .identifiedLowConfidence:
             return .identified(UITestScenarios.lowConfidenceBluegill)
         case .noMatch, .detailLoaded, .detailDeleteFails, .logLoading, .logLoaded, .logEmpty,
-             .migrationLaunch1, .migrationLaunch2, .spotMapSeeded:
+             .migrationLaunch1, .migrationLaunch2, .spotMapSeeded, .accountSignedOut, .accountSignedIn:
             return .noMatch
         }
     }
@@ -710,6 +753,57 @@ struct UITestSpotRepository: SpotRepository, Sendable {
     func setFavorite(spotID: UUID, isFavorite: Bool) async throws {}
 }
 
+private actor UITestSignedInAuthProvider: SupabaseAuthProviding {
+    static let user = SupabaseUser(
+        id: UUID(uuidString: "66666666-6666-6666-6666-666666666666")!,
+        email: "ui-test@example.com",
+        createdAt: Date(timeIntervalSince1970: 1_751_653_800)
+    )
+
+    private var activeUser: SupabaseUser?
+
+    init() {
+        activeUser = Self.user
+    }
+
+    func signUp(email: String, password: String) async throws -> SupabaseSession {
+        let session = Self.session(for: Self.user)
+        activeUser = Self.user
+        return session
+    }
+
+    func signIn(email: String, password: String) async throws -> SupabaseSession {
+        let session = Self.session(for: Self.user)
+        activeUser = Self.user
+        return session
+    }
+
+    func signOut() async throws {
+        activeUser = nil
+    }
+
+    func currentUser() async -> SupabaseUser? {
+        activeUser
+    }
+
+    func currentSession() async throws -> SupabaseSession? {
+        activeUser.map(Self.session(for:))
+    }
+
+    nonisolated func stateChanges() -> AsyncStream<SupabaseAuthEvent> {
+        AsyncStream { $0.finish() }
+    }
+
+    private static func session(for user: SupabaseUser) -> SupabaseSession {
+        SupabaseSession(
+            accessToken: "ui-test-access-token",
+            refreshToken: "ui-test-refresh-token",
+            expiresAt: Date(timeIntervalSince1970: 4_102_444_800),
+            user: user
+        )
+    }
+}
+
 struct UITestNoAuthProvider: SupabaseAuthProviding, Sendable {
     func signUp(email: String, password: String) async throws -> SupabaseSession {
         throw UITestAuthUnavailable()
@@ -731,5 +825,62 @@ struct UITestNoAuthProvider: SupabaseAuthProviding, Sendable {
 }
 
 private struct UITestAuthUnavailable: Error {}
+
+private struct UITestAccountProfile: ProfileManaging, Sendable {
+    let profileValue: AccountProfile?
+
+    init(profileValue: AccountProfile? = nil) {
+        self.profileValue = profileValue
+    }
+
+    func profile() async throws -> AccountProfile {
+        guard let profileValue else { throw UITestAccountUnavailable.unavailable }
+        return profileValue
+    }
+
+    func updateDisplayName(_ name: String) async throws {}
+
+    func updateAvatar(data: Data, contentType: String) async throws -> String {
+        "ui-test-avatar.jpg"
+    }
+
+    func avatarData(avatarPath: String) async throws -> Data? { nil }
+}
+
+private struct UITestAccountFavorites: FavoritesPresenting, Sendable {
+    let favoritesValue: [FavoriteSpot]
+
+    init(favoritesValue: [FavoriteSpot] = []) {
+        self.favoritesValue = favoritesValue
+    }
+
+    func favorites() async throws -> [FavoriteSpot] { favoritesValue }
+
+    func favoriteSpotIDs() async throws -> Set<UUID> {
+        Set(favoritesValue.map(\.spotID))
+    }
+
+    func isFavorite(spotID: UUID) async throws -> Bool {
+        favoritesValue.contains { $0.spotID == spotID }
+    }
+
+    func setFavorite(spotID: UUID, isFavorite: Bool) async throws {}
+}
+
+private struct UITestAccountSync: CatchSynchronizing, Sendable {
+    let result: CatchSyncResult
+
+    init(result: CatchSyncResult = CatchSyncResult(pushed: 0, pulled: 0, skipped: 0)) {
+        self.result = result
+    }
+
+    func sync(userID: UUID) async throws -> CatchSyncResult {
+        result
+    }
+}
+
+private enum UITestAccountUnavailable: Error, Sendable {
+    case unavailable
+}
 
 #endif

@@ -54,7 +54,9 @@ final class AccountSessionManagerTests: XCTestCase {
     func testSignInFailureThrowsSignInFailedAndDoesNotEmitSignedIn() async throws {
         let fake = SupabaseBaseFake()
         fake.isSessionActive = false
-        fake.authError = SupabaseBaseError.signInFailed
+        fake.authError = SupabaseBaseError.signInFailed(
+            SupabaseAuthFailure(reason: .invalidCredentials, description: "Invalid login credentials")
+        )
         let manager = AccountSessionManager(auth: fake)
         let stream = manager.sessionState
 
@@ -76,6 +78,25 @@ final class AccountSessionManagerTests: XCTestCase {
             if case .signedIn = state { return true }
             return false
         })
+    }
+
+    func testSignInFailureMessageStatesTheReasonWithoutDuplicatedPrefix() async throws {
+        let fake = SupabaseBaseFake()
+        fake.isSessionActive = false
+        fake.authError = SupabaseBaseError.signInFailed(
+            SupabaseAuthFailure(reason: .invalidCredentials, description: "Invalid login credentials")
+        )
+        let manager = AccountSessionManager(auth: fake)
+
+        do {
+            try await manager.signIn(email: "angler@example.com", password: "wrong-password")
+            XCTFail("Se esperaba AccountError.signInFailed")
+        } catch let error as AccountError {
+            XCTAssertEqual(
+                error.localizedDescription,
+                "No se pudo iniciar sesión: las credenciales no son válidas."
+            )
+        }
     }
 
     func testSessionRestorationYieldsSignedInFirst() async throws {

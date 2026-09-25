@@ -63,7 +63,11 @@ final class SupabaseSessionFlowIntegrationTests: XCTestCase {
             _ = try await auth.signIn(email: "angler@example.com", password: "wrong-password")
             XCTFail("Expected signIn to throw")
         } catch let error as SupabaseBaseError {
-            XCTAssertEqual(error, .signInFailed)
+            guard case .signInFailed(let failure) = error else {
+                XCTFail("Expected .signInFailed, got \(error)")
+                return
+            }
+            XCTAssertEqual(failure.description, "Invalid login credentials")
         } catch {
             XCTFail("Unexpected error type: \(error)")
         }

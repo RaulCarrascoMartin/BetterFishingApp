@@ -5,17 +5,20 @@ import XCTest
 actor RecordingDB: SupabaseDatabaseAccess {
     private var rowsScript: [[String]]
     private var lastBatch: [String] = []
-    private let cannedRPCValue: String
+    private var databaseError: SupabaseBaseError?
     private var recordedSelectValues: [BaseFakeRecordedSelect] = []
     private var recordedRPCValues: [BaseFakeRecordedRPC] = []
 
-    init(rowsScript: [[String]], cannedRPCValue: String = "{}") {
+    init(rowsScript: [[String]]) {
         self.rowsScript = rowsScript
-        self.cannedRPCValue = cannedRPCValue
     }
 
     var recordedSelects: [BaseFakeRecordedSelect] { recordedSelectValues }
     var recordedRPCs: [BaseFakeRecordedRPC] { recordedRPCValues }
+
+    func setDatabaseError(_ error: SupabaseBaseError?) {
+        databaseError = error
+    }
 
     func select<T: Decodable & Sendable>(
         columns: String,
@@ -26,6 +29,9 @@ actor RecordingDB: SupabaseDatabaseAccess {
         recordedSelectValues.append(
             BaseFakeRecordedSelect(columns: columns, table: table, filters: filters, limit: limit)
         )
+        if let databaseError {
+            throw databaseError
+        }
         if rowsScript.isEmpty {
             return try lastBatch.compactMap { try JSONDecoder().decode(T.self, from: Data($0.utf8)) }
         }
@@ -38,7 +44,20 @@ actor RecordingDB: SupabaseDatabaseAccess {
         arguments: SupabaseRPCArguments?
     ) async throws -> T {
         recordedRPCValues.append(BaseFakeRecordedRPC(function: function, arguments: arguments))
-        return try JSONDecoder().decode(T.self, from: Data(cannedRPCValue.utf8))
+        if let databaseError {
+            throw databaseError
+        }
+        throw SupabaseBaseFakeError(reason: "JSON RPC is not configured")
+    }
+
+    func rpcVoid(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws {
+        recordedRPCValues.append(BaseFakeRecordedRPC(function: function, arguments: arguments))
+        if let databaseError {
+            throw databaseError
+        }
     }
 }
 
@@ -269,7 +288,7 @@ final class CatchSyncServiceTests: XCTestCase {
         try await fixture.ledger.commit(initialSnapshot)
 
         let remoteA = makeRemoteCatch(id: idA, updatedAt: referenceTime + 200)
-        let db = SupabaseBaseFake(cannedRows: [try remoteRowJSON(remoteA)], cannedRPCValue: "{}")
+        let db = SupabaseBaseFake(cannedRows: [try remoteRowJSON(remoteA)])
         let service = makeService(
             directory: directory,
             repository: fixture.repository,

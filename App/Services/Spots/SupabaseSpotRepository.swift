@@ -79,7 +79,7 @@ actor SupabaseSpotRepository: SpotRepository {
         }
         let function = isFavorite ? "add_spot_favorite" : "remove_spot_favorite"
         do {
-            let _: FavoriteMutationResult = try await database.rpc(
+            try await database.rpcVoid(
                 function,
                 arguments: SupabaseRPCArguments(["spot_id": .string(spotID.uuidString)])
             )
@@ -139,5 +139,3 @@ private struct FavoriteIDRow: Decodable, Sendable {
         case spotID = "spot_id"
     }
 }
-
-private struct FavoriteMutationResult: Decodable, Sendable {}

@@ -11,6 +11,10 @@ protocol SupabaseDatabaseAccess: Sendable {
         _ function: String,
         arguments: SupabaseRPCArguments?
     ) async throws -> T
+    func rpcVoid(
+        _ function: String,
+        arguments: SupabaseRPCArguments?
+    ) async throws
 }
 
 struct SupabaseFilter: Equatable, Sendable {

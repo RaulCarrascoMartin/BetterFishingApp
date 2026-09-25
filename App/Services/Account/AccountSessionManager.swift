@@ -91,6 +91,9 @@ actor AccountSessionManager: AccountSessionManaging {
     }
 
     private static func errorText(_ error: Error) -> String {
-        error.localizedDescription
+        if let baseError = error as? SupabaseBaseError, let reason = baseError.reasonDescription {
+            return reason
+        }
+        return error.localizedDescription
     }
 }
