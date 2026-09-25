@@ -100,7 +100,7 @@
   - Observable: el test de integración en verde cubre mapa → cerca-de-mí → detalle → favoritos y la degradación sin stack.
   - _Requirements: 2.1, 2.2, 5.1, 5.2, 5.4, 5.5_
 
-- [ ]* 4.2 Humo UI del tab Mapa (opcional, diferible post-MVP)
+- [x]* 4.2 Humo UI del tab Mapa (opcional, diferible post-MVP)
   - _Depends: 3.2_
   - Añadir `SpotMapUITests` (target UI) que con el `SpotRepositoryFake` sembrado lanza «Mapa» y comprueba que se renderizan anotaciones y que tocar una anotación navega al detalle.
   - Observable: el test UI de humo en verde sobre el doble; si se difiere, la cobertura funcional ya está garantizada por 4.1 y los tests de ViewModels (ACs cubiertas: 1.1, 4.1).
@@ -149,3 +149,5 @@
 - 3.3: `AppCompositionSupport` pasa `auth: stack.auth` en el `SpotMapViewModel` de producción y `auth: UITestNoAuthProvider()` en el path de UI-test sembrado (mismo doble que ya usaba `spotDetailViewModelFactory`), sin cambios de contrato en `AppRootServices`.
 - 3.3: 4 tests nuevos en `SpotMapViewModelTests` (con `SupabaseBaseFake` como doble de auth, mismo patrón que `SpotDetailViewModelTests`): favoritos destacados tras `loadSpots()` con sesión activa; `isFavorite` falso para spot no sembrado; `signedOut` vacía `favoriteSpotIDs`; fallo de `favoriteSpotIDs()` deja el mapa `.loaded` con los spots intactos y el set de favoritos vacío. `SpotDiscoveryCompositionTests` no requirió cambios (solo lee `services.spotMapViewModel`, no instancia el VM directamente).
 - 3.3: verificación fresca — `xcodebuild build-for-testing` → TEST BUILD SUCCEEDED; `xcodebuild test` completo (iPhone 17 Pro Max, iOS 26.4.1) → TEST SUCCEEDED, BetterFishingTests 373/373 (369 base + 4 nuevos) y BetterFishingUITests 27/27, sin fallos introducidos. Cierra el hueco de Req 4.4 documentado como deuda diferida en `account-personal` (tasks.md, sección "Deuda conocida").
+- 4.2 (2026-09-25): `SpotMapUITests.swift` (target UI, patrón `CatchDetailUITests`: `launch(scenario:)` con `--ui-test-double`) lanza con el escenario `spotMapSeeded` ya existente (`UITestSpotRepository.seededSpots`, un spot fijo "Embalse de Sau"), toca el tab «Mapa» (`app.tabBars.buttons["Mapa"]`), espera la anotación (`spotMap.annotation`), la toca y verifica que navega al detalle (`spotDetail.name` con el nombre del spot sembrado). Registrado en `project.pbxproj` (fileRef/buildFile hex `F17`/`F18`, rango A/B saturado hasta A99/B99).
+- 4.2: verificación — test focal `-only-testing:BetterFishingUITests/SpotMapUITests` → 1/1 en verde; suite completa (iPhone 17 Pro Max, iOS 26.4.1) → TEST SUCCEEDED, BetterFishingTests 373/373 y BetterFishingUITests 28/28 (27 base + 1 nuevo), sin fallos introducidos. Con esto, spot-discovery no tiene tareas obligatorias ni opcionales pendientes.
