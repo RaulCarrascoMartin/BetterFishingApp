@@ -1,9 +1,9 @@
 {
   "feature_name": "supabase-foundation",
   "created_at": "2026-09-22T07:19:04Z",
-  "updated_at": "2026-09-25T00:00:00Z",
+  "updated_at": "2026-09-25T17:25:54Z",
   "language": "es",
-  "phase": "tasks-generated",
+  "phase": "implementation-validated",
   "approvals": {
     "requirements": {
       "generated": true,
@@ -18,5 +18,17 @@
       "approved": true
     }
   },
-  "ready_for_implementation": true
+  "ready_for_implementation": true,
+  "validation": {
+    "completed": true,
+    "decision": "GO",
+    "validated_at": "2026-09-25T17:25:54Z",
+    "evidence": {
+      "tests": "xcodebuild test -scheme BetterFishing: 373 unit + 28 UI, 0 failures",
+      "mechanical": "clean (no TBD/TODO/secrets en boundary Services/Supabase, Models/Supabase)",
+      "cross_task": "rpcVoid publicado en SupabaseDatabaseAccess/SupabaseDatabaseService y consumido por SupabaseProfileRepository, CatchSyncService y SupabaseSpotRepository; DTOs sentinel (ProfileMutationResult/FavoriteMutationResult) retirados",
+      "file_structure": "App/Services/Supabase (9 ficheros) y App/Models/Supabase (2 ficheros) coinciden con el design.md",
+      "boundary": "capa base sin acoplamiento a features; consumidoras migradas por sus propias tareas (8.1-8.4), sin cambios de producción fuera de sus specs"
+    }
+  }
 }

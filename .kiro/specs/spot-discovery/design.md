@@ -598,21 +598,21 @@ as $fn$
   order by f.created_at desc;
 $fn$;
 
-create or replace function public.add_spot_favorite(p_spot_id uuid)
+create or replace function public.add_spot_favorite(spot_id uuid)
 returns void language sql volatile security definer
 set search_path = public
 as $fn$
   insert into public.spot_favorites (spot_id, user_id)
-  values (p_spot_id, auth.uid())
+  values (spot_id, auth.uid())
   on conflict do nothing;
 $fn$;
 
-create or replace function public.remove_spot_favorite(p_spot_id uuid)
+create or replace function public.remove_spot_favorite(spot_id uuid)
 returns void language sql volatile security definer
 set search_path = public
 as $fn$
   delete from public.spot_favorites
-  where spot_id = p_spot_id and user_id = auth.uid();
+  where public.spot_favorites.spot_id = $1 and user_id = auth.uid();
 $fn$;
 
 -- Semilla curada (ejemplo; categorías: river, lake, sea, shore)

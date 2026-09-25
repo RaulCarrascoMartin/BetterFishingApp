@@ -2,7 +2,7 @@
 
 ## Overview
 
-App nativa iOS (Swift/SwiftUI, iOS 17+) cliente-servidor sobre **Supabase** (Postgres + PostGIS, Auth, Storage) e identificación de especies vía **Fishial.ai**. Ya entregadas y validadas: `fish-species-identification` (escáner + identificación de especies) y `catch-log` (registro de capturas local CRUD + migración de borradores). El roadmap restante traspasa las features a una capa de datos compartida en Supabase y añade descubrimiento de spots en mapa.
+App nativa iOS (Swift/SwiftUI, iOS 17+) cliente-servidor sobre **Supabase** (Postgres + PostGIS, Auth, Storage) e identificación de especies vía **Fishial.ai**. Ya entregadas y validadas: `fish-species-identification` (escáner + identificación de especies), `catch-log` (registro de capturas local CRUD + migración de borradores), `supabase-foundation` (capa base de Supabase tras protocolos), `spot-discovery` (mapa de spots con favoritos) y `account-personal` (cuenta, perfil, favoritos y sync). El roadmap no tiene specs pendientes.
 
 ## Approach Decision
 
@@ -27,6 +27,6 @@ App nativa iOS (Swift/SwiftUI, iOS 17+) cliente-servidor sobre **Supabase** (Pos
 
 ## Specs (dependency order)
 
-- [ ] supabase-foundation -- cliente Supabase (auth/storage/db) tras protocolos compartidos, seam base. Dependencies: none
-- [ ] spot-discovery -- mapa de spots en MapKit con geometría PostGIS (semilla curada), spots cerca de mí, favoritos con cuenta. Dependencies: supabase-foundation
-- [ ] account-personal -- cuenta de usuario, perfil, favoritos y sync del registro de capturas con Supabase. Dependencies: supabase-foundation, catch-log, spot-discovery
+- [x] supabase-foundation -- cliente Supabase (auth/storage/db) tras protocolos compartidos, seam base. Dependencies: none
+- [x] spot-discovery -- mapa de spots en MapKit con geometría PostGIS (semilla curada), spots cerca de mí, favoritos con cuenta. Dependencies: supabase-foundation
+- [x] account-personal -- cuenta de usuario, perfil, favoritos y sync del registro de capturas con Supabase. Dependencies: supabase-foundation, catch-log, spot-discovery
