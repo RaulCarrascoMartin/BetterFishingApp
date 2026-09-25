@@ -76,23 +76,32 @@ struct SpotMapView: View {
     }
 
     private func annotationContent(for spot: Spot) -> some View {
-        Button {
+        let isFavorite = viewModel.isFavorite(spot)
+        return Button {
             viewModel.select(spot)
         } label: {
             VStack(spacing: 2) {
-                Image(systemName: spot.category.systemImage)
-                    .font(.subheadline)
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: spot.category.systemImage)
+                        .font(.subheadline)
+                    if isFavorite {
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.red)
+                            .offset(x: 8, y: -6)
+                    }
+                }
                 if let meters = spot.distanceMeters {
                     Text(Self.distanceText(meters))
                         .font(.caption2.weight(.semibold))
                 }
             }
             .padding(6)
-            .background(.white, in: RoundedRectangle(cornerRadius: 8))
+            .background(isFavorite ? .red.opacity(0.12) : .white, in: RoundedRectangle(cornerRadius: 8))
             .shadow(radius: 2)
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier("spotMap.annotation")
+        .accessibilityIdentifier(isFavorite ? "spotMap.annotation.favorite" : "spotMap.annotation")
     }
 
     @ViewBuilder

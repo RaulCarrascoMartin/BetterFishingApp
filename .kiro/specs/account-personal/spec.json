@@ -27,9 +27,11 @@
   "known_gaps": [
     {
       "requirement": "4.4",
-      "description": "Favoritos no se destacan en el mapa (SpotMapView/SpotMapViewModel de spot-discovery sin referencia a favoritos). Diferido post-MVP; requiere trabajo en spot-discovery (owner del mapa), fuera del boundary de account-personal.",
-      "status": "deferred",
-      "decided_at": "2026-09-25"
+      "description": "Favoritos no se destacaban en el mapa. Resuelto en spot-discovery (tarea 3.3): SpotMapView/SpotMapViewModel consumen favoriteSpotIDs() y destacan los spots favoritos.",
+      "status": "resolved",
+      "decided_at": "2026-09-25",
+      "resolved_at": "2026-09-25",
+      "resolved_in": "spot-discovery#3.3"
     }
   ]
 }

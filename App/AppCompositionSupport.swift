@@ -71,7 +71,8 @@ enum AppComposition {
             spotRepository = supabaseSpotRepository
             spotMapViewModel = SpotMapViewModel(
                 repository: supabaseSpotRepository,
-                locationProvider: deviceLocationProvider
+                locationProvider: deviceLocationProvider,
+                auth: stack.auth
             )
             spotDetailViewModelFactory = { spot in
                 SpotDetailViewModel(
@@ -254,7 +255,8 @@ enum AppComposition {
             spotRepository = seededRepository
             spotMapViewModel = SpotMapViewModel(
                 repository: seededRepository,
-                locationProvider: UITestNoLocationProvider()
+                locationProvider: UITestNoLocationProvider(),
+                auth: UITestNoAuthProvider()
             )
             spotDetailViewModelFactory = { spot in
                 SpotDetailViewModel(

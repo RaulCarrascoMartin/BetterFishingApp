@@ -36,6 +36,7 @@ final class SpotMapViewModel {
     private(set) var region: SpotRegion
     private(set) var nearbyNotice: NearbyNotice?
     private(set) var selectedSpot: Spot?
+    private(set) var favoriteSpotIDs: Set<UUID> = []
 
     var nearbyMessage: String? {
         switch nearbyNotice {
@@ -49,24 +50,33 @@ final class SpotMapViewModel {
 
     private let repository: (any SpotRepository)?
     private let locationProvider: any DeviceLocationProviding
+    private let auth: (any SupabaseAuthProviding)?
     private let debounceInterval: Duration
 
     @ObservationIgnored
     nonisolated(unsafe) private(set) var regionLoadTask: Task<Void, Never>?
+    @ObservationIgnored
+    nonisolated(unsafe) private(set) var stateChangesTask: Task<Void, Never>?
     @ObservationIgnored
     private var loadGeneration = 0
 
     init(
         repository: (any SpotRepository)?,
         locationProvider: any DeviceLocationProviding,
+        auth: (any SupabaseAuthProviding)? = nil,
         region: SpotRegion = SpotMapViewModel.defaultRegion,
         debounceInterval: Duration = .milliseconds(400)
     ) {
         self.repository = repository
         self.locationProvider = locationProvider
+        self.auth = auth
         self.region = region
         self.debounceInterval = debounceInterval
         self.state = repository == nil ? .unavailable : .loading
+    }
+
+    func isFavorite(_ spot: Spot) -> Bool {
+        favoriteSpotIDs.contains(spot.id)
     }
 
     func loadSpots() async {
@@ -78,6 +88,10 @@ final class SpotMapViewModel {
             return
         }
         await performRegionLoad(generation: generation, repository: repository)
+        await refreshFavoriteSpotIDs()
+        if stateChangesTask == nil {
+            stateChangesTask = observeAuthStateChanges()
+        }
     }
 
     func updateRegion(_ newRegion: SpotRegion) {
@@ -114,6 +128,7 @@ final class SpotMapViewModel {
         } catch {
             nearbyNotice = .loadFailed
         }
+        await refreshFavoriteSpotIDs()
     }
 
     func select(_ spot: Spot) {
@@ -157,7 +172,34 @@ final class SpotMapViewModel {
         }
     }
 
+    private func refreshFavoriteSpotIDs() async {
+        guard let repository, let auth, await auth.currentUser() != nil else {
+            return
+        }
+        do {
+            favoriteSpotIDs = try await repository.favoriteSpotIDs()
+        } catch {
+            // El mapa sigue legible sin favoritos; no toca state ni spots.
+        }
+    }
+
+    private func observeAuthStateChanges() -> Task<Void, Never>? {
+        guard let auth else { return nil }
+        return Task { [weak self] in
+            for await event in auth.stateChanges() {
+                guard let self else { return }
+                switch event {
+                case .signedIn, .sessionRestored:
+                    await self.refreshFavoriteSpotIDs()
+                case .signedOut:
+                    self.favoriteSpotIDs = []
+                }
+            }
+        }
+    }
+
     deinit {
         regionLoadTask?.cancel()
+        stateChangesTask?.cancel()
     }
 }

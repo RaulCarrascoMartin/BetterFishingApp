@@ -53,12 +53,14 @@ final class SpotMapViewModelTests: XCTestCase {
     private func makeViewModel(
         repository: SpotRepositoryFake,
         location: MapLocationProviderDouble,
+        auth: SupabaseBaseFake? = nil,
         region: SpotRegion? = nil,
         debounce: Duration = .milliseconds(20)
     ) -> SpotMapViewModel {
         SpotMapViewModel(
             repository: repository,
             locationProvider: location,
+            auth: auth,
             region: region ?? SpotMapViewModel.defaultRegion,
             debounceInterval: debounce
         )
@@ -230,5 +232,92 @@ final class SpotMapViewModelTests: XCTestCase {
         viewModel.clearSelection()
 
         XCTAssertNil(viewModel.selectedSpot)
+    }
+
+    func testLoadSpotsWithActiveSessionHighlightsFavoriteSpots() async {
+        let repository = SpotRepositoryFake()
+        let region = makeRegion()
+        let favoriteSpot = makeSpot(name: "Favorito")
+        repository.seed([favoriteSpot, makeSpot(name: "Normal")], for: region)
+        repository.favoriteIDs = [favoriteSpot.id]
+        let auth = SupabaseBaseFake()
+        auth.isSessionActive = true
+        let viewModel = makeViewModel(
+            repository: repository,
+            location: MapLocationProviderDouble(granted: false, coordinate: nil),
+            auth: auth,
+            region: region
+        )
+
+        await viewModel.loadSpots()
+
+        XCTAssertEqual(viewModel.favoriteSpotIDs, [favoriteSpot.id])
+        XCTAssertTrue(viewModel.isFavorite(favoriteSpot))
+    }
+
+    func testIsFavoriteFalseForSpotNotInFavoriteSet() async {
+        let repository = SpotRepositoryFake()
+        let region = makeRegion()
+        let spot = makeSpot(name: "Sin favorito")
+        repository.seed([spot], for: region)
+        let auth = SupabaseBaseFake()
+        auth.isSessionActive = true
+        let viewModel = makeViewModel(
+            repository: repository,
+            location: MapLocationProviderDouble(granted: false, coordinate: nil),
+            auth: auth,
+            region: region
+        )
+
+        await viewModel.loadSpots()
+
+        XCTAssertFalse(viewModel.isFavorite(spot))
+    }
+
+    func testSignedOutStateChangeClearsFavoriteSpotIDs() async {
+        let repository = SpotRepositoryFake()
+        let region = makeRegion()
+        let favoriteSpot = makeSpot(name: "Favorito")
+        repository.seed([favoriteSpot], for: region)
+        repository.favoriteIDs = [favoriteSpot.id]
+        let auth = SupabaseBaseFake()
+        auth.isSessionActive = true
+        auth.stateChangesEvents = [.signedOut]
+        let viewModel = makeViewModel(
+            repository: repository,
+            location: MapLocationProviderDouble(granted: false, coordinate: nil),
+            auth: auth,
+            region: region
+        )
+
+        await viewModel.loadSpots()
+        XCTAssertEqual(viewModel.favoriteSpotIDs, [favoriteSpot.id], "Antes del evento, la sesión activa carga los favoritos")
+
+        if let task = viewModel.stateChangesTask {
+            await task.value
+        }
+
+        XCTAssertTrue(viewModel.favoriteSpotIDs.isEmpty, "El cierre de sesión vacía el conjunto de favoritos")
+    }
+
+    func testFavoriteSpotIDsFailureLeavesMapLoadedWithoutFavorites() async {
+        let repository = SpotRepositoryFake()
+        let region = makeRegion()
+        repository.seed([makeSpot(name: "A")], for: region)
+        repository.favoriteSpotIDsError = .queryFailed("red caída")
+        let auth = SupabaseBaseFake()
+        auth.isSessionActive = true
+        let viewModel = makeViewModel(
+            repository: repository,
+            location: MapLocationProviderDouble(granted: false, coordinate: nil),
+            auth: auth,
+            region: region
+        )
+
+        await viewModel.loadSpots()
+
+        XCTAssertEqual(viewModel.state, .loaded, "El fallo de favoritos no debe romper el estado del mapa")
+        XCTAssertEqual(viewModel.spots.map(\.name), ["A"], "El fallo de favoritos no debe tocar los spots cargados")
+        XCTAssertTrue(viewModel.favoriteSpotIDs.isEmpty)
     }
 }
