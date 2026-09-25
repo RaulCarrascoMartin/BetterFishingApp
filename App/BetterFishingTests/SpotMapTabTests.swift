@@ -14,10 +14,16 @@ final class SpotMapTabTests: XCTestCase {
         window = nil
     }
 
-    func testRootViewWithoutSpotServicesKeepsMapTabInUnavailableState() {
+    func testRootViewWithoutSpotServicesKeepsMapTabInUnavailableState() throws {
         let tempDirectory = FileManager.default.temporaryDirectory
             .appendingPathComponent("SpotMapTabTests-\(UUID().uuidString)", isDirectory: true)
-        let services = AppComposition.makeRootServices(arguments: [], draftsDirectory: tempDirectory)
+        let invalidURL = try XCTUnwrap(URL(string: "http://"))
+        let configuration = SupabaseClientConfiguration(projectURL: invalidURL, anonKey: "test-anon-key")
+        let services = AppComposition.makeRootServices(
+            arguments: [],
+            draftsDirectory: tempDirectory,
+            supabaseConfiguration: configuration
+        )
 
         XCTAssertNil(services.spotMapViewModel, "Sin capa de datos no debe haber ViewModel de mapa (Req 2.1)")
 

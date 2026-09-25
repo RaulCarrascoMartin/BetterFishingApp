@@ -23,8 +23,11 @@ final class SpotDiscoveryCompositionTests: XCTestCase {
         )
     }
 
-    func testMakeRootServicesWithoutStackKeepsSpotServicesNil() {
-        let services = AppComposition.makeRootServices(arguments: [])
+    func testMakeRootServicesWithoutStackKeepsSpotServicesNil() throws {
+        let invalidURL = try XCTUnwrap(URL(string: "http://"))
+        let configuration = SupabaseClientConfiguration(projectURL: invalidURL, anonKey: "test-anon-key")
+
+        let services = AppComposition.makeRootServices(arguments: [], supabaseConfiguration: configuration)
 
         XCTAssertNil(services.supabase)
         XCTAssertNil(services.spotRepository, "Sin capa de datos el repositorio de spots debe ser nil (Req 2.1)")

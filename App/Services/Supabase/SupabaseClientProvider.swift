@@ -52,6 +52,8 @@ enum SupabaseBaseError: Error, Sendable, Equatable, LocalizedError {
         switch reason {
         case .invalidCredentials:
             return "las credenciales no son válidas."
+        case .emailNotConfirmed:
+            return "debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada."
         case .network:
             return "no hay conexión con el servidor."
         case .configuration:

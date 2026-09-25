@@ -2,6 +2,7 @@ import Foundation
 
 enum SupabaseAuthFailureReason: String, Sendable, Equatable {
     case invalidCredentials
+    case emailNotConfirmed
     case network
     case configuration
     case server

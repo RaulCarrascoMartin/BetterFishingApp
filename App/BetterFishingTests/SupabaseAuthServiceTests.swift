@@ -19,8 +19,12 @@ final class SupabaseAuthServiceTests: XCTestCase {
 
         let auth = try makeAuthService()
 
-        let session = try await auth.signUp(email: "angler@example.com", password: "correct-horse")
+        let result = try await auth.signUp(email: "angler@example.com", password: "correct-horse")
 
+        guard case .signedIn(let session) = result else {
+            XCTFail("Expected signedIn result, got \(result)")
+            return
+        }
         XCTAssertEqual(session.accessToken, "access-token-111")
         XCTAssertEqual(session.refreshToken, "refresh-token-222")
         XCTAssertEqual(session.user.id, fixedUserID)
@@ -52,6 +56,19 @@ final class SupabaseAuthServiceTests: XCTestCase {
 
         XCTAssertEqual(failure.reason, .invalidCredentials)
         XCTAssertEqual(failure.description, "Invalid login credentials")
+    }
+
+    func testSignInWithEmailNotConfirmedCodeClassifiesAsEmailNotConfirmed() async throws {
+        let errorBody: [String: Any] = [
+            "message": "Email not confirmed",
+            "error_code": "email_not_confirmed",
+        ]
+        HTTPStubRegistry.shared.register(.json(errorBody, statusCode: 400), for: tokenURL)
+
+        let failure = try await signInFailure()
+
+        XCTAssertEqual(failure.reason, .emailNotConfirmed)
+        XCTAssertEqual(failure.description, "Email not confirmed")
     }
 
     func testSignInWithUserNotFoundCodeClassifiesAsInvalidCredentials() async throws {
@@ -99,6 +116,15 @@ final class SupabaseAuthServiceTests: XCTestCase {
         XCTAssertEqual(failure.description, "Database failure")
     }
 
+    func testSignUpWithoutSessionInResponseReturnsEmailConfirmationRequired() async throws {
+        HTTPStubRegistry.shared.register(.json(Self.userJSON), for: signUpURL)
+
+        let auth = try makeAuthService()
+        let result = try await auth.signUp(email: "angler@example.com", password: "correct-horse")
+
+        XCTAssertEqual(result, .emailConfirmationRequired)
+    }
+
     func testSignUpWithServerErrorCarriesFailureInSignUpFailed() async throws {
         let errorBody: [String: Any] = ["message": "Database failure"]
         HTTPStubRegistry.shared.register(.json(errorBody, statusCode: 500), for: signUpURL)
@@ -118,7 +144,7 @@ final class SupabaseAuthServiceTests: XCTestCase {
     func testAuthFailureErrorDescriptionIsSpanishPerReasonAndDoesNotLeakSDKMessage() {
         let sdkMessage = "Invalid API key provided: apikey-abc123"
         let reasons: [SupabaseAuthFailureReason] = [
-            .invalidCredentials, .network, .configuration, .server, .unknown,
+            .invalidCredentials, .emailNotConfirmed, .network, .configuration, .server, .unknown,
         ]
 
         var signInDescriptions: Set<String> = []

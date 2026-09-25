@@ -5,10 +5,13 @@ import Supabase
 
 @MainActor
 final class SupabaseCompositionTests: XCTestCase {
-    func testMakeRootServicesWithEmptyConfigurationBuildsAllServicesAndNilStack() {
-        let services = AppComposition.makeRootServices(arguments: [])
+    func testMakeRootServicesWithEmptyConfigurationBuildsAllServicesAndNilStack() throws {
+        let invalidURL = try XCTUnwrap(URL(string: "http://"))
+        let configuration = SupabaseClientConfiguration(projectURL: invalidURL, anonKey: "test-anon-key")
 
-        XCTAssertNil(services.supabase, "Sin configuración accesible el stack de Supabase debe ser nil")
+        let services = AppComposition.makeRootServices(arguments: [], supabaseConfiguration: configuration)
+
+        XCTAssertNil(services.supabase, "Sin configuración utilizable el stack de Supabase debe ser nil")
         XCTAssertNotNil(services.scannerViewModel)
         XCTAssertNotNil(services.catchSaver)
         XCTAssertNotNil(services.catchLogViewModel)

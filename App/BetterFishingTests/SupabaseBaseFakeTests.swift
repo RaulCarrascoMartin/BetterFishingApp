@@ -50,9 +50,9 @@ final class SupabaseBaseFakeTests: XCTestCase {
         let fake = SupabaseBaseFake()
         let auth: any SupabaseAuthProviding = fake
 
-        let session = try await auth.signUp(email: "new@example.com", password: "pw1234")
+        let result = try await auth.signUp(email: "new@example.com", password: "pw1234")
 
-        XCTAssertEqual(session, fake.authSession)
+        XCTAssertEqual(result, .signedIn(fake.authSession))
         XCTAssertEqual(
             fake.recordedSignUps,
             [BaseFakeRecordedCredentials(email: "new@example.com", password: "pw1234")]

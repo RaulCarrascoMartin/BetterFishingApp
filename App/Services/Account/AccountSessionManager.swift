@@ -39,11 +39,18 @@ actor AccountSessionManager: AccountSessionManaging {
         }
     }
 
-    func signUp(email: String, password: String) async throws {
+    func signUp(email: String, password: String) async throws -> AccountSignUpOutcome {
         do {
-            let session = try await auth.signUp(email: email, password: password)
-            sessionContinuation.yield(.signedIn(session.user))
-            Self.logger.info("Cuenta creada: \(session.user.id, privacy: .public)")
+            let result = try await auth.signUp(email: email, password: password)
+            switch result {
+            case .signedIn(let session):
+                sessionContinuation.yield(.signedIn(session.user))
+                Self.logger.info("Cuenta creada: \(session.user.id, privacy: .public)")
+                return .signedIn
+            case .emailConfirmationRequired:
+                Self.logger.info("Cuenta creada, pendiente de confirmación de email")
+                return .emailConfirmationRequired
+            }
         } catch let error as SupabaseBaseError {
             switch error {
             case .sessionUnavailable:

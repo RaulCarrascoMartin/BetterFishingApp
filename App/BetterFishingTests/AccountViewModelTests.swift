@@ -67,6 +67,24 @@ final class AccountViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.errorMessage)
     }
 
+    func testSignUpWithEmailConfirmationPendingSetsInfoMessageAndKeepsSignedOut() async {
+        let auth = AccountSessionFake()
+        auth.nextSignUpOutcome = .emailConfirmationRequired
+        let profile = ProfileFake()
+        let favorites = FavoritesFake()
+        let sync = SyncFake()
+        let viewModel = makeViewModel(auth: auth, profile: profile, favorites: favorites, sync: sync)
+
+        await viewModel.signUp(email: "angler@example.com", password: "correct-horse")
+
+        XCTAssertEqual(viewModel.sessionState, .signedOut)
+        XCTAssertNil(viewModel.errorMessage)
+        XCTAssertEqual(
+            viewModel.infoMessage,
+            "Cuenta creada. Revisa tu email para confirmar la cuenta antes de iniciar sesión."
+        )
+    }
+
     func testSignOutClearsAndKeepsNothingFromPreviousAccount() async {
         let auth = AccountSessionFake(currentUser: user)
         let profile = ProfileFake(profile: makeProfile())
@@ -194,6 +212,7 @@ private final class AccountSessionFake: AccountSessionManaging, @unchecked Senda
     private var currentUserStorage: SupabaseUser?
     private var errorStorage: Error?
     private var nextUserStorage: SupabaseUser?
+    private var nextSignUpOutcomeStorage: AccountSignUpOutcome?
     private var recordedSignInEmailsStorage: [String] = []
     private let stream: AsyncStream<AccountSessionState>
     private let continuation: AsyncStream<AccountSessionState>.Continuation
@@ -241,12 +260,25 @@ private final class AccountSessionFake: AccountSessionManaging, @unchecked Senda
         continuation.yield(state)
     }
 
-    func signUp(email: String, password: String) async throws {
+    var nextSignUpOutcome: AccountSignUpOutcome? {
+        get {
+            withLock { nextSignUpOutcomeStorage }
+        }
+        set {
+            withLock { nextSignUpOutcomeStorage = newValue }
+        }
+    }
+
+    func signUp(email: String, password: String) async throws -> AccountSignUpOutcome {
         let error = withLock { errorStorage }
         try throwIfSet(error)
+        if let outcome = withLock({ nextSignUpOutcomeStorage }), outcome == .emailConfirmationRequired {
+            return .emailConfirmationRequired
+        }
         let user = withLock { nextUserStorage } ?? makeUser(email: email)
         withLock { currentUserStorage = user }
         continuation.yield(.signedIn(user))
+        return .signedIn
     }
 
     func signIn(email: String, password: String) async throws {

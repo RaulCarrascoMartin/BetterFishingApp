@@ -768,10 +768,10 @@ private actor UITestSignedInAuthProvider: SupabaseAuthProviding {
         activeUser = Self.user
     }
 
-    func signUp(email: String, password: String) async throws -> SupabaseSession {
+    func signUp(email: String, password: String) async throws -> SupabaseSignUpResult {
         let session = Self.session(for: Self.user)
         activeUser = Self.user
-        return session
+        return .signedIn(session)
     }
 
     func signIn(email: String, password: String) async throws -> SupabaseSession {
@@ -807,7 +807,7 @@ private actor UITestSignedInAuthProvider: SupabaseAuthProviding {
 }
 
 struct UITestNoAuthProvider: SupabaseAuthProviding, Sendable {
-    func signUp(email: String, password: String) async throws -> SupabaseSession {
+    func signUp(email: String, password: String) async throws -> SupabaseSignUpResult {
         throw UITestAuthUnavailable()
     }
 

@@ -20,6 +20,24 @@ final class AccountSessionManagerTests: XCTestCase {
         XCTAssertEqual(fake.recordedSignUps.first?.email, "angler@example.com")
     }
 
+    func testSignUpWithoutSessionReturnsEmailConfirmationRequiredAndDoesNotEmitSignedIn() async throws {
+        let fake = SupabaseBaseFake()
+        fake.isSessionActive = false
+        fake.authSignUpResult = .emailConfirmationRequired
+        let manager = AccountSessionManager(auth: fake)
+        let stream = manager.sessionState
+
+        let outcome = try await manager.signUp(email: "angler@example.com", password: "correct-horse")
+
+        XCTAssertEqual(outcome, .emailConfirmationRequired)
+
+        let collected = await Self.collect(from: stream, until: { _ in false }, timeout: .milliseconds(400))
+        XCTAssertFalse(collected.contains { state in
+            if case .signedIn = state { return true }
+            return false
+        })
+    }
+
     func testSignInEmitsSignedIn() async throws {
         let fake = SupabaseBaseFake()
         fake.isSessionActive = false

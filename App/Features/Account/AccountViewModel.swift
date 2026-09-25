@@ -10,6 +10,7 @@ final class AccountViewModel {
     private(set) var isSyncing = false
     private(set) var lastSyncResult: CatchSyncResult?
     private(set) var errorMessage: String?
+    private(set) var infoMessage: String?
     private(set) var avatarData: Data?
 
     var sessionUser: SupabaseUser? {
@@ -49,8 +50,13 @@ final class AccountViewModel {
         guard !isSubmitting else { return }
         isSubmitting = true
         defer { isSubmitting = false }
+        errorMessage = nil
+        infoMessage = nil
         do {
-            try await auth.signUp(email: email, password: password)
+            let outcome = try await auth.signUp(email: email, password: password)
+            if outcome == .emailConfirmationRequired {
+                infoMessage = "Cuenta creada. Revisa tu email para confirmar la cuenta antes de iniciar sesión."
+            }
         } catch {
             errorMessage = Self.errorText(error)
         }
@@ -60,6 +66,8 @@ final class AccountViewModel {
         guard !isSubmitting else { return }
         isSubmitting = true
         defer { isSubmitting = false }
+        errorMessage = nil
+        infoMessage = nil
         do {
             try await auth.signIn(email: email, password: password)
         } catch {
@@ -173,6 +181,7 @@ final class AccountViewModel {
         lastSyncResult = nil
         avatarData = nil
         errorMessage = nil
+        infoMessage = nil
     }
 
     private static func errorText(_ error: Error) -> String {

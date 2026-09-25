@@ -38,6 +38,7 @@ struct BaseFakeRecordedRPC: Equatable {
 final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDatabaseAccess, @unchecked Sendable {
     private struct State {
         var authSession: SupabaseSession
+        var authSignUpResult: SupabaseSignUpResult?
         var authError: Error?
         var stateChangesEvents: [SupabaseAuthEvent]
         var uploadResultPath: String
@@ -70,6 +71,7 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
     ) {
         state = State(
             authSession: authSession,
+            authSignUpResult: nil,
             authError: nil,
             stateChangesEvents: stateChangesEvents,
             uploadResultPath: uploadResultPath,
@@ -106,6 +108,11 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
     var authSession: SupabaseSession {
         get { withLock { state.authSession } }
         set { withLock { state.authSession = newValue } }
+    }
+
+    var authSignUpResult: SupabaseSignUpResult? {
+        get { withLock { state.authSignUpResult } }
+        set { withLock { state.authSignUpResult = newValue } }
     }
 
     var authError: Error? {
@@ -198,13 +205,13 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
         }
     }
 
-    func signUp(email: String, password: String) async throws -> SupabaseSession {
-        let result = withLock { () -> (error: Error?, session: SupabaseSession) in
+    func signUp(email: String, password: String) async throws -> SupabaseSignUpResult {
+        let result = withLock { () -> (error: Error?, session: SupabaseSession, override: SupabaseSignUpResult?) in
             state.recordedSignUps.append(BaseFakeRecordedCredentials(email: email, password: password))
-            return (state.authError, state.authSession)
+            return (state.authError, state.authSession, state.authSignUpResult)
         }
         try throwIfSet(result.error)
-        return result.session
+        return result.override ?? .signedIn(result.session)
     }
 
     func signIn(email: String, password: String) async throws -> SupabaseSession {

@@ -61,6 +61,10 @@ struct SignInSignUpFormView: View {
             .disabled(!canSubmit)
             .accessibilityIdentifier("account.submit")
 
+            if let message = viewModel.infoMessage {
+                infoNotice(message)
+            }
+
             if let message = viewModel.errorMessage {
                 errorNotice(message)
             }
@@ -119,5 +123,16 @@ struct SignInSignUpFormView: View {
         .padding()
         .background(.red.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
         .accessibilityIdentifier("account.error")
+    }
+
+    private func infoNotice(_ message: String) -> some View {
+        HStack(spacing: 12) {
+            Label(message, systemImage: "envelope.badge.fill")
+                .font(.subheadline)
+            Spacer()
+        }
+        .padding()
+        .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityIdentifier("account.info")
     }
 }

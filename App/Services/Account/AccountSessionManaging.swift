@@ -25,10 +25,15 @@ enum AccountError: Error, Sendable, LocalizedError {
     }
 }
 
+enum AccountSignUpOutcome: Sendable, Equatable {
+    case signedIn
+    case emailConfirmationRequired
+}
+
 protocol AccountSessionManaging: Sendable {
     var currentUser: SupabaseUser? { get async }
     var sessionState: AsyncStream<AccountSessionState> { get }
-    func signUp(email: String, password: String) async throws
+    func signUp(email: String, password: String) async throws -> AccountSignUpOutcome
     func signIn(email: String, password: String) async throws
     func signOut() async throws
 }

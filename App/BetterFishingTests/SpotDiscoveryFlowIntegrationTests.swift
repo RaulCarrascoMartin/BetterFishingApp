@@ -183,10 +183,13 @@ final class SpotDiscoveryFlowIntegrationTests: XCTestCase {
         )
     }
 
-    func testFlowWithoutStackDegradesToUnavailableWithoutCrashing() async {
-        let services = AppComposition.makeRootServices(arguments: [])
+    func testFlowWithoutStackDegradesToUnavailableWithoutCrashing() async throws {
+        let invalidURL = try XCTUnwrap(URL(string: "http://"))
+        let configuration = SupabaseClientConfiguration(projectURL: invalidURL, anonKey: "test-anon-key")
 
-        XCTAssertNil(services.supabase, "Sin configuración el stack de Supabase queda en nil")
+        let services = AppComposition.makeRootServices(arguments: [], supabaseConfiguration: configuration)
+
+        XCTAssertNil(services.supabase, "Sin configuración utilizable el stack de Supabase queda en nil")
         XCTAssertNil(services.spotRepository, "Sin capa de datos el repositorio de spots debe ser nil (Req 2.1)")
         XCTAssertNil(services.spotMapViewModel, "Sin capa de datos el ViewModel del mapa debe ser nil (Req 2.1)")
         XCTAssertNil(services.spotDetailViewModelFactory, "Sin capa de datos la factory de detalle debe ser nil (Req 2.1)")

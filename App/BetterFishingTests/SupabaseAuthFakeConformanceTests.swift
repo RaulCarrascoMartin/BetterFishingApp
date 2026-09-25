@@ -4,8 +4,8 @@ import XCTest
 @testable import BetterFishing
 
 struct AuthTestDouble: SupabaseAuthProviding, Sendable {
-    func signUp(email: String, password: String) async throws -> SupabaseSession {
-        AuthTestDouble.session
+    func signUp(email: String, password: String) async throws -> SupabaseSignUpResult {
+        .signedIn(AuthTestDouble.session)
     }
 
     func signIn(email: String, password: String) async throws -> SupabaseSession {

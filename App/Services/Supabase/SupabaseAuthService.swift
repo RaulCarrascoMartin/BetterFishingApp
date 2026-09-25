@@ -8,18 +8,13 @@ actor SupabaseAuthService: SupabaseAuthProviding {
         self.client = client
     }
 
-    func signUp(email: String, password: String) async throws -> SupabaseSession {
+    func signUp(email: String, password: String) async throws -> SupabaseSignUpResult {
         do {
             let response = try await client.auth.signUp(email: email, password: password)
             guard let session = response.session else {
-                throw SupabaseBaseError.signUpFailed(
-                    SupabaseAuthFailure(
-                        reason: .unknown,
-                        description: "Supabase no devolvió una sesión tras el registro."
-                    )
-                )
+                return .emailConfirmationRequired
             }
-            return Self.makeSession(from: session)
+            return .signedIn(Self.makeSession(from: session))
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
@@ -126,6 +121,9 @@ actor SupabaseAuthService: SupabaseAuthProviding {
         for errorCode: Supabase.ErrorCode,
         statusCode: Int
     ) -> SupabaseAuthFailureReason {
+        if errorCode == .emailNotConfirmed {
+            return .emailNotConfirmed
+        }
         if errorCode == .invalidCredentials || errorCode == .userNotFound {
             return .invalidCredentials
         }
