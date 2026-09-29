@@ -39,6 +39,9 @@ struct AccountView: View {
             }
             .padding()
         }
+        .task {
+            await viewModel.refreshFavorites()
+        }
     }
 
     private func syncSection(for viewModel: AccountViewModel) -> some View {

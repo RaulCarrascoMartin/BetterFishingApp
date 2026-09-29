@@ -65,7 +65,11 @@ actor SupabaseAuthService: SupabaseAuthProviding {
                 switch event {
                 case .initialSession:
                     if let session {
-                        continuation.yield(.sessionRestored(Self.makeSession(from: session)))
+                        if session.isExpired {
+                            continuation.yield(.signedOut)
+                        } else {
+                            continuation.yield(.sessionRestored(Self.makeSession(from: session)))
+                        }
                     }
                 case .signedIn:
                     if let session {

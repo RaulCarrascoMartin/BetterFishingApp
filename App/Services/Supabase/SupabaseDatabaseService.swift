@@ -1,7 +1,9 @@
 import Foundation
+import os
 import Supabase
 
 actor SupabaseDatabaseService: SupabaseDatabaseAccess {
+    private static let logger = Logger(subsystem: "com.betterfishing.BetterFishing", category: "Database")
     private let client: SupabaseClient
 
     init(client: SupabaseClient) {
@@ -29,6 +31,7 @@ actor SupabaseDatabaseService: SupabaseDatabaseAccess {
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
+            Self.logger.error("queryFailed: \(String(describing: error), privacy: .public)")
             throw SupabaseBaseError.queryFailed
         }
     }
@@ -45,6 +48,7 @@ actor SupabaseDatabaseService: SupabaseDatabaseAccess {
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
+            Self.logger.error("rpcFailed: \(String(describing: error), privacy: .public)")
             throw SupabaseBaseError.rpcFailed
         }
     }
@@ -60,6 +64,7 @@ actor SupabaseDatabaseService: SupabaseDatabaseAccess {
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
+            Self.logger.error("rpcFailed: \(String(describing: error), privacy: .public)")
             throw SupabaseBaseError.rpcFailed
         }
     }

@@ -341,7 +341,7 @@ final class AccountFlowE2ETests: XCTestCase {
         XCTAssertTrue(
             fake.recordedUploads.contains {
                 $0.bucket == "catches"
-                    && $0.path == "\(SupabaseBaseFake.defaultUser.id.uuidString)/\(saved.id.uuidString).jpg"
+                    && $0.path == "\(SupabaseBaseFake.defaultUser.id.uuidString.lowercased())/\(saved.id.uuidString.lowercased()).jpg"
                     && $0.data == Data([0xAA])
             },
             "La foto se sube a catches/{user}/{id}.jpg"
@@ -418,18 +418,18 @@ final class AccountFlowE2ETests: XCTestCase {
         await viewModel.uploadAvatar(data: avatarBytes, contentType: "image/jpeg")
         XCTAssertEqual(
             viewModel.profile?.avatarPath,
-            "\(userID.uuidString)/avatar.jpg",
+            "\(userID.uuidString.lowercased())/avatar.jpg",
             "Aportar un avatar lo expone actualizado (Req 3.3)"
         )
         XCTAssertEqual(viewModel.avatarData, avatarBytes, "El VM expone los bytes del avatar aceptado")
         let upload = try XCTUnwrap(fake.recordedUploads.last)
         XCTAssertEqual(upload.bucket, "avatars")
-        XCTAssertEqual(upload.path, "\(userID.uuidString)/avatar.jpg")
+        XCTAssertEqual(upload.path, "\(userID.uuidString.lowercased())/avatar.jpg")
         XCTAssertEqual(upload.options?.contentType, "image/jpeg")
         XCTAssertEqual(upload.options?.upsert, true)
         let avatarRPC = try XCTUnwrap(fake.recordedRPCs.last)
         XCTAssertEqual(avatarRPC.function, "upsert_profile")
-        XCTAssertEqual(avatarRPC.arguments?.values["p_avatar_path"], .string("\(userID.uuidString)/avatar.jpg"))
+        XCTAssertEqual(avatarRPC.arguments?.values["p_avatar_path"], .string("\(userID.uuidString.lowercased())/avatar.jpg"))
 
         fake.downloadError = SupabaseBaseError.downloadFailed
         await viewModel.signOut()
@@ -440,7 +440,7 @@ final class AccountFlowE2ETests: XCTestCase {
         }
         XCTAssertEqual(
             viewModel.profile?.avatarPath,
-            "\(userID.uuidString)/avatar.jpg",
+            "\(userID.uuidString.lowercased())/avatar.jpg",
             "El perfil se mantiene y el fallo de descarga solo afecta al avatar (Req 3.4)"
         )
         XCTAssertNil(viewModel.avatarData)
@@ -613,7 +613,7 @@ final class AccountFlowE2ETests: XCTestCase {
         XCTAssertTrue(
             fake.recordedUploads.contains {
                 $0.bucket == "catches"
-                    && $0.path == "\(userID.uuidString)/\(localL.uuidString).jpg"
+                    && $0.path == "\(userID.uuidString.lowercased())/\(localL.uuidString.lowercased()).jpg"
                     && $0.data == Data([0xAA])
             },
             "El push sube la foto a catches/{user}/{id}.jpg"

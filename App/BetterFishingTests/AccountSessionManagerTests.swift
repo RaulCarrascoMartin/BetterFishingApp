@@ -38,6 +38,22 @@ final class AccountSessionManagerTests: XCTestCase {
         })
     }
 
+    func testSignInFailsWhenSessionWasNotPersisted() async throws {
+        let fake = SupabaseBaseFake()
+        fake.isSessionActive = false
+        fake.persistsSessionOnSignIn = false
+        let manager = AccountSessionManager(auth: fake)
+
+        do {
+            try await manager.signIn(email: "angler@example.com", password: "correct-horse")
+            XCTFail("Debe fallar si la sesión no quedó almacenada")
+        } catch {
+            guard case AccountError.sessionUnavailable = error else {
+                return XCTFail("Error inesperado: \(error)")
+            }
+        }
+    }
+
     func testSignInEmitsSignedIn() async throws {
         let fake = SupabaseBaseFake()
         fake.isSessionActive = false

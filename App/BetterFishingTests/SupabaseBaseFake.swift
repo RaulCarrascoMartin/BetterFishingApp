@@ -49,6 +49,7 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
         var cannedRPCValue: String
         var databaseError: Error?
         var isSessionActive: Bool
+        var persistsSessionOnSignIn = true
         var recordedSignUps: [BaseFakeRecordedCredentials]
         var recordedSignIns: [BaseFakeRecordedCredentials]
         var recordedSignOuts: Int
@@ -160,6 +161,11 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
         set { withLock { state.databaseError = newValue } }
     }
 
+    var persistsSessionOnSignIn: Bool {
+        get { withLock { state.persistsSessionOnSignIn } }
+        set { withLock { state.persistsSessionOnSignIn = newValue } }
+    }
+
     var isSessionActive: Bool {
         get { withLock { state.isSessionActive } }
         set { withLock { state.isSessionActive = newValue } }
@@ -208,6 +214,7 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
     func signUp(email: String, password: String) async throws -> SupabaseSignUpResult {
         let result = withLock { () -> (error: Error?, session: SupabaseSession, override: SupabaseSignUpResult?) in
             state.recordedSignUps.append(BaseFakeRecordedCredentials(email: email, password: password))
+            if state.authError == nil, state.authSignUpResult == nil, state.persistsSessionOnSignIn { state.isSessionActive = true }
             return (state.authError, state.authSession, state.authSignUpResult)
         }
         try throwIfSet(result.error)
@@ -217,6 +224,7 @@ final class SupabaseBaseFake: SupabaseAuthProviding, SupabaseStoring, SupabaseDa
     func signIn(email: String, password: String) async throws -> SupabaseSession {
         let result = withLock { () -> (error: Error?, session: SupabaseSession) in
             state.recordedSignIns.append(BaseFakeRecordedCredentials(email: email, password: password))
+            if state.authError == nil, state.persistsSessionOnSignIn { state.isSessionActive = true }
             return (state.authError, state.authSession)
         }
         try throwIfSet(result.error)

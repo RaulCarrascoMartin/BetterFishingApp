@@ -1,7 +1,9 @@
 import Foundation
+import os
 import Supabase
 
 actor SupabaseStorageService: SupabaseStoring {
+    private static let logger = Logger(subsystem: "com.betterfishing.BetterFishing", category: "Storage")
     private let client: SupabaseClient
 
     init(client: SupabaseClient) {
@@ -27,6 +29,7 @@ actor SupabaseStorageService: SupabaseStoring {
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
+            Self.logger.error("uploadFailed: \(String(describing: error), privacy: .public)")
             throw SupabaseBaseError.uploadFailed
         }
     }
@@ -37,6 +40,7 @@ actor SupabaseStorageService: SupabaseStoring {
         } catch let error as SupabaseBaseError {
             throw error
         } catch {
+            Self.logger.error("downloadFailed: \(String(describing: error), privacy: .public)")
             throw SupabaseBaseError.downloadFailed
         }
     }

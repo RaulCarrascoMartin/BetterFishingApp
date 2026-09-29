@@ -150,7 +150,7 @@ actor CatchSyncService: CatchSynchronizing {
             do {
                 _ = try await storage.upload(
                     bucket: "catches",
-                    path: "\(userID.uuidString)/\(catchEntry.id.uuidString).jpg",
+                    path: "\(userID.uuidString.lowercased())/\(catchEntry.id.uuidString.lowercased()).jpg",
                     data: photo,
                     options: SupabaseUploadOptions(contentType: "image/jpeg", upsert: true)
                 )
@@ -236,6 +236,6 @@ private struct CatchPushPayload: Encodable {
         self.location = catchEntry.location
         self.notes = catchEntry.notes
         self.createdAt = catchEntry.createdAt
-        self.photoPath = "\(userID.uuidString)/\(catchEntry.id.uuidString).jpg"
+        self.photoPath = "\(userID.uuidString.lowercased())/\(catchEntry.id.uuidString.lowercased()).jpg"
     }
 }

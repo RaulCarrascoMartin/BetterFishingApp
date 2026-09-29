@@ -78,6 +78,7 @@
 		0000000000000000000000B72 /* SupabaseModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A6A /* SupabaseModelsTests.swift */; };
 		0000000000000000000000B67 /* SupabaseConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A65 /* SupabaseConfiguration.swift */; };
 		0000000000000000000000B68 /* SupabaseClientProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A66 /* SupabaseClientProvider.swift */; };
+		FA11BACK0000000000000B01 /* FallbackAuthLocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA11BACK0000000000000A01 /* FallbackAuthLocalStorage.swift */; };
 		0000000000000000000000B70 /* SupabaseUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A68 /* SupabaseUser.swift */; };
 		0000000000000000000000B71 /* SupabaseSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A69 /* SupabaseSession.swift */; };
 		0000000000000000000000B73 /* SupabaseAuthProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000000A6B /* SupabaseAuthProviding.swift */; };
@@ -245,6 +246,7 @@
 		0000000000000000000000A67 /* SupabaseConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseConfigurationTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A6A /* SupabaseModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseModelsTests.swift; sourceTree = "<group>"; };
 		0000000000000000000000A65 /* SupabaseConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseConfiguration.swift; sourceTree = "<group>"; };
+		FA11BACK0000000000000A01 /* FallbackAuthLocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackAuthLocalStorage.swift; sourceTree = "<group>"; };
 		0000000000000000000000A66 /* SupabaseClientProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClientProvider.swift; sourceTree = "<group>"; };
 		0000000000000000000000A68 /* SupabaseUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseUser.swift; sourceTree = "<group>"; };
 		0000000000000000000000A69 /* SupabaseSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSession.swift; sourceTree = "<group>"; };
@@ -491,6 +493,7 @@
 			children = (
 				0000000000000000000000A65 /* SupabaseConfiguration.swift */,
 				0000000000000000000000A66 /* SupabaseClientProvider.swift */,
+				FA11BACK0000000000000A01 /* FallbackAuthLocalStorage.swift */,
 				0000000000000000000000A6B /* SupabaseAuthProviding.swift */,
 				0000000000000000000000A6D /* SupabaseAuthService.swift */,
 				0000000000000000000000AB4 /* SupabaseAuthFailure.swift */,
@@ -872,6 +875,7 @@ isa = PBXSourcesBuildPhase;
 				0000000000000000000000B37 /* CameraManagerUITestDouble.swift in Sources */,
 				0000000000000000000000B67 /* SupabaseConfiguration.swift in Sources */,
 				0000000000000000000000B68 /* SupabaseClientProvider.swift in Sources */,
+				FA11BACK0000000000000B01 /* FallbackAuthLocalStorage.swift in Sources */,
 				0000000000000000000000B70 /* SupabaseUser.swift in Sources */,
 				0000000000000000000000B71 /* SupabaseSession.swift in Sources */,
 				0000000000000000000000B73 /* SupabaseAuthProviding.swift in Sources */,

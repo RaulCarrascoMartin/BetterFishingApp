@@ -6,7 +6,7 @@
 --
 -- Convención de path: cada objeto vive bajo `{user_id}/...`, p.ej.
 -- `avatars/3fa2.../foto.jpg` o `catches/3fa2.../captura.jpg`. Las políticas
--- comparan ese primer segmento del path con auth.uid() (storage.foldername
+-- comparan ese primer segmento del path (en minúsculas, como lo genera el cliente) con auth.uid() (storage.foldername
 -- devuelve un array de segmentos del path del objeto).
 
 -- ===========================================================================
@@ -15,27 +15,27 @@
 drop policy if exists avatars_own_select on storage.objects;
 create policy avatars_own_select on storage.objects
   for select using (
-    bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'avatars' and auth.uid()::text = lower((storage.foldername(name))[1])
   );
 
 drop policy if exists avatars_own_insert on storage.objects;
 create policy avatars_own_insert on storage.objects
   for insert with check (
-    bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'avatars' and auth.uid()::text = lower((storage.foldername(name))[1])
   );
 
 drop policy if exists avatars_own_update on storage.objects;
 create policy avatars_own_update on storage.objects
   for update using (
-    bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'avatars' and auth.uid()::text = lower((storage.foldername(name))[1])
   ) with check (
-    bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'avatars' and auth.uid()::text = lower((storage.foldername(name))[1])
   );
 
 drop policy if exists avatars_own_delete on storage.objects;
 create policy avatars_own_delete on storage.objects
   for delete using (
-    bucket_id = 'avatars' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'avatars' and auth.uid()::text = lower((storage.foldername(name))[1])
   );
 
 -- ===========================================================================
@@ -44,25 +44,25 @@ create policy avatars_own_delete on storage.objects
 drop policy if exists catches_own_select on storage.objects;
 create policy catches_own_select on storage.objects
   for select using (
-    bucket_id = 'catches' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'catches' and auth.uid()::text = lower((storage.foldername(name))[1])
   );
 
 drop policy if exists catches_own_insert on storage.objects;
 create policy catches_own_insert on storage.objects
   for insert with check (
-    bucket_id = 'catches' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'catches' and auth.uid()::text = lower((storage.foldername(name))[1])
   );
 
 drop policy if exists catches_own_update on storage.objects;
 create policy catches_own_update on storage.objects
   for update using (
-    bucket_id = 'catches' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'catches' and auth.uid()::text = lower((storage.foldername(name))[1])
   ) with check (
-    bucket_id = 'catches' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'catches' and auth.uid()::text = lower((storage.foldername(name))[1])
   );
 
 drop policy if exists catches_own_delete on storage.objects;
 create policy catches_own_delete on storage.objects
   for delete using (
-    bucket_id = 'catches' and auth.uid()::text = (storage.foldername(name))[1]
+    bucket_id = 'catches' and auth.uid()::text = lower((storage.foldername(name))[1])
   );

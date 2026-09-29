@@ -88,7 +88,7 @@ final class SupabaseProfileRepositoryTests: XCTestCase {
     func testUpdateAvatarUploadsToAvatarsBucketAndPersistsPath() async throws {
         let fake = SupabaseBaseFake()
         let userID = SupabaseBaseFake.defaultUser.id
-        fake.uploadResultPath = "\(userID.uuidString)/avatar.jpg"
+        fake.uploadResultPath = "\(userID.uuidString.lowercased())/avatar.jpg"
         fake.cannedRows = ["{\"user_id\":\"\(userID.uuidString)\",\"display_name\":\"Ana\",\"avatar_path\":null}"]
         let repository = makeRepository(fake: fake)
 
@@ -97,7 +97,7 @@ final class SupabaseProfileRepositoryTests: XCTestCase {
         XCTAssertEqual(storedPath, fake.uploadResultPath)
         let upload = try XCTUnwrap(fake.recordedUploads.first)
         XCTAssertEqual(upload.bucket, "avatars")
-        XCTAssertEqual(upload.path, "\(userID.uuidString)/avatar.jpg")
+        XCTAssertEqual(upload.path, "\(userID.uuidString.lowercased())/avatar.jpg")
         XCTAssertTrue(upload.path.hasSuffix("avatar.jpg"))
         XCTAssertEqual(upload.options?.contentType, "image/jpeg")
         XCTAssertEqual(upload.options?.upsert, true)

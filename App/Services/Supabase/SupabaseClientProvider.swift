@@ -95,7 +95,16 @@ struct SupabaseClientProvider: Sendable {
         return SupabaseClient(
             supabaseURL: configuration.projectURL,
             supabaseKey: configuration.anonKey,
-            options: options ?? SupabaseClientOptions()
+            options: options ?? Self.defaultOptions
+        )
+    }
+
+    static var defaultOptions: SupabaseClientOptions {
+        SupabaseClientOptions(
+            auth: .init(
+                storage: FallbackAuthLocalStorage(),
+                emitLocalSessionAsInitialSession: true
+            )
         )
     }
 }

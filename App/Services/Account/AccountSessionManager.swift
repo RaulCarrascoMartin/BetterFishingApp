@@ -44,6 +44,7 @@ actor AccountSessionManager: AccountSessionManaging {
             let result = try await auth.signUp(email: email, password: password)
             switch result {
             case .signedIn(let session):
+                try await ensureSessionPersisted()
                 sessionContinuation.yield(.signedIn(session.user))
                 Self.logger.info("Cuenta creada: \(session.user.id, privacy: .public)")
                 return .signedIn
@@ -63,9 +64,18 @@ actor AccountSessionManager: AccountSessionManaging {
         }
     }
 
+    /// Evita mostrar estado "conectado" cuando los servicios no podrán leer la sesión.
+    private func ensureSessionPersisted() async throws {
+        guard try await auth.currentSession() != nil else {
+            Self.logger.error("Login correcto pero la sesión no quedó almacenada")
+            throw SupabaseBaseError.sessionUnavailable
+        }
+    }
+
     func signIn(email: String, password: String) async throws {
         do {
             let session = try await auth.signIn(email: email, password: password)
+            try await ensureSessionPersisted()
             sessionContinuation.yield(.signedIn(session.user))
             Self.logger.info("Sesión iniciada: \(session.user.id, privacy: .public)")
         } catch let error as SupabaseBaseError {

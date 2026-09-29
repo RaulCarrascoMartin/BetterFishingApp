@@ -118,6 +118,15 @@ final class AccountViewModel {
         }
     }
 
+    func refreshFavorites() async {
+        guard case .signedIn = sessionState else { return }
+        do {
+            favorites = try await favoritesService.favorites()
+        } catch {
+            errorMessage = Self.errorText(error)
+        }
+    }
+
     func sync() async {
         guard !isSyncing else { return }
         guard case .signedIn(let user) = sessionState else {

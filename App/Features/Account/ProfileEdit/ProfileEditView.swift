@@ -129,9 +129,13 @@ struct ProfileEditView: View {
 
     private func handleAvatarSelection() async {
         guard let item = selectedAvatarItem else { return }
-        selectedAvatarItem = nil
         isPreparingAvatar = true
-        defer { isPreparingAvatar = false }
+        // Limpiar la selección cambia el id de `.task` y cancela esta tarea (NSURLErrorCancelled),
+        // por eso se hace al terminar y no antes de subir.
+        defer {
+            isPreparingAvatar = false
+            selectedAvatarItem = nil
+        }
         guard let data = try? await item.loadTransferable(type: Data.self) else { return }
         guard let image = UIImage(data: data), let jpegData = image.jpegData(compressionQuality: 0.8) else { return }
         let previousError = viewModel.errorMessage

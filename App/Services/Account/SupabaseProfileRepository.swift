@@ -50,7 +50,7 @@ actor SupabaseProfileRepository: ProfileManaging {
     func updateAvatar(data: Data, contentType: String) async throws -> String {
         let user = try await currentUser()
         do {
-            let avatarPath = "\(user.id.uuidString)/avatar.jpg"
+            let avatarPath = "\(user.id.uuidString.lowercased())/avatar.jpg"
             _ = try await storage.upload(
                 bucket: "avatars",
                 path: avatarPath,
